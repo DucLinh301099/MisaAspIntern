@@ -19,7 +19,11 @@ namespace MisaAsp.Controllers
         {
             _accountService = accountService;
         }
-
+        /// <summary>
+        /// Api đăng ký mới 1 tài khoản
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost("register")]
         [AllowAnonymous]
         public async Task<IActionResult> Register([FromBody] RegistrationRequest request)
@@ -54,6 +58,11 @@ namespace MisaAsp.Controllers
                 return BadRequest(res);
             }
         }
+        /// <summary>
+        /// Api tạo mới 1 nhân viên
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost("createEmployee")]
         [AllowAnonymous]
         public async Task<IActionResult> CreateCustomer([FromBody] CreateEmployee request)
@@ -88,6 +97,10 @@ namespace MisaAsp.Controllers
                 return BadRequest(res);
             }
         }
+        /// <summary>
+        /// Api hiển thị tất cả các nhân viên hiện có
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("employee")]
         //[Authorize(Roles = "Admin")] // Chỉ admin mới có quyền truy cập
         [AllowAnonymous] // toàn quyền truy cập
@@ -107,7 +120,11 @@ namespace MisaAsp.Controllers
                 return BadRequest(res);
             }
         }
-
+        /// <summary>
+        /// Api đăng nhập 
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost("login")]
         [AllowAnonymous]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
@@ -147,7 +164,10 @@ namespace MisaAsp.Controllers
                 return BadRequest(res);
             }
         }
-
+        /// <summary>
+        /// Api đăng xuất
+        /// </summary>
+        /// <returns></returns>
         [HttpPost("logout")]
         [Authorize]
         public IActionResult Logout()
@@ -164,7 +184,10 @@ namespace MisaAsp.Controllers
             return Ok(new { message = "Đăng xuất thành công" });
         }
 
-
+        /// <summary>
+        /// Api hiển thị tất cả các user
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("users")]
         [Authorize(Roles = "Admin")] // Chỉ admin mới có quyền truy cập
         public async Task<IActionResult> GetUsers()
@@ -195,6 +218,12 @@ namespace MisaAsp.Controllers
             return Ok(user);
         }
 
+        /// <summary>
+        /// Api cập nhật User theo id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="user"></param>
+        /// <returns></returns>
         [HttpPut("users/{id}")]
         [Authorize(Roles = "Admin,User")] // Chỉ admin và người dùng mới có quyền truy cập
         public async Task<IActionResult> UpdateUser(int id, [FromBody] UpdateUser user)
@@ -228,7 +257,11 @@ namespace MisaAsp.Controllers
                 return BadRequest(res);
             }
         }
-
+        /// <summary>
+        /// Api xóa 1 user theo Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("users/{id}")]
         [Authorize(Roles = "Admin")] // Chỉ admin mới có quyền truy cập
         public async Task<IActionResult> DeleteUser(int id)
@@ -255,7 +288,11 @@ namespace MisaAsp.Controllers
                 return BadRequest(res);
             }
         }
-
+        /// <summary>
+        /// Api quên mật khẩu
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost("forgot-password")]
         [AllowAnonymous]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)
