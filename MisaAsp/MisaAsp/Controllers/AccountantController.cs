@@ -16,7 +16,10 @@ namespace MisaAsp.Controllers
         {
             _accountantService = accountantService;
         }
-
+        /// <summary>
+        /// Api hiển thị tất cả các Accountant service trong homepage
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("list")]
         public async Task<IEnumerable<AccountantGeneric>> GetServices()
         {

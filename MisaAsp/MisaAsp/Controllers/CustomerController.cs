@@ -17,7 +17,7 @@ namespace MisaAsp.Controllers
             _customerService = customerService;
         }
         /// <summary>
-        /// Api thêm mới 1 Customer
+        /// Api thêm mới 1 khách hàng mới
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>

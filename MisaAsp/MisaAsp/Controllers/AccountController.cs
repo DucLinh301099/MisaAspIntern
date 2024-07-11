@@ -226,18 +226,13 @@ namespace MisaAsp.Controllers
         /// <returns></returns>
         [HttpPut("users/{id}")]
         [Authorize(Roles = "Admin,User")] // Chỉ admin và người dùng mới có quyền truy cập
-        public async Task<IActionResult> UpdateUser(int id, [FromBody] UpdateUser user)
+        public async Task<IActionResult> UpdateUser( UpdateUser user)
         {
             var res = new ResOutput();
 
             try
             {
-                if (id != user.Id)
-                {
-                    res.HandleError("User ID không khớp");
-                }
-                else
-                {
+             
                     var result = await _accountService.UpdateUserAsync(user);
                     if (result)
                     {
@@ -247,7 +242,7 @@ namespace MisaAsp.Controllers
                     {
                         res.HandleError("Cập nhật người dùng thất bại");
                     }
-                }
+                
 
                 return Ok(res);
             }

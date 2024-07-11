@@ -16,6 +16,11 @@ namespace MisaAsp.Controllers
         {
             _bankaccountService = bankaccountService;
         }
+        /// <summary>
+        /// Api tạo mới 1 tài khoản ngân hàng
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost("CreateBankAccount")]
         [AllowAnonymous]
         public async Task<IActionResult> CreateBankAccount([FromBody] CreateBankAccount request)
@@ -50,6 +55,13 @@ namespace MisaAsp.Controllers
                 return BadRequest(res);
             }
         }
+        /// <summary>
+        /// Api hiển thị bankaccount theo roleid
+        /// dùng roleid để xác định 2 loại tài khoản
+        /// 1 là tài khoản chi, 2 là tài khoản nhận
+        /// </summary>
+        /// <param name="roleId"></param>
+        /// <returns></returns>
         [HttpGet("bankAccount")]
         public async Task<IActionResult> GetBankAccountByRoleAsync(int roleId)
         {
