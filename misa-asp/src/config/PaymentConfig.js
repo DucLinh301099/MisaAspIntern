@@ -22,7 +22,7 @@ let paymentConfig = {
         { columnName: "Chi nhánh", fieldName: "branch" },
       ],
       params: {
-        roleId: 1
+        typeOfBank: 1
       }
     },
     bankReceive: {
@@ -44,7 +44,7 @@ let paymentConfig = {
         },
       ],
       params: {
-        roleId: 2
+        typeOfBank: 2
       }
     },
     employee: {

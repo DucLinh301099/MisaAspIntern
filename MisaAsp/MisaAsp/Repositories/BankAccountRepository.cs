@@ -10,30 +10,30 @@ namespace MisaAsp.Repositories
 {
     public interface IBankAccountRepository : IBaseRepository
     {
-        Task<IEnumerable<BankAccount>> GetBankAccountsByRoleAsync(int roleId);
-        Task<int> CreateBankAccountAsync(CreateBankAccount request);
+        Task<IEnumerable<BankAccountVM>> GetBankAccountsByTypeAsync(int roleId);
+        Task<int> CreateBankAccountAsync(BankAccountVM request);
     }
 
     public class BankAccountRepository : BaseRepository, IBankAccountRepository
     {
         public BankAccountRepository(IDbConnection connection) : base(connection) { }
 
-        public async Task<int> CreateBankAccountAsync(CreateBankAccount request)
+        public async Task<int> CreateBankAccountAsync(BankAccountVM request)
         {
             var parameters = new
             {
                 AccountNumber = request.AccountNumber,
                 BankName = request.BankName,
                 Branch = request.Branch,
-                RoleId = request.RoleId,
+                TypeOfBank = request.TypeOfBank,
             };
             return await ExecuteProcScalarAsync<int>("createbankaccount", parameters);
         }
 
-        public async Task<IEnumerable<BankAccount>> GetBankAccountsByRoleAsync(int roleId)
+        public async Task<IEnumerable<BankAccountVM>> GetBankAccountsByTypeAsync(int typeOfBank)
         {
-            var sql = "SELECT * FROM getallbankaccountbyroleid(@RoleId)";
-            return await QueryAsync<BankAccount>(sql, new { RoleId = roleId });
+            var sql = "SELECT * FROM getbankbytype(@TypeOfBank)";
+            return await QueryAsync<BankAccountVM>(sql, new { TypeOfBank = typeOfBank });
         }
     }
 }

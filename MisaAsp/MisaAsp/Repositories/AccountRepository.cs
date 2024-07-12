@@ -9,19 +9,19 @@ namespace MisaAsp.Repositories
 {
     public interface IAccountRepository : IBaseRepository
     {
-        Task<bool> UpdateUserAsync(UpdateUser user);
+        Task<bool> UpdateUserAsync(UpdateUserVM user);
         Task<bool> DeleteUserAsync(int userId);
-        Task<IEnumerable<UserRequest>> GetAllUsersAsync();
+        Task<IEnumerable<UserRequestVM>> GetAllUsersAsync();
         
-        Task<IEnumerable<Employee>> GetAllEmployeeAsync();
-        Task<int> RegisterUserAsync(RegistrationRequest request);
-        Task<int> CreateEmployeeAsync(CreateEmployee request);
+        Task<IEnumerable<EmployeeVM>> GetAllEmployeeAsync();
+        Task<int> RegisterUserAsync(RegistrationRequestVM request);
+        Task<int> CreateEmployeeAsync(EmployeeVM request);
         Task<bool> IsEmailUniqueAsync(string email);
         Task<bool> IsPhoneUniqueAsync(string phoneNumber);
-        Task<bool> AuthenticateUserAsync(LoginRequest request);
-        Task<bool> ForgotPasswordAsync(ForgotPasswordRequest request);
+        Task<bool> AuthenticateUserAsync(LoginRequestVM request);
+        Task<bool> ForgotPasswordAsync(ForgotPasswordRequestVM request);
         Task<RoleAccount> GetUserRoleAsync(string emailOrPhoneNumber);
-        Task<UpdateUser> GetUserByIdAsync(int id);
+        Task<UpdateUserVM> GetUserByIdAsync(int id);
        // Task<UserRequest> GetLastNameById(int id);
 
 
@@ -31,37 +31,37 @@ namespace MisaAsp.Repositories
     {
         public AccountRepository(IDbConnection connection) : base(connection) { }
 
-        public async Task<bool> UpdateUserAsync(UpdateUser user)
+        public async Task<bool> UpdateUserAsync(UpdateUserVM user)
         {
             var sql = "SELECT updateuser(@user_id, @first_name, @last_name, @Email, @phone_number)";
             var parameters = new
             {
-                user_id = user.Id,
+                user_id = user.Id, 
                 first_name = user.FirstName,
                 last_name = user.LastName,
                 Email = user.Email,
-                phone_number = user.PhoneNumber,
-               
+                phone_number = user.PhoneNumber
             };
             var result = await ExecuteScalarAsync<bool>(sql, parameters);
             return result;
         }
-        public async Task<bool> DeleteUserAsync(int userId)
+
+        public async Task<bool> DeleteUserAsync(int id)
         {
             var sql = "SELECT delete_user(@user_id)";
-            var result = await ExecuteScalarAsync<bool>(sql, new { user_id = userId });
+            var result = await ExecuteScalarAsync<bool>(sql, new { user_id = id });
             return result;
         }
 
-        public async Task<IEnumerable<UserRequest>> GetAllUsersAsync()
+        public async Task<IEnumerable<UserRequestVM>> GetAllUsersAsync()
         {
             var sql = "SELECT * FROM GetAllUsers()";
-            return await QueryAsync<UserRequest>(sql);
+            return await QueryAsync<UserRequestVM>(sql);
         }
-        public async Task<UpdateUser> GetUserByIdAsync(int id)
+        public async Task<UpdateUserVM> GetUserByIdAsync(int id)
         {
-            var sql = "SELECT * FROM Registrations WHERE Id = @Id";
-            return await QueryFirstOrDefaultAsync<UpdateUser>(sql, new { Id = id });
+            var sql = "SELECT * FROM Users WHERE Id = @Id";
+            return await QueryFirstOrDefaultAsync<UpdateUserVM>(sql, new { Id = id });
         }
         //public async Task<UpdateUser> GetLastNameById(int id)
        // {
@@ -69,7 +69,7 @@ namespace MisaAsp.Repositories
        //     return await QueryFirstOrDefaultAsync<UpdateUser>(sql, new { Id = id });
        // }
 
-        public async Task<int> RegisterUserAsync(RegistrationRequest request)
+        public async Task<int> RegisterUserAsync(RegistrationRequestVM request)
         {
             var parameters = new
             {
@@ -82,7 +82,7 @@ namespace MisaAsp.Repositories
             };
             return await ExecuteProcScalarAsync<int>("registeruser", parameters);
         }
-        public async Task<int> CreateEmployeeAsync(CreateEmployee request)
+        public async Task<int> CreateEmployeeAsync(EmployeeVM request)
         {
             var parameters = new
             {
@@ -94,28 +94,28 @@ namespace MisaAsp.Repositories
             };
             return await ExecuteProcScalarAsync<int>("createemployee", parameters);
         }
-        public async Task<IEnumerable<Employee>> GetAllEmployeeAsync()
+        public async Task<IEnumerable<EmployeeVM>> GetAllEmployeeAsync()
         {
             var sql = "SELECT * FROM getallemployees()";
-            return await QueryAsync<Employee>(sql);
+            return await QueryAsync<EmployeeVM>(sql);
         }
 
 
         public async Task<bool> IsEmailUniqueAsync(string email)
         {
-            var query = "SELECT COUNT(1) FROM Registrations WHERE Email = @Email";
+            var query = "SELECT COUNT(1) FROM Users WHERE Email = @Email";
             var count = await ExecuteScalarAsync<int>(query, new { Email = email });
             return count == 0;
         }
 
         public async Task<bool> IsPhoneUniqueAsync(string phoneNumber)
         {
-            var query = "SELECT COUNT(1) FROM Registrations WHERE PhoneNumber = @PhoneNumber";
+            var query = "SELECT COUNT(1) FROM Users WHERE PhoneNumber = @PhoneNumber";
             var count = await ExecuteScalarAsync<int>(query, new { PhoneNumber = phoneNumber });
             return count == 0;
         }
 
-        public async Task<bool> AuthenticateUserAsync(LoginRequest request)
+        public async Task<bool> AuthenticateUserAsync(LoginRequestVM request)
         {
             var parameters = new
             {
@@ -125,7 +125,7 @@ namespace MisaAsp.Repositories
             return await ExecuteProcScalarAsync<bool>("authenticateuser", parameters);
         }
 
-        public async Task<bool> ForgotPasswordAsync(ForgotPasswordRequest request)
+        public async Task<bool> ForgotPasswordAsync(ForgotPasswordRequestVM request)
         {
             var sql = "SELECT CheckEmailExists(@Email)";
             var parameters = new { request.Email };
@@ -134,13 +134,9 @@ namespace MisaAsp.Repositories
 
         public async Task<RoleAccount> GetUserRoleAsync(string emailOrPhoneNumber)
         {
-            var sql = @"
-                SELECT ra.UserId, ra.RoleId, r.RoleName
-                FROM RoleAccount ra
-                JOIN Roles r ON ra.RoleId = r.Id
-                JOIN Registrations u ON ra.UserId = u.Id
-                WHERE u.Email = @EmailOrPhoneNumber OR u.PhoneNumber = @EmailOrPhoneNumber";
+            var sql = "SELECT * FROM getuserrole(@EmailOrPhoneNumber)";
             return await QuerySingleOrDefaultAsync<RoleAccount>(sql, new { EmailOrPhoneNumber = emailOrPhoneNumber });
         }
+
     }
 }

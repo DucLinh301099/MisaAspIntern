@@ -1,8 +1,5 @@
 ﻿using MisaAsp.Models.DTO;
 using MisaAsp.Repositories;
-using Microsoft.Extensions.Configuration;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace MisaAsp.Services
 {

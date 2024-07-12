@@ -1,6 +1,6 @@
 const accApi = {
     bankExpense: {
-        url: 'BankAccount/bankAccount',
+        url: 'BankAccount/bank-account',
         method: 'get'
     },
     employee: {

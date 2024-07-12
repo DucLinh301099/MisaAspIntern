@@ -15,7 +15,7 @@ namespace MisaAsp.Models.Ulti
             IsSuccess = true;
         }
 
-        public void HandleError(string message, object data = null)
+        public void HandleError(string message = "Thất bại", object data = null)
         {
             Message = message;
             Data = data;

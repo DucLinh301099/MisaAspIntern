@@ -2,7 +2,7 @@
 
 namespace MisaAsp.Models.ViewModel
 {
-    public class RegistrationRequest
+    public class RegistrationRequestVM
     {
         [Required(ErrorMessage = "First name is required.")]
         public string FirstName { get; set; }

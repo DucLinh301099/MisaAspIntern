@@ -1,60 +1,52 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MisaAsp.Models.Ulti;
 using MisaAsp.Models.ViewModel;
 using MisaAsp.Services;
+using System.Threading.Tasks;
 
 namespace MisaAsp.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BankAccountController : ControllerBase
+    public class BankAccountController : BaseController
     {
         private readonly IBankAccountService _bankaccountService;
-        public BankAccountController(IBankAccountService bankaccountService)
+
+        public BankAccountController(IBankAccountService bankaccountService, ResOutput _response) : base(_response)
         {
             _bankaccountService = bankaccountService;
         }
+
         /// <summary>
         /// Api tạo mới 1 tài khoản ngân hàng
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        [HttpPost("CreateBankAccount")]
+        [HttpPost("create-bank-account")]
         [AllowAnonymous]
-        public async Task<IActionResult> CreateBankAccount([FromBody] CreateBankAccount request)
+        public async Task<IActionResult> CreateBankAccount([FromBody] BankAccountVM request)
         {
-            var res = new ResOutput();
-
-            try
+            if (!ModelState.IsValid)
             {
-                if (!ModelState.IsValid)
-                {
-                    res.HandleError("Thất bại");
-                }
-                else
-                {
-                    var bankId = await _bankaccountService.CreateBankAccountAsync(request);
-
-                    if (bankId > 0)
-                    {
-                        res.HandleSuccess("Đăng kí thành công", new { BankId = bankId });
-                    }
-                    else
-                    {
-                        res.HandleError("Đăng kí thất bại", new { BankId = bankId });
-                    }
-                }
-
-                return Ok(res);
+                _response.HandleError();
+                return Ok(_response);
             }
-            catch (Exception ex)
+
+            var bankId = await _bankaccountService.CreateBankAccountAsync(request);
+            
+            if (bankId > 0)
             {
-                res.HandleError(ex.Message);
-                return BadRequest(res);
+                _response.HandleSuccess("Đăng kí thành công", new { BankId = bankId });
             }
+            else
+            {
+                _response.HandleError("Đăng kí thất bại", new { BankId = bankId });
+            }
+
+            return Ok(_response);
         }
+
         /// <summary>
         /// Api hiển thị bankaccount theo roleid
         /// dùng roleid để xác định 2 loại tài khoản
@@ -62,18 +54,22 @@ namespace MisaAsp.Controllers
         /// </summary>
         /// <param name="roleId"></param>
         /// <returns></returns>
-        [HttpGet("bankAccount")]
-        public async Task<IActionResult> GetBankAccountByRoleAsync(int roleId)
+        [HttpGet("bank-account")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetBankAccountsByTypeAsync(int typeOfBank)
         {
-            var res = new ResOutput();
-            var bankAccount = await _bankaccountService.GetBankAccountByRoleAsync(roleId);
+            var bankAccount = await _bankaccountService.GetBankAccountsByTypeAsync(typeOfBank);
+
             if (bankAccount == null)
             {
-                res.HandleError("Không tìm thấy BankAccount theo roleId này", new { RoleId = roleId });
-                return Ok(res);
+                _response.HandleError("Không tìm thấy BankAccount theo roleId này", new { TypeOfBank = typeOfBank });
             }
-            return Ok(bankAccount);
+            else
+            {
+                _response.HandleSuccess("Tìm thấy BankAccount", bankAccount);
+            }
+            
+            return Ok(_response);
         }
-
     }
 }

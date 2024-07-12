@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using MisaAsp.Middleware;
+using MisaAsp.Models.Ulti;
 using MisaAsp.Repositories;
 using MisaAsp.Services;
 using Npgsql;
@@ -42,6 +43,8 @@ builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IAccountantRepository, AccountantRepository>();
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<IBankAccountRepository, BankAccountRepository>();
+
+builder.Services.AddScoped<ResOutput>();
 #endregion
 
 
@@ -97,7 +100,7 @@ if (app.Environment.IsDevelopment())
 app.UseRouting();
 app.UseCors("CorsPolicy");
 app.UseMiddleware<TokenMiddleware>();
-
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
 

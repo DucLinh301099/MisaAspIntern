@@ -1,16 +1,11 @@
 ﻿using Microsoft.IdentityModel.Tokens;
+using MisaAsp.Models.BaseModel;
 using MisaAsp.Models.ViewModel;
 using MisaAsp.Repositories;
-using System;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using Microsoft.Extensions.Configuration;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using System.Security.Claims;
-using MisaAsp.Models.BaseModel;
-using Microsoft.AspNetCore.Http;
 
 namespace MisaAsp.Services
 {
@@ -18,16 +13,15 @@ namespace MisaAsp.Services
     {
         Task<bool> IsEmailUniqueAsync(string email);
         Task<bool> IsPhoneUniqueAsync(string phone);
-        Task<int> RegisterUserAsync(RegistrationRequest request);
-        Task<AuthResult> AuthenticateUserAsync(LoginRequest request);
-        Task<IEnumerable<UserRequest>> GetAllUsersAsync();
-        Task<bool> ForgotPasswordAsync(ForgotPasswordRequest request);
-        Task<IEnumerable<Employee>> GetAllEmployeeAsync();
-        Task<int> CreateEmployeeAsync(CreateEmployee request);
+        Task<int> RegisterUserAsync(RegistrationRequestVM request);
+        Task<AuthResult> AuthenticateUserAsync(LoginRequestVM request);
+        Task<IEnumerable<UserRequestVM>> GetAllUsersAsync();
+        Task<bool> ForgotPasswordAsync(ForgotPasswordRequestVM request);
+        Task<IEnumerable<EmployeeVM>> GetAllEmployeeAsync();
+        Task<int> CreateEmployeeAsync(EmployeeVM request);
         Task<bool> DeleteUserAsync(int userId);
-        Task<bool> UpdateUserAsync(UpdateUser user);
-        Task<string> GetRoleAsync(string token);
-        Task<UpdateUser> GetUserByIdAsync(int id);
+        Task<bool> UpdateUserAsync(UpdateUserVM user);
+        Task<UpdateUserVM> GetUserByIdAsync(int id);
         Task<string> GetLastNameById(int id);
     }
 
@@ -44,7 +38,7 @@ namespace MisaAsp.Services
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<bool> UpdateUserAsync(UpdateUser user)
+        public async Task<bool> UpdateUserAsync(UpdateUserVM user)
         {
             return await _accountRepo.UpdateUserAsync(user);
         }
@@ -54,24 +48,26 @@ namespace MisaAsp.Services
             return await _accountRepo.DeleteUserAsync(userId);
         }
 
-        public async Task<IEnumerable<UserRequest>> GetAllUsersAsync()
+        public async Task<IEnumerable<UserRequestVM>> GetAllUsersAsync()
         {
             return await _accountRepo.GetAllUsersAsync();
         }
-        public async Task<IEnumerable<Employee>> GetAllEmployeeAsync()
+
+        public async Task<IEnumerable<EmployeeVM>> GetAllEmployeeAsync()
         {
             return await _accountRepo.GetAllEmployeeAsync();
         }
-        public async Task<UpdateUser> GetUserByIdAsync(int id)
+
+        public async Task<UpdateUserVM> GetUserByIdAsync(int id)
         {
             return await _accountRepo.GetUserByIdAsync(id);
         }
+
         public async Task<string> GetLastNameById(int userId)
         {
             var user = await _accountRepo.GetUserByIdAsync(userId);
             return user?.LastName;
         }
-
 
         public async Task<bool> IsEmailUniqueAsync(string email)
         {
@@ -83,128 +79,109 @@ namespace MisaAsp.Services
             return await _accountRepo.IsPhoneUniqueAsync(phoneNumber);
         }
 
-        public async Task<int> RegisterUserAsync(RegistrationRequest request)
+        public async Task<int> RegisterUserAsync(RegistrationRequestVM request)
         {
-            if (!await IsEmailUniqueAsync(request.Email))
+            if (request != null)
             {
-                throw new Exception("Email is already in use.");
-            }
+                if (!await IsEmailUniqueAsync(request.Email))
+                {
+                    throw new Exception("Email đã sử dụng");
+                }
 
-            if (!await IsPhoneUniqueAsync(request.PhoneNumber))
-            {
-                throw new Exception("Phone number is already in use.");
-            }
+                if (!await IsPhoneUniqueAsync(request.PhoneNumber))
+                {
+                    throw new Exception("Số điện thoại đã được sử dụng");
+                }
 
-            request.Password = GetMd5Hash(request.Password);
+                request.Password = GetMd5Hash(request.Password);
+            }
 
             return await _accountRepo.RegisterUserAsync(request);
         }
-        public async Task<int> CreateEmployeeAsync(CreateEmployee request)
+
+        public async Task<int> CreateEmployeeAsync(EmployeeVM request)
         {
-             return await _accountRepo.CreateEmployeeAsync(request);
+            return await _accountRepo.CreateEmployeeAsync(request);
         }
 
-        public async Task<AuthResult> AuthenticateUserAsync(LoginRequest request)
+        public async Task<AuthResult> AuthenticateUserAsync(LoginRequestVM request)
         {
-            request.Password = GetMd5Hash(request.Password);
-
-            if (await _accountRepo.AuthenticateUserAsync(request))
+            if (request != null)
             {
-                var userRole = await _accountRepo.GetUserRoleAsync(request.EmailOrPhoneNumber);
-                if (userRole == null)
-                {
-                    throw new Exception("Role not found for the user.");
-                }
+                request.Password = GetMd5Hash(request.Password);
 
-                var jwtTokenHandler = new JwtSecurityTokenHandler();
-                var secretKey = _configuration.GetSection("Jwt").GetSection("SecretKey").Value;
-                if (string.IsNullOrEmpty(secretKey))
-                    throw new ArgumentNullException(nameof(secretKey));
-
-                var secretKeyBytes = Encoding.UTF8.GetBytes(secretKey);
-                var tokenDescription = new SecurityTokenDescriptor
+                if (await _accountRepo.AuthenticateUserAsync(request))
                 {
-                    Subject = new ClaimsIdentity(new[]
+                    var userRole = await _accountRepo.GetUserRoleAsync(request.EmailOrPhoneNumber);
+                    if (userRole == null)
                     {
-                new Claim(ClaimTypes.Name, request.EmailOrPhoneNumber),
-                new Claim(ClaimTypes.Role, userRole.RoleName)
-            }),
-                    Expires = DateTime.UtcNow.AddHours(10),
-                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(secretKeyBytes), SecurityAlgorithms.HmacSha256)
-                };
+                        throw new Exception("Role không tìm thấy của người dùng này");
+                    }
 
-                var token = jwtTokenHandler.CreateToken(tokenDescription);
-                var tokenString = jwtTokenHandler.WriteToken(token);
+                    var jwtTokenHandler = new JwtSecurityTokenHandler();
+                    var secretKey = _configuration.GetSection("Jwt").GetSection("SecretKey").Value;
+                    if (string.IsNullOrEmpty(secretKey))
+                        throw new ArgumentNullException(nameof(secretKey));
 
-                var cookieOptions = new CookieOptions
-                {
-                    //HttpOnly = true,
-                    Secure = true, // Đảm bảo cookie chỉ được gửi qua HTTPS
-                    SameSite = SameSiteMode.Strict,
-                    Expires = DateTime.UtcNow.AddHours(10)
-                };
-                _httpContextAccessor.HttpContext.Response.Cookies.Append("AuthToken", tokenString, cookieOptions);
+                    var tokenExpiryInHours = _configuration.GetValue<int>("Jwt:TokenExpiryInHours");
+                    var secretKeyBytes = Encoding.UTF8.GetBytes(secretKey);
+                    var tokenDescription = new SecurityTokenDescriptor
+                    {
+                        Subject = new ClaimsIdentity(new[]
+                        {
+                            new Claim(ClaimTypes.Name, request.EmailOrPhoneNumber),
+                            new Claim(ClaimTypes.Role, userRole.RoleName)
+                        }),
+                        Expires = DateTime.UtcNow.AddHours(tokenExpiryInHours),
+                        SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(secretKeyBytes), SecurityAlgorithms.HmacSha256)
+                    };
 
-                return new AuthResult
+                    var token = jwtTokenHandler.CreateToken(tokenDescription);
+                    var tokenString = jwtTokenHandler.WriteToken(token);
 
-                {
-                    Token = tokenString,
-                    Role = userRole.RoleName,
-                    UserId = userRole.UserId // Thêm UserId vào AuthResult
-                };
+                    var cookieOptions = new CookieOptions
+                    {
+                        //HttpOnly = true,
+                        Secure = true, // Đảm bảo cookie chỉ được gửi qua HTTPS
+                        SameSite = SameSiteMode.Strict,
+                        Expires = DateTime.UtcNow.AddHours(tokenExpiryInHours)
+                    };
+                    _httpContextAccessor.HttpContext.Response.Cookies.Append("AuthToken", tokenString, cookieOptions);
+
+                    return new AuthResult
+                    {
+                        Token = tokenString,
+                        Role = userRole.RoleName,
+                        UserId = userRole.UserId // Thêm UserId vào AuthResult
+                    };
+                }
             }
 
             return null;
         }
 
-
-
-        public async Task<bool> ForgotPasswordAsync(ForgotPasswordRequest request)
+        public async Task<bool> ForgotPasswordAsync(ForgotPasswordRequestVM request)
         {
             return await _accountRepo.ForgotPasswordAsync(request);
         }
 
-        public async Task<string> GetRoleAsync(string token)
-        {
-            var jwtTokenHandler = new JwtSecurityTokenHandler();
-            var secretKey = _configuration.GetSection("Jwt").GetSection("SecretKey").Value;
-            if (string.IsNullOrEmpty(secretKey))
-                throw new ArgumentNullException(nameof(secretKey));
-
-            var secretKeyBytes = Encoding.UTF8.GetBytes(secretKey);
-            var validationParameters = new TokenValidationParameters
-            {
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(secretKeyBytes),
-                ValidateIssuer = false,
-                ValidateAudience = false
-            };
-
-            try
-            {
-                jwtTokenHandler.ValidateToken(token, validationParameters, out SecurityToken validatedToken);
-                var jwtToken = (JwtSecurityToken)validatedToken;
-                return jwtToken.Claims.First(x => x.Type == ClaimTypes.Role).Value;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-
         private string GetMd5Hash(string input)
         {
-            using (var md5 = MD5.Create())
+            if (!string.IsNullOrEmpty(input))
             {
-                var inputBytes = Encoding.ASCII.GetBytes(input);
-                var hashBytes = md5.ComputeHash(inputBytes);
-                var sb = new StringBuilder();
-                foreach (var t in hashBytes)
+                using (var md5 = MD5.Create())
                 {
-                    sb.Append(t.ToString("X2"));
+                    var inputBytes = Encoding.ASCII.GetBytes(input);
+                    var hashBytes = md5.ComputeHash(inputBytes);
+                    var sb = new StringBuilder();
+                    foreach (var t in hashBytes)
+                    {
+                        sb.Append(t.ToString("X2"));
+                    }
+                    return sb.ToString();
                 }
-                return sb.ToString();
             }
+            return null;
         }
     }
 }

@@ -10,8 +10,8 @@ namespace MisaAsp.Repositories
 
     public interface ICustomerRepository : IBaseRepository
     {
-        Task<IEnumerable<Customer>> GetAllCustomerAsync();
-        Task<int> CreateCustomerAsync(CreateCustomer request);
+        Task<IEnumerable<CustomerVM>> GetAllCustomerAsync();
+        Task<int> CreateCustomerAsync(CustomerVM request);
 
     }
     
@@ -19,7 +19,7 @@ namespace MisaAsp.Repositories
         public class CustomerRepository : BaseRepository, ICustomerRepository
         {
             public CustomerRepository(IDbConnection connection) : base(connection) { }
-            public async Task<int> CreateCustomerAsync(CreateCustomer request)
+            public async Task<int> CreateCustomerAsync(CustomerVM request)
             {
                 var parameters = new
                 {
@@ -32,10 +32,10 @@ namespace MisaAsp.Repositories
                 };
                 return await ExecuteProcScalarAsync<int>("createcustomer", parameters);
             }
-            public async Task<IEnumerable<Customer>> GetAllCustomerAsync()
+            public async Task<IEnumerable<CustomerVM>> GetAllCustomerAsync()
             {
                 var sql = "SELECT * FROM getallcustomers()";
-                return await QueryAsync<Customer>(sql);
+                return await QueryAsync<CustomerVM>(sql);
             }
         } 
 }

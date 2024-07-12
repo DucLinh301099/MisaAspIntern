@@ -1,83 +1,77 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MisaAsp.Models.Ulti;
 using MisaAsp.Models.ViewModel;
 using MisaAsp.Services;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace MisaAsp.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CustomerController : ControllerBase
+    public class CustomerController : BaseController
     {
         private readonly ICustomerService _customerService;
-        public CustomerController(ICustomerService customerService)
+        public CustomerController(ICustomerService customerService, ResOutput _response) : base(_response)
         {
             _customerService = customerService;
         }
+
         /// <summary>
         /// Api thêm mới 1 khách hàng mới
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        [HttpPost("createCustomer")]
+        [HttpPost("create-customer")]
         [AllowAnonymous]
-        public async Task<IActionResult> CreateCustomer([FromBody] CreateCustomer request)
+        public async Task<IActionResult> CreateCustomer([FromBody] CustomerVM request)
         {
-            var res = new ResOutput();
-
-            try
+            if (!ModelState.IsValid)
             {
-                if (!ModelState.IsValid)
-                {
-                    res.HandleError("Thất bại");
-                }
-                else
-                {
-                    var customerId = await _customerService.CreateCustomerAsync(request);
 
-                    if (customerId > 0)
-                    {
-                        res.HandleSuccess("Tạo mới thành công", new { CustomerId = customerId });
-                    }
-                    else
-                    {
-                        res.HandleError("Tạo mới thất bại", new { CustomerId = customerId });
-                    }
-                }
-
-                return Ok(res);
+                _response.HandleError();
+                return Ok(_response);
             }
-            catch (Exception ex)
+
+            var customerId = await _customerService.CreateCustomerAsync(request);
+           
+
+            if (customerId > 0)
             {
-                res.HandleError(ex.Message);
-                return BadRequest(res);
+                _response.HandleSuccess("Tạo mới thành công", new { CustomerId = customerId });
+                
             }
+            else
+            {
+                _response.HandleError("Tạo mới thất bại", new { CustomerId = customerId });
+                
+            }
+            return Ok(_response);
         }
+
         /// <summary>
         /// Api lấy tất cả thông tin của customer
         /// </summary>
         /// <returns></returns>
         [HttpGet("customer")]
-        //[Authorize(Roles = "Admin")] // Chỉ admin mới có quyền truy cập
         [AllowAnonymous] // toàn quyền truy cập
         public async Task<IActionResult> GetCustomer()
         {
             var customers = await _customerService.GetAllCustomerAsync();
-            var res = new ResOutput();
+            
 
             if (customers != null && customers.Any())
             {
-                res.HandleSuccess("Lấy thông tin Customer thành công", customers);
-                return Ok(res);
+                _response.HandleSuccess("Lấy thông tin khách hàng thành công", customers);
+                
             }
             else
             {
-                res.HandleError("Lấy thông tin Customer thất bại");
-                return BadRequest(res);
+                _response.HandleError("Lấy thông tin khách hàng thất bại");
+                
             }
+            return Ok(_response);
         }
-
     }
 }

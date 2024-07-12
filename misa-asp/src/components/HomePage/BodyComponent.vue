@@ -97,12 +97,6 @@ export default {
         console.error("Failed to fetch services:", error);
       }
     },
-    onPrevPage() {
-      this.currentPage = prevPage(this.currentPage);
-    },
-    onNextPage() {
-      this.currentPage = nextPage(this.currentPage, this.totalPages);
-    },
   },
   created() {
     this.fetchServices();

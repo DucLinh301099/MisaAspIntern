@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-public class ForgotPasswordRequest
+public class ForgotPasswordRequestVM
 {
     [Required]
     [EmailAddress]

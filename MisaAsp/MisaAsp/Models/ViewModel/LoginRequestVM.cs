@@ -2,7 +2,7 @@
 
 namespace MisaAsp.Models.ViewModel
 {
-    public class LoginRequest
+    public class LoginRequestVM
     {
         [Required]
         public string EmailOrPhoneNumber { get; set; }

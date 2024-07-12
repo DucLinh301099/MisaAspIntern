@@ -66,7 +66,7 @@ export const fetchProtectedData = async () => {
 
 export const register = async (firstName, lastName, email, phoneNumber, password, roleId) => {
   console.log('Attempting to register user...');
-  const response = await apiClient.post('Account/createEmployee', {
+  const response = await apiClient.post('Account/register', {
     FirstName: firstName,
     LastName: lastName,
     Email: email,

@@ -14,15 +14,14 @@ export const getServices = async () => {
 };
 
 export const filterServices = (services, searchQuery) => {
-  return services.filter(service => 
-    service.name.toLowerCase().includes(searchQuery.toLowerCase())
+  if (!services || !Array.isArray(services.data) || !services.data.length) {
+    return [];
+  }
+
+  return services.data.filter(services => 
+    services.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 };
 
-export const prevPage = (currentPage) => {
-  return currentPage > 1 ? currentPage - 1 : currentPage;
-};
 
-export const nextPage = (currentPage, totalPages) => {
-  return currentPage < totalPages ? currentPage + 1 : currentPage;
-};
+

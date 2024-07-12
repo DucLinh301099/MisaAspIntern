@@ -45,7 +45,7 @@
         <div class="input-container full-width">
           <label for="account-type">Loại tài khoản</label>
           <div class="custom-select">
-            <select id="account-type" v-model="roleId" class="input-field">
+            <select id="account-type" v-model="typeOfBank" class="input-field">
               <option class="options" value="1">Tài khoản chi</option>
               <option class="options" value="2">Tài khoản nhận</option>
             </select>
@@ -81,7 +81,7 @@ export default {
       accountNumber: "",
       bankName: "",
       branch: "",
-      roleId: "",
+      typeOfBank: "",
       generalError: "",
     };
   },
@@ -93,7 +93,7 @@ export default {
           this.accountNumber,
           this.bankName,
           this.branch,
-          this.roleId
+          this.typeOfBank
         );
         console.log("Tạo mới tài khoản ngân hàng thành công:", data);
         alert("Tạo mới tài khoản ngân hàng thành công!");

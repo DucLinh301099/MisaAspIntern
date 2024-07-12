@@ -3,22 +3,20 @@ using Microsoft.AspNetCore.Mvc;
 using MisaAsp.Models.Ulti;
 using MisaAsp.Models.ViewModel;
 using MisaAsp.Services;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace MisaAsp.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class AccountController : ControllerBase
+    public class AccountController : BaseController
     {
         private readonly IAccountService _accountService;
 
-        public AccountController(IAccountService accountService)
+        public AccountController(IAccountService accountService, ResOutput _response) : base(_response)
         {
             _accountService = accountService;
         }
+
         /// <summary>
         /// Api đăng ký mới 1 tài khoản
         /// </summary>
@@ -26,38 +24,28 @@ namespace MisaAsp.Controllers
         /// <returns></returns>
         [HttpPost("register")]
         [AllowAnonymous]
-        public async Task<IActionResult> Register([FromBody] RegistrationRequest request)
+        public async Task<IActionResult> Register([FromBody] RegistrationRequestVM request)
         {
-            var res = new ResOutput();
-
-            try
+            if (!ModelState.IsValid)
             {
-                if (!ModelState.IsValid)
-                {
-                    res.HandleError("Thất bại");
-                }
-                else
-                {
-                    var userId = await _accountService.RegisterUserAsync(request);
-
-                    if (userId > 0)
-                    {
-                        res.HandleSuccess("Đăng kí thành công", new { UserId = userId });
-                    }
-                    else
-                    {
-                        res.HandleError("Đăng kí thất bại", new { UserId = userId });
-                    }
-                }
-
-                return Ok(res);
+                _response.HandleError();
+                return Ok(_response);
             }
-            catch (Exception ex)
+
+            var userId = await _accountService.RegisterUserAsync(request);
+
+            if (userId > 0)
             {
-                res.HandleError(ex.Message);
-                return BadRequest(res);
+                _response.HandleSuccess("Đăng kí thành công", new { UserId = userId });
             }
+            else
+            {
+                _response.HandleError("Đăng kí thất bại", new { UserId = userId });
+            }
+
+            return Ok(_response);
         }
+
         /// <summary>
         /// Api tạo mới 1 nhân viên
         /// </summary>
@@ -65,61 +53,50 @@ namespace MisaAsp.Controllers
         /// <returns></returns>
         [HttpPost("createEmployee")]
         [AllowAnonymous]
-        public async Task<IActionResult> CreateCustomer([FromBody] CreateEmployee request)
+        public async Task<IActionResult> CreateEmployee([FromBody] EmployeeVM request)
         {
-            var res = new ResOutput();
-
-            try
+            if (!ModelState.IsValid)
             {
-                if (!ModelState.IsValid)
-                {
-                    res.HandleError("Thất bại");
-                }
-                else
-                {
-                    var employeeId = await _accountService.CreateEmployeeAsync(request);
-
-                    if (employeeId > 0)
-                    {
-                        res.HandleSuccess("Tạo mới thành công", new { EmployeeId = employeeId });
-                    }
-                    else
-                    {
-                        res.HandleError("Tạo mới thất bại", new { EmployeeId = employeeId });
-                    }
-                }
-
-                return Ok(res);
+                _response.HandleError();
+                return Ok(_response);
             }
-            catch (Exception ex)
+
+            var employeeId = await _accountService.CreateEmployeeAsync(request);
+
+            if (employeeId > 0)
             {
-                res.HandleError(ex.Message);
-                return BadRequest(res);
+                _response.HandleSuccess("Tạo mới thành công", new { EmployeeId = employeeId });
             }
+            else
+            {
+                _response.HandleError("Tạo mới thất bại", new { EmployeeId = employeeId });
+            }
+
+            return Ok(_response);
         }
+
         /// <summary>
         /// Api hiển thị tất cả các nhân viên hiện có
         /// </summary>
         /// <returns></returns>
         [HttpGet("employee")]
-        //[Authorize(Roles = "Admin")] // Chỉ admin mới có quyền truy cập
         [AllowAnonymous] // toàn quyền truy cập
         public async Task<IActionResult> GetEmployee()
         {
             var employees = await _accountService.GetAllEmployeeAsync();
-            var res = new ResOutput();
 
             if (employees != null && employees.Any())
             {
-                res.HandleSuccess("Lấy thông tin Customer thành công", employees);
-                return Ok(res);
+                _response.HandleSuccess("Lấy thông tin nhân viên thành công", employees);
             }
             else
             {
-                res.HandleError("Lấy thông tin Customer thất bại");
-                return BadRequest(res);
+                _response.HandleError("Lấy thông tin nhân viên thất bại");
             }
+
+            return Ok(_response);
         }
+
         /// <summary>
         /// Api đăng nhập 
         /// </summary>
@@ -127,43 +104,34 @@ namespace MisaAsp.Controllers
         /// <returns></returns>
         [HttpPost("login")]
         [AllowAnonymous]
-        public async Task<IActionResult> Login([FromBody] LoginRequest request)
+        public async Task<IActionResult> Login([FromBody] LoginRequestVM request)
         {
-            var res = new ResOutput();
-
-            try
-            {   
-
-                if (!ModelState.IsValid)
-                {
-                    res.HandleError("Thất bại");
-                }
-                else
-                {
-                    if (Request.Cookies.ContainsKey("AuthToken"))
-                    {
-                        Response.Cookies.Delete("AuthToken");
-                    }
-                    var authResult = await _accountService.AuthenticateUserAsync(request);
-                    if (authResult != null && !string.IsNullOrEmpty(authResult.Role))
-                    {
-                        var user = await _accountService.GetUserByIdAsync(authResult.UserId);
-                        res.HandleSuccess("Đăng nhập thành công", new { Role = authResult.Role, Toke = authResult.Token, LastName = user.LastName });
-                    }
-                    else
-                    {
-                        res.HandleError("Thông tin đăng nhập không hợp lệ");
-                    }
-                }
-
-                return Ok(res);
-            }
-            catch (Exception ex)
+            if (!ModelState.IsValid)
             {
-                res.HandleError(ex.Message);
-                return BadRequest(res);
+                _response.HandleError("Thất bại");
+                return Ok(_response);
             }
+
+            if (Request.Cookies.ContainsKey("AuthToken"))
+            {
+                Response.Cookies.Delete("AuthToken");
+            }
+
+            var authResult = await _accountService.AuthenticateUserAsync(request);
+
+            if (authResult != null && !string.IsNullOrEmpty(authResult.Role))
+            {
+                var user = await _accountService.GetUserByIdAsync(authResult.UserId);
+                _response.HandleSuccess("Đăng nhập thành công", new { Role = authResult.Role, Token = authResult.Token, LastName = user.LastName });
+            }
+            else
+            {
+                _response.HandleError("Thông tin đăng nhập không hợp lệ");
+            }
+
+            return Ok(_response);
         }
+
         /// <summary>
         /// Api đăng xuất
         /// </summary>
@@ -172,16 +140,9 @@ namespace MisaAsp.Controllers
         [Authorize]
         public IActionResult Logout()
         {
-            var cookieOptions = new CookieOptions
-            {
-                //HttpOnly = true,
-                Secure = true, // Đảm bảo cookie chỉ được gửi qua HTTPS
-                SameSite = SameSiteMode.Strict,
-                Expires = DateTime.UtcNow.AddDays(-1) // Đặt ngày hết hạn trong quá khứ để xóa cookie
-            };
-            Response.Cookies.Append("AuthToken", "", cookieOptions);
-
-            return Ok(new { message = "Đăng xuất thành công" });
+            Response.Cookies.Delete("AuthToken");
+            _response.HandleSuccess("Đăng xuất thành công");
+            return Ok(_response);
         }
 
         /// <summary>
@@ -193,18 +154,16 @@ namespace MisaAsp.Controllers
         public async Task<IActionResult> GetUsers()
         {
             var users = await _accountService.GetAllUsersAsync();
-            var res = new ResOutput();
 
             if (users != null && users.Any())
             {
-                res.HandleSuccess("Lấy thông tin người dùng thành công", users);
-                return Ok(res);
+                _response.HandleSuccess("Lấy thông tin người dùng thành công", users);
             }
             else
             {
-                res.HandleError("Lấy thông tin người dùng thất bại");
-                return BadRequest(res);
+                _response.HandleError("Lấy thông tin người dùng thất bại");
             }
+            return Ok(_response);
         }
 
         [HttpGet("users/{id}")]
@@ -213,45 +172,39 @@ namespace MisaAsp.Controllers
             var user = await _accountService.GetUserByIdAsync(id);
             if (user == null)
             {
-                return NotFound();
+                _response.HandleError("Không tìm thấy tài khoản");
+
             }
-            return Ok(user);
+            else
+            {
+                _response.HandleSuccess(" Tìm thấy tài khoản" ,user);
+                
+            }
+            return Ok(_response);
         }
 
         /// <summary>
         /// Api cập nhật User theo id
         /// </summary>
-        /// <param name="id"></param>
         /// <param name="user"></param>
         /// <returns></returns>
-        [HttpPut("users/{id}")]
+        [HttpPut("update")]
         [Authorize(Roles = "Admin,User")] // Chỉ admin và người dùng mới có quyền truy cập
-        public async Task<IActionResult> UpdateUser( UpdateUser user)
+        public async Task<IActionResult> UpdateUser(UpdateUserVM user)
         {
-            var res = new ResOutput();
-
-            try
+            var result = await _accountService.UpdateUserAsync(user);
+            if (result != null)
             {
-             
-                    var result = await _accountService.UpdateUserAsync(user);
-                    if (result)
-                    {
-                        res.HandleSuccess("Cập nhật người dùng thành công");
-                    }
-                    else
-                    {
-                        res.HandleError("Cập nhật người dùng thất bại");
-                    }
-                
-
-                return Ok(res);
+                _response.HandleSuccess("Cập nhật người dùng thành công",user);
             }
-            catch (Exception ex)
+            else
             {
-                res.HandleError($"Có lỗi xảy ra khi cập nhật người dùng: {ex.Message}");
-                return BadRequest(res);
+                _response.HandleError("Cập nhật người dùng thất bại");
             }
+
+            return Ok(_response);
         }
+
         /// <summary>
         /// Api xóa 1 user theo Id
         /// </summary>
@@ -261,28 +214,19 @@ namespace MisaAsp.Controllers
         [Authorize(Roles = "Admin")] // Chỉ admin mới có quyền truy cập
         public async Task<IActionResult> DeleteUser(int id)
         {
-            var res = new ResOutput();
-
-            try
+            var deleted = await _accountService.DeleteUserAsync(id);
+            if (deleted != null)
             {
-                var deleted = await _accountService.DeleteUserAsync(id);
-                if (deleted)
-                {
-                    res.HandleSuccess("Xóa người dùng thành công");
-                }
-                else
-                {
-                    res.HandleError("Xóa người dùng thất bại");
-                }
-
-                return Ok(res);
+                _response.HandleSuccess("Xóa người dùng thành công");
             }
-            catch (Exception ex)
+            else
             {
-                res.HandleError(ex.Message);
-                return BadRequest(res);
+                _response.HandleError("Xóa người dùng thất bại");
             }
+
+            return Ok(_response);
         }
+
         /// <summary>
         /// Api quên mật khẩu
         /// </summary>
@@ -290,36 +234,26 @@ namespace MisaAsp.Controllers
         /// <returns></returns>
         [HttpPost("forgot-password")]
         [AllowAnonymous]
-        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequestVM request)
         {
-            var res = new ResOutput();
-
-            try
+            var _response = new ResOutput();
+            if (!ModelState.IsValid)
             {
-                if (!ModelState.IsValid)
-                {
-                    res.HandleError("Thất bại");
-                }
-                else
-                {
-                    var result = await _accountService.ForgotPasswordAsync(request);
-                    if (result)
-                    {
-                        res.HandleSuccess("Liên kết đặt lại mật khẩu đã được gửi đến email của bạn");
-                    }
-                    else
-                    {
-                        res.HandleError("Không tìm thấy email");
-                    }
-                }
+                _response.HandleError();
+                return Ok(_response);
+            }
 
-                return Ok(res);
-            }
-            catch (Exception ex)
+            var result = await _accountService.ForgotPasswordAsync(request);
+
+            if (result)
             {
-                res.HandleError(ex.Message);
-                return BadRequest(res);
+                _response.HandleSuccess("Liên kết đặt lại mật khẩu đã được gửi đến email của bạn");
             }
+            else
+            {
+                _response.HandleError("Không tìm thấy email");
+            }
+            return Ok(_response);
         }
     }
 }

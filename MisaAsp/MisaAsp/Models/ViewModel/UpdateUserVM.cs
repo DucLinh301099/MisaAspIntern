@@ -2,7 +2,7 @@
 
 namespace MisaAsp.Models.ViewModel
 {
-    public class UpdateUser
+    public class UpdateUserVM
     {
         [Required]
         public int Id { get; set; }
