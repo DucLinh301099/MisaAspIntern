@@ -96,7 +96,7 @@
 </template>
 
 <script>
-import { deleteUserById, fetchProtectedData } from "../../api/account";
+import { account} from "../../api/account";
 
 export default {
   name: "AdminComponent",
@@ -115,7 +115,7 @@ export default {
   methods: {
     async loadUsers() {
       try {
-        const response = await fetchProtectedData();
+        const response = await account.getAllUser();
         this.users = response;
       } catch (error) {
         console.error("Error fetching users:", error);
@@ -137,7 +137,7 @@ export default {
     async deleteUser(id) {
       if (confirm("Are you sure you want to delete this user?")) {
         try {
-          await deleteUserById(id);
+          await account.deleteUserById(id);
           this.users = this.users.filter((user) => user.id !== id);
           alert("User deleted successfully!");
         } catch (error) {

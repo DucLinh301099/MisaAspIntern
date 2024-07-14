@@ -69,7 +69,7 @@
 </template>
 
 <script>
-import { getServices, filterServices } from "../../api/accountant";
+import { accountant } from "../../api/accountant";
 
 export default {
   name: "BodyComponent",
@@ -85,13 +85,13 @@ export default {
   },
   computed: {
     filteredServices() {
-      return filterServices(this.services, this.searchQuery);
+      return accountant.filterServices(this.services, this.searchQuery);
     },
   },
   methods: {
     async fetchServices() {
       try {
-        const services = await getServices();
+        const services = await accountant.getServices();
         this.services = services;
       } catch (error) {
         console.error("Failed to fetch services:", error);

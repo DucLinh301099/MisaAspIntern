@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { forgotPassword } from "../../api/account";
+import { account } from "../../api/account";
 
 export default {
   name: "ForgotPasswordComponent",
@@ -37,7 +37,7 @@ export default {
     async forgotPassword() {
       try {
         console.log("Sending forgot password request...");
-        const data = await forgotPassword(this.email);
+        const data = await account.forgotPassword(this.email);
         console.log("Forgot password request successful:", data);
         alert("Password reset link has been sent to your email.");
       } catch (error) {

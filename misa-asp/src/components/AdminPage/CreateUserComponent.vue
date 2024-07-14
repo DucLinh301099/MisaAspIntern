@@ -108,7 +108,7 @@
 </template>
 
 <script>
-import { register } from "../../api/account";
+import { account } from "../../api/account";
 
 export default {
   name: "CreateUserComponent",
@@ -126,42 +126,35 @@ export default {
   },
   methods: {
     async createUser() {
-      try {
-        console.log("Sending request to create user...");
-        const data = await register(
-          this.firstName,
-          this.lastName,
-          this.email,
-          this.phoneNumber,
-          this.password,
-          this.roleId
-        );
-        console.log("User created:", data);
-        alert("User created successfully!");
-        this.$router.push("/admin");
-      } catch (error) {
-        console.error("There was an error creating the user:", error);
-        this.errors = {};
-        this.generalError = "";
+  try {
+    await account.register(
+      this.firstName,
+      this.lastName,
+      this.email,
+      this.phoneNumber,
+      this.password,
+      this.roleId
+    );
+    alert("User created successfully!");
+    this.$router.push("/admin");
+  } catch (error) {
+    this.errors = {};
+    this.generalError = "";
 
-        // Handle specific validation errors
-        if (error.message.includes("Email error")) {
-          this.errors.Email = error.message
-            .split(", ")
-            .find((msg) => msg.includes("Email error"));
-        }
-        if (error.message.includes("Phone number error")) {
-          this.errors.PhoneNumber = error.message
-            .split(", ")
-            .find((msg) => msg.includes("Phone number error"));
-        }
+    // Extract error messages
+    const errorMsgs = error.message.split(", ");
 
-        // Handle general error
-        if (!this.errors.Email && !this.errors.PhoneNumber) {
-          this.generalError = error.message;
-        }
-      }
-    },
+    // Handle specific validation errors
+    this.errors.Email = errorMsgs.find((msg) => msg.includes("Email error"));
+    this.errors.PhoneNumber = errorMsgs.find((msg) => msg.includes("Phone number error"));
+
+    // Handle general error if no specific errors are found
+    if (!this.errors.Email && !this.errors.PhoneNumber) {
+      this.generalError = error.message;
+    }
+  }
+}
+
   },
 };
 </script>

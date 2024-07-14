@@ -1,14 +1,16 @@
-import { apiClient } from "./base";
+// src/api/bankAccount.js
+import { base } from '../api/base.js';
 
-export const createBankAccount = async (accountNumber, bankName, branch, typeOfBank) => {
-  console.log('Attempting to create bank account...');
-  const response = await apiClient.post('BankAccount/create-bank-account', {
-    AccountNumber: accountNumber,
-    BankName: bankName,
-    Branch: branch,
-    TypeOfBank: typeOfBank,
-   
-  });
-  console.log('User create bank account successfully:', response.data);
-  return response.data;
+export const bankAccount = {
+  // function tạo mới 1 tk ngân hàng theo loại
+  // có 2 loại: nhận và chi
+  async createBankAccount(accountNumber, bankName, branch, typeOfBank) {
+    const response = await base.apiClient.post('BankAccount/create-bank-account', {
+      AccountNumber: accountNumber,
+      BankName: bankName,
+      Branch: branch,
+      TypeOfBank: typeOfBank,
+    });
+    return response.data;
+  }
 };

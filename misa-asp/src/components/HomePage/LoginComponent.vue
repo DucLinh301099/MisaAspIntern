@@ -54,7 +54,7 @@
 </template>
 
 <script>
-import { login } from "../../api/account";
+import { account } from "../../api/account";
 
 export default {
   name: "LoginComponent",
@@ -67,9 +67,7 @@ export default {
   methods: {
     async login() {
       try {
-        console.log("Sending request to login user...");
-        const data = await login(this.emailOrPhoneNumber, this.password);
-        console.log("User logged in:", data);
+        const data = await account.login(this.emailOrPhoneNumber, this.password);
         const role = localStorage.getItem("role");
         const lastName = localStorage.getItem("lastName");
         console.log("Role from localStorage:", role);

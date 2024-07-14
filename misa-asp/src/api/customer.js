@@ -1,16 +1,14 @@
-import { apiClient } from './base';
+import { base } from '../api/base.js';
 
-export const CreateCustomer = async (objectId, objectName, taxCode, address, phoneNumber) => {
-  console.log('Attempting to create customer...');
-  const response = await apiClient.post('Customer/createCustomer', {
-    ObjectId: objectId,
-    ObjectName: objectName,
-    TaxCode: taxCode,
-    Address: address,
-    PhoneNumber: phoneNumber,
-    
-  });
-  console.log('Tạo mới Customer thành công:', response.data);
-  return response.data;
+export const customer = {
+  async createCustomer(objectId, objectName, taxCode, address, phoneNumber) {
+    const response = await base.apiClient.post('Customer/createCustomer', {
+      ObjectId: objectId,
+      ObjectName: objectName,
+      TaxCode: taxCode,
+      Address: address,
+      PhoneNumber: phoneNumber,
+    });
+    return response.data;
+  }
 };
-

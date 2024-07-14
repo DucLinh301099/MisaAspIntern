@@ -72,7 +72,7 @@
 </template>
 
 <script>
-import { createBankAccount } from "../../api/bank"; // Import hàm tạo tài khoản ngân hàng từ file account.js
+import { bankAccount } from "../../api/bank"; // Import hàm tạo tài khoản ngân hàng từ file account.js
 
 export default {
   name: "CreateBankAccount",
@@ -89,23 +89,20 @@ export default {
     async createBankAccount() {
       try {
         console.log("Attempting to create bank account...");
-        const data = await createBankAccount(
+        const data = await bankAccount.createBankAccount(
           this.accountNumber,
           this.bankName,
           this.branch,
           this.typeOfBank
         );
-        console.log("Tạo mới tài khoản ngân hàng thành công:", data);
         alert("Tạo mới tài khoản ngân hàng thành công!");
         this.$router.push("/payment"); // Điều hướng đến trang danh sách tài khoản ngân hàng sau khi tạo thành công
       } catch (error) {
-        console.error("Lỗi khi tạo mới tài khoản ngân hàng:", error);
         this.generalError = error.message;
       }
     },
     save() {
       // Logic for saving without submitting
-      console.log("Saving bank account information...");
       alert("Thông tin tài khoản ngân hàng đã được lưu!");
     },
   },

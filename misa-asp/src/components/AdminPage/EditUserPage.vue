@@ -107,7 +107,7 @@
 </template>
 
 <script>
-import { updateUser, fetchUserById } from "../../api/account";
+import { account } from "../../api/account";
 
 export default {
   name: "EditUserPage",
@@ -119,7 +119,7 @@ export default {
   },
   async created() {
     try {
-      const response = await fetchUserById(this.id);
+      const response = await account.getUserById(this.id);
       this.editingUser = response;
     } catch (error) {
       console.error("Error fetching user:", error);
@@ -132,7 +132,7 @@ export default {
   methods: {
     async saveUser() {
       try {
-        await updateUser(this.editingUser);
+        await account.updateUser(this.editingUser);
         alert("User updated successfully!");
         this.$router.push("/admin");
       } catch (error) {

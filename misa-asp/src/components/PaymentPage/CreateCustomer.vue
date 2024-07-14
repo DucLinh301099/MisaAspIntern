@@ -84,7 +84,7 @@
 </template>
 
 <script>
-import { CreateCustomer } from "../../api/customer";
+import { customer } from "../../api/customer";
 
 export default {
   name: "CreateCustomer",
@@ -101,19 +101,16 @@ export default {
   methods: {
     async createCustomer() {
       try {
-        console.log("Attempting to create customer...");
-        const data = await CreateCustomer(
+        const data = await customer.createCustomer(
           this.objectId,
           this.objectName,
           this.taxCode,
           this.address,
           this.phoneNumber
         );
-        console.log("Tạo mới Customer thành công:", data);
         alert("Tạo mới Customer thành công!");
         this.$router.push("/payment");
       } catch (error) {
-        console.error("Lỗi khi tạo mới Customer:", error);
         this.generalError = error.message;
       }
     },

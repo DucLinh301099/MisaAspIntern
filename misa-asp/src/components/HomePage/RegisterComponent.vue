@@ -87,7 +87,7 @@
 </template>
 
 <script>
-import { register } from "../../api/account";
+import { account } from "../../api/account";
 
 export default {
   name: "RegisterComponent",
@@ -106,40 +106,32 @@ export default {
   methods: {
     async register() {
       try {
-        console.log("Sending request to register user...");
-        const data = await register(
-          this.firstName,
-          this.lastName,
-          this.email,
-          this.phoneNumber,
-          this.password,
-          this.roleId
-        );
-        console.log("User registered:", data);
-        alert("Registration successful!");
-        this.$router.push("/login");
-      } catch (error) {
-        console.error("There was an error registering the user:", error);
-        this.errors = {};
-        this.generalError = "";
+    await account.register(
+      this.firstName,
+      this.lastName,
+      this.email,
+      this.phoneNumber,
+      this.password,
+      this.roleId
+    );
+    alert("User created successfully!");
+    this.$router.push("/login");
+  } catch (error) {
+    this.errors = {};
+    this.generalError = "";
 
-        // Handle specific validation errors
-        if (error.message.includes("Email error")) {
-          this.errors.Email = error.message
-            .split(", ")
-            .find((msg) => msg.includes("Email error"));
-        }
-        if (error.message.includes("Phone number error")) {
-          this.errors.PhoneNumber = error.message
-            .split(", ")
-            .find((msg) => msg.includes("Phone number error"));
-        }
+    // Extract error messages
+    const errorMsgs = error.message.split(", ");
 
-        // Handle general error
-        if (!this.errors.Email && !this.errors.PhoneNumber) {
-          this.generalError = error.message;
-        }
-      }
+    // Handle specific validation errors
+    this.errors.Email = errorMsgs.find((msg) => msg.includes("Email error"));
+    this.errors.PhoneNumber = errorMsgs.find((msg) => msg.includes("Phone number error"));
+
+    // Handle general error if no specific errors are found
+    if (!this.errors.Email && !this.errors.PhoneNumber) {
+      this.generalError = error.message;
+    }
+  }
     },
   },
 };

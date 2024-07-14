@@ -1,11 +1,12 @@
 // apiConfig.js
-import accApi from "../api/apiConst";
+import Api from "../api/apiConst";
+
 import RowModel from "../models/RowModel";
 let paymentConfig = {
   comboxConfig: {
     bankExpense: {
-      endpoint: accApi.bankExpense.url,
-      method: accApi.bankExpense.method,
+      endpoint: Api.bankExpense.url,
+      method: Api.bankExpense.method,
       columnConfig: [
         {
           columnName: "Số tài khoản",
@@ -26,8 +27,8 @@ let paymentConfig = {
       }
     },
     bankReceive: {
-      endpoint: accApi.bankExpense.url,
-      method: accApi.bankExpense.method,
+      endpoint: Api.bankExpense.url,
+      method: Api.bankExpense.method,
       columnConfig: [
         {
           columnName: "Số tài khoản",
@@ -48,8 +49,8 @@ let paymentConfig = {
       }
     },
     employee: {
-      endpoint: accApi.employee.url,
-      method: accApi.employee.method,
+      endpoint: Api.employee.url,
+      method: Api.employee.method,
       columnConfig: [
         { columnName: 'Mã nhân viên', fieldName: 'employeeCode', isDisplay: true, isValue: true, },
         { columnName: 'Tên nhân viên', fieldName: 'employeeName' },

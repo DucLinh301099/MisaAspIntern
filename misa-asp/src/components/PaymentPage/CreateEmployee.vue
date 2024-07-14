@@ -68,7 +68,7 @@
 </template>
 
 <script>
-import { createEmployee } from "../../api/account"; // Import hàm tạo nhân viên từ file account.js
+import { account } from "../../api/account"; // Import hàm tạo nhân viên từ file account.js
 
 export default {
   name: "CreateEmployee",
@@ -85,7 +85,7 @@ export default {
     async createEmployee() {
       try {
         console.log("Attempting to create employee...");
-        const data = await createEmployee(
+        const data = await account.createEmployee(
           this.employeeCode,
           this.employeeName,
           this.mobilePhone,

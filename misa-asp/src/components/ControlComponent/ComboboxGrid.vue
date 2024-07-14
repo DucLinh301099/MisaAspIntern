@@ -73,7 +73,7 @@
 <script>
 import Multiselect from "vue-multiselect";
 import "vue-multiselect/dist/vue-multiselect.css";
-import { apiClient } from "../../api/base";
+import { base } from "../../api/base";
 
 export default {
   name: "ComboboxGrid",
@@ -124,7 +124,7 @@ export default {
         return;
       }
       try {
-        const response = await apiClient[this.config.method](
+        const response = await base.apiClient[this.config.method](
           this.config.endpoint
         );
         if (
