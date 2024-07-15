@@ -38,6 +38,22 @@ const Api = {
         url:'Account/users/',
         method:'delete'
     },
+    bank: {
+         url:'BankAccount/create-bank-account',
+        method:'post'
+    },
+    customer: {
+        url:'Customer/create-customer',
+        method:'post'
+    },
+    password: {
+        url: 'Account/forgot-password',
+        method:'post'  
+    },
+    accountant: {
+        url: 'Accountant/list',
+        method:'get'
+    },
 
 }
 export default Api;

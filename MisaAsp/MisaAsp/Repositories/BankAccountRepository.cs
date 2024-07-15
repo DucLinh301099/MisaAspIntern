@@ -2,15 +2,13 @@
 using MisaAsp.Models.ViewModel;
 using System.Data;
 using Dapper;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+
 
 namespace MisaAsp.Repositories
 {
     public interface IBankAccountRepository : IBaseRepository
     {
-        Task<IEnumerable<BankAccountVM>> GetBankAccountsByTypeAsync(int roleId);
+        Task<IEnumerable<BankAccountVM>> GetBankAccountsByTypeAsync(int typeOfBank);
         Task<int> CreateBankAccountAsync(BankAccountVM request);
     }
 
@@ -32,8 +30,9 @@ namespace MisaAsp.Repositories
 
         public async Task<IEnumerable<BankAccountVM>> GetBankAccountsByTypeAsync(int typeOfBank)
         {
-            var sql = "SELECT * FROM getbankbytype(@TypeOfBank)";
-            return await QueryAsync<BankAccountVM>(sql, new { TypeOfBank = typeOfBank });
+          
+            var parameters = new { p_typeofbank = typeOfBank };
+            return await ExecuteProcObScalarAsync<BankAccountVM>("getbankbytype", parameters);
         }
     }
 }

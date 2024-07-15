@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MisaAsp.Services;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using MisaAsp.Models.DTO;
+
 using MisaAsp.Models.Ulti;
 
 namespace MisaAsp.Controllers

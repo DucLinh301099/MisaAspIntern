@@ -1,13 +1,14 @@
 
 import { base } from '../api/base.js';
+import Api from '../api/apiConst.js'
 
-const API_URL = 'Accountant/list';
+
 
 export const accountant = {
   // function lấy thông tin tất cả các dịch vụ kế toán hiển thị trong home page
   async getServices() {
     try {
-      const response = await base.apiClient.get(API_URL);
+      const response = await base.apiClient.get(Api.accountant.url);
       return response.data;
     } catch (error) {
       console.error('Failed to fetch services:', error);

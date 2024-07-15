@@ -5,7 +5,7 @@ namespace MisaAsp.Services
 {
     public interface IBankAccountService
     {
-        Task<IEnumerable<BankAccountVM>> GetBankAccountsByTypeAsync(int roleId);
+        Task<IEnumerable<BankAccountVM>> GetBankAccountsByTypeAsync(int typeOfBank);
         Task<int> CreateBankAccountAsync(BankAccountVM request);
     }
 

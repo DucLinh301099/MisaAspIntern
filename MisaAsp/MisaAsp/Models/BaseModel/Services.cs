@@ -1,22 +1,22 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MisaAsp.Models.ViewModel
+namespace MisaAsp.Models.BaseModel
 {
-    public class EmployeeVM
+    public class Services
     {
         [Required]
         public int Id { get; set; }
         [Required]
         [StringLength(100)]
-        public string EmployeeCode { get; set; }
+        public string Name { get; set; }
         [Required]
         [StringLength(100)]
-        public string EmployeeName { get; set; }
+        public string Location { get; set; }
         [Required]
         [StringLength(100)]
-        public string Department { get; set; }
+        public string Price { get; set; }
         [Required]
         [StringLength(100)]
-        public string MobilePhone { get; set; }
+        public string Logo { get; set; }
     }
 }

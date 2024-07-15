@@ -22,7 +22,7 @@ namespace MisaAsp.Repositories
         Task<bool> ForgotPasswordAsync(ForgotPasswordRequestVM request);
         Task<RoleAccount> GetUserRoleAsync(string emailOrPhoneNumber);
         Task<UpdateUserVM> GetUserByIdAsync(int id);
-       // Task<UserRequest> GetLastNameById(int id);
+      
 
 
     }
@@ -33,7 +33,7 @@ namespace MisaAsp.Repositories
 
         public async Task<bool> UpdateUserAsync(UpdateUserVM user)
         {
-            var sql = "SELECT updateuser(@user_id, @first_name, @last_name, @Email, @phone_number)";
+         
             var parameters = new
             {
                 user_id = user.Id, 
@@ -42,32 +42,36 @@ namespace MisaAsp.Repositories
                 Email = user.Email,
                 phone_number = user.PhoneNumber
             };
-            var result = await ExecuteScalarAsync<bool>(sql, parameters);
+            var result = await ExecuteProcScalarAsync<bool>("updateuser", parameters);
             return result;
         }
 
         public async Task<bool> DeleteUserAsync(int id)
-        {
-            var sql = "SELECT delete_user(@user_id)";
-            var result = await ExecuteScalarAsync<bool>(sql, new { user_id = id });
+        {          
+            var parameters = new
+            { user_id = id, };
+            var result = await ExecuteProcScalarAsync<bool>("delete_user", parameters );
             return result;
         }
 
         public async Task<IEnumerable<UserRequestVM>> GetAllUsersAsync()
         {
-            var sql = "SELECT * FROM GetAllUsers()";
-            return await QueryAsync<UserRequestVM>(sql);
+            
+            return await QueryProcAsync<UserRequestVM>("getallusers", null);
+        }
+
+        public async Task<IEnumerable<EmployeeVM>> GetAllEmployeeAsync()
+        {
+            
+            return await QueryProcAsync<EmployeeVM>("getallemployees", null);
         }
         public async Task<UpdateUserVM> GetUserByIdAsync(int id)
-        {
-            var sql = "SELECT * FROM Users WHERE Id = @Id";
-            return await QueryFirstOrDefaultAsync<UpdateUserVM>(sql, new { Id = id });
+        {          
+            var parameters = new
+            { p_id = id, };
+            return await ExecuteProcSingleScalarAsync<UpdateUserVM>("getuserbyid", parameters);
         }
-        //public async Task<UpdateUser> GetLastNameById(int id)
-       // {
-       //     var sql = "SELECT * FROM Registrations WHERE Id = @Id";
-       //     return await QueryFirstOrDefaultAsync<UpdateUser>(sql, new { Id = id });
-       // }
+        
 
         public async Task<int> RegisterUserAsync(RegistrationRequestVM request)
         {
@@ -94,24 +98,20 @@ namespace MisaAsp.Repositories
             };
             return await ExecuteProcScalarAsync<int>("createemployee", parameters);
         }
-        public async Task<IEnumerable<EmployeeVM>> GetAllEmployeeAsync()
-        {
-            var sql = "SELECT * FROM getallemployees()";
-            return await QueryAsync<EmployeeVM>(sql);
-        }
+       
 
 
         public async Task<bool> IsEmailUniqueAsync(string email)
         {
-            var query = "SELECT COUNT(1) FROM Users WHERE Email = @Email";
-            var count = await ExecuteScalarAsync<int>(query, new { Email = email });
+            var parameters = new { p_email = email };
+            var count = await ExecuteProcSingleScalarAsync<int>("getusercountbyemail", parameters);
             return count == 0;
         }
 
         public async Task<bool> IsPhoneUniqueAsync(string phoneNumber)
         {
-            var query = "SELECT COUNT(1) FROM Users WHERE PhoneNumber = @PhoneNumber";
-            var count = await ExecuteScalarAsync<int>(query, new { PhoneNumber = phoneNumber });
+            var parameters = new { p_phoneNumber = phoneNumber };
+            var count = await ExecuteProcSingleScalarAsync<int>("getusercountbyphonenumber", parameters);
             return count == 0;
         }
 
@@ -126,16 +126,17 @@ namespace MisaAsp.Repositories
         }
 
         public async Task<bool> ForgotPasswordAsync(ForgotPasswordRequestVM request)
-        {
-            var sql = "SELECT CheckEmailExists(@Email)";
-            var parameters = new { request.Email };
-            return await ExecuteScalarAsync<bool>(sql, parameters);
+        {        
+            var parameters = new 
+            {Email= request.Email };
+            return await ExecuteProcScalarAsync<bool>("checkemailexists", parameters);
         }
 
         public async Task<RoleAccount> GetUserRoleAsync(string emailOrPhoneNumber)
         {
-            var sql = "SELECT * FROM getuserrole(@EmailOrPhoneNumber)";
-            return await QuerySingleOrDefaultAsync<RoleAccount>(sql, new { EmailOrPhoneNumber = emailOrPhoneNumber });
+            
+            var parameters = new { EmailOrPhoneNumber = emailOrPhoneNumber };
+            return await ExecuteProcSingleScalarAsync<RoleAccount>("getuserrole", parameters);
         }
 
     }

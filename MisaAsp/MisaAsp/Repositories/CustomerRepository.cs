@@ -34,8 +34,8 @@ namespace MisaAsp.Repositories
             }
             public async Task<IEnumerable<CustomerVM>> GetAllCustomerAsync()
             {
-                var sql = "SELECT * FROM getallcustomers()";
-                return await QueryAsync<CustomerVM>(sql);
-            }
+                
+                return await QueryProcAsync<CustomerVM>("getallcustomers", null);
+        }
         } 
 }

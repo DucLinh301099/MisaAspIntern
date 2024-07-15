@@ -52,7 +52,37 @@ namespace MisaAsp.Repositories
                     _connection.Close();
             }
         }
+        public async Task<IEnumerable<T>> QueryProcAsync<T>(string procedureName, object parameters)
+        {
+            var listParam = new List<string>();
+            var sql = string.Empty;
+            var listProp = parameters?.GetType().GetProperties().ToList() ?? new List<System.Reflection.PropertyInfo>();
 
+            foreach (var item in listProp)
+            {
+                listParam.Add($"@{item.Name}");
+            }
+
+            if (listParam.Count > 0)
+            {
+                sql = $"SELECT * FROM {procedureName}({string.Join(',', listParam)})";
+            }
+            else
+            {
+                sql = $"SELECT * FROM {procedureName}()";
+            }
+
+            try
+            {
+                _connection.Open();
+                return await _connection.QueryAsync<T>(sql, parameters);
+            }
+            finally
+            {
+                if (_connection.State == ConnectionState.Open)
+                    _connection.Close();
+            }
+        }
         public async Task<T> ExecuteScalarAsync<T>(string sql, object parameters = null)
         {
             try
@@ -89,6 +119,70 @@ namespace MisaAsp.Repositories
             {
                 _connection.Open();
                 return await _connection.ExecuteScalarAsync<T>(sql, parameters);
+            }
+            finally
+            {
+                if (_connection.State == ConnectionState.Open)
+                    _connection.Close();
+            }
+        }
+        public async Task<T> ExecuteProcSingleScalarAsync<T>(string procedureName, object parameters)
+        {
+            var listParam = new List<string>();
+            var sql = string.Empty;
+            var listProp = parameters.GetType().GetProperties().ToList();
+
+            foreach (var item in listProp)
+            {
+                listParam.Add($"@{item.Name}");
+            }
+
+            if (listParam.Count > 0)
+            {
+                sql = $"SELECT * FROM {procedureName}({string.Join(',', listParam)})";
+            }
+            else
+            {
+                sql = $"SELECT * FROM {procedureName}()";
+            }
+
+            try
+            {
+                _connection.Open();
+                var result = await _connection.QuerySingleOrDefaultAsync<T>(sql, parameters);
+                return result;
+            }
+            finally
+            {
+                if (_connection.State == ConnectionState.Open)
+                    _connection.Close();
+            }
+        }
+        public async Task<IEnumerable<T>> ExecuteProcObScalarAsync<T>(string procedureName, object parameters)
+        {
+            var listParam = new List<string>();
+            var sql = string.Empty;
+            var listProp = parameters.GetType().GetProperties().ToList();
+
+            foreach (var item in listProp)
+            {
+                listParam.Add($"@{item.Name}");
+            }
+
+            if (listParam.Count > 0)
+            {
+                sql = $"SELECT * FROM {procedureName}({string.Join(',', listParam)})";
+            }
+            else
+            {
+                sql = $"SELECT * FROM {procedureName}()";
+            }
+
+            try
+            {
+                _connection.Open();
+                var result = await _connection.QueryAsync<T>(sql, parameters);
+                return result;
             }
             finally
             {

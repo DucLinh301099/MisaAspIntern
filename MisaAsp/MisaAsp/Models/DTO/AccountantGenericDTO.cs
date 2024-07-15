@@ -2,7 +2,7 @@
 
 namespace MisaAsp.Models.DTO
 {
-    public class AccountantGeneric
+    public class AccountantGenericDTO
     {
         [Required]
         public int Id { get; set; }

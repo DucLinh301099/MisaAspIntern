@@ -11,13 +11,13 @@ export const base = {
   }),
 
   async addHeaders(config = {}) {
-    const token = this.getTokenFromCookie();
+    const token = base.getTokenFromCookie();
     const headers = {
       ...config.headers,
       'Content-Type': 'application/json',
     };
 
-    if (token) {
+    if (token != null) {
       headers['Authorization'] = `Bearer ${token}`;
     }
 

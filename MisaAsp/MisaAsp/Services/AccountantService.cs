@@ -5,7 +5,7 @@ namespace MisaAsp.Services
 {
     public interface IAccountantService
     {
-        Task<IEnumerable<AccountantGeneric>> GetServicesAsync();
+        Task<IEnumerable<AccountantGenericDTO>> GetServicesAsync();
     }
 
     public class AccountantService : IAccountantService
@@ -17,7 +17,7 @@ namespace MisaAsp.Services
             _accountantRepo = accountantRepo;
         }
 
-        public async Task<IEnumerable<AccountantGeneric>> GetServicesAsync()
+        public async Task<IEnumerable<AccountantGenericDTO>> GetServicesAsync()
         {
             return await _accountantRepo.GetServicesAsync();
         }

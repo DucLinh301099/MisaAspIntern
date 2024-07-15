@@ -24,7 +24,7 @@ namespace MisaAsp.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost("create-customer")]
-        [AllowAnonymous]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateCustomer([FromBody] CustomerVM request)
         {
             if (!ModelState.IsValid)
@@ -55,7 +55,7 @@ namespace MisaAsp.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("customer")]
-        [AllowAnonymous] // toàn quyền truy cập
+       
         public async Task<IActionResult> GetCustomer()
         {
             var customers = await _customerService.GetAllCustomerAsync();

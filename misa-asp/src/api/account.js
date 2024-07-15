@@ -48,12 +48,13 @@ export const account = {
   },
 
   async createEmployee(employeeCode, employeeName, department, mobilePhone) {
+    const config = await base.addHeaders();
     const response = await base.apiClient.post(Api.createEmployee.url, {
       EmployeeCode: employeeCode,
       EmployeeName: employeeName,
       Department: department,
       MobilePhone: mobilePhone,
-    });
+    },config);
     return response.data;
   },
 
@@ -79,7 +80,7 @@ export const account = {
   },
 
   async forgotPassword(email) {
-    const response = await base.apiClient.post('Account/forgot-password', { Email: email });
+    const response = await base.apiClient.post(Api.password.url, { Email: email });
     return response.data;
   },
 

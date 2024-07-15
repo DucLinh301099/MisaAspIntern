@@ -24,7 +24,7 @@ namespace MisaAsp.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost("create-bank-account")]
-        [AllowAnonymous]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateBankAccount([FromBody] BankAccountVM request)
         {
             if (!ModelState.IsValid)

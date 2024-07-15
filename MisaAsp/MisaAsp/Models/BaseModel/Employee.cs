@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MisaAsp.Models.ViewModel
+namespace MisaAsp.Models.BaseModel
 {
-    public class EmployeeVM
+    public class Employee
     {
         [Required]
         public int Id { get; set; }

@@ -23,7 +23,7 @@ namespace MisaAsp.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost("register")]
-        [AllowAnonymous]
+       
         public async Task<IActionResult> Register([FromBody] RegistrationRequestVM request)
         {
             if (!ModelState.IsValid)
@@ -52,7 +52,7 @@ namespace MisaAsp.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost("createEmployee")]
-        [AllowAnonymous]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateEmployee([FromBody] EmployeeVM request)
         {
             if (!ModelState.IsValid)
@@ -80,7 +80,7 @@ namespace MisaAsp.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("employee")]
-        [AllowAnonymous] // toàn quyền truy cập
+        
         public async Task<IActionResult> GetEmployee()
         {
             var employees = await _accountService.GetAllEmployeeAsync();
@@ -103,7 +103,7 @@ namespace MisaAsp.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost("login")]
-        [AllowAnonymous]
+        
         public async Task<IActionResult> Login([FromBody] LoginRequestVM request)
         {
             if (!ModelState.IsValid)
@@ -233,7 +233,7 @@ namespace MisaAsp.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost("forgot-password")]
-        [AllowAnonymous]
+       
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequestVM request)
         {
             var _response = new ResOutput();
