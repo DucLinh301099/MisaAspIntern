@@ -5,61 +5,54 @@ import Api from '../api/apiConst';
 
 export const account = {
   async login(emailOrPhoneNumber, password) {
-    try {
-      const { url, method } = Api.login;
-      const response = await base.apiClient[method](url, {
-        EmailOrPhoneNumber: emailOrPhoneNumber,
-        Password: password
-      });
+    let params = {
+      EmailOrPhoneNumber: emailOrPhoneNumber,
+      Password: password
+    };
+    const response = await base.postApi(Api.login, params,
+      function handleSuccess() {
+        localStorage.setItem('role', response.role);
+        localStorage.setItem('lastName', response.lastName);
 
-      if (response.status === 200) {
-        const { role, lastName } = response.data.data;
-        localStorage.setItem('role', role);
-        localStorage.setItem('lastName', lastName);
-        return response.data;
-      } else {
-        throw new Error('Login failed');
+        if (role === "Admin") {
+          this.$router.push("/payment"); // this.$router.push("/admin"); // thay thể router admin ở đây khi đăng nhập.
+        } else {
+          this.$router.push("/userAccount");
+        }
+      },
+      function handleError(response) {
+        if (!response || !response.message) {
+          errorMessage = "Tài khoản hoặc mật khẩu sai. Vui lòng thử lại.";
+        }
+        alert(errorMessage);
       }
-    } catch (error) {
-      throw error;
-    }
+    );
   },
 
   async getAllUser() {
-    try {
-      const { url, method } = Api.getAllUser;
-      const response = await base.apiClient[method](url, base.addHeaders());
-      console.log('Protected data fetched successfully:', response.data);
-      return response.data.data;
-    } catch (error) {
-      console.error('Error fetching protected data:', error.response ? error.response.data : error.message);
-      throw error.response ? error.response.data : error.message;
-    }
+    return response = await base.getAuthenApi(Api.getAllUser)
   },
 
   async register(firstName, lastName, email, phoneNumber, password, roleId) {
-    const { url, method } = Api.register;
-    const response = await base.apiClient[method](url, {
+    let params = {
       FirstName: firstName,
       LastName: lastName,
       Email: email,
       PhoneNumber: phoneNumber,
       Password: password,
       RoleId: roleId
-    });
-    return response.data;
+    };
+    return await base.postApi(Api.register, params)
   },
 
   async createEmployee(employeeCode, employeeName, department, mobilePhone) {
-    const { url, method } = Api.createEmployee;
-    const config = await base.addHeaders();
-    const response = await base.apiClient[method](url, {
+    let params = {
       EmployeeCode: employeeCode,
       EmployeeName: employeeName,
       Department: department,
       MobilePhone: mobilePhone,
-    }, config);
-    return response.data;
+    };
+    return await base.postApi(Api.createEmployee, params)
   },
 
   async createUser(firstName, lastName, email, phoneNumber, password, roleId) {

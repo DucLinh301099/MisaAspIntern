@@ -167,7 +167,7 @@ export default {
       }
 
       try {
-        this.buildUrlRequest(this.config);
+        base.buildUrlRequest(this.config);
         const response = await base.apiClient[this.config.method](
           this.config.url
         );
@@ -213,22 +213,7 @@ export default {
     handleInputChange(value) {
       this.internalSelectedOption = value;
     },
-    buildUrlRequest(config) {
-      config.url = `${config.endpoint}`;
-      if (config.params) {
-        if (config.method.toLowerCase() == "get") {
-          let urlParam = Object.entries(config.params)
-            .map(([key, value]) => `${key}=${value}`)
-            .join("&&");
 
-          config.url = urlParam
-            ? `${config.endpoint}?${urlParam}`
-            : `${config.endpoint}`;
-        } else {
-          config.body = config.params;
-        }
-      }
-    },
     openCreateModal() {
       this.isCreateModalVisible = true;
     },

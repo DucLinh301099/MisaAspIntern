@@ -102,8 +102,7 @@ namespace MisaAsp.Controllers
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        [HttpPost("login")]
-        
+        [HttpPost("login")]    
         public async Task<IActionResult> Login([FromBody] LoginRequestVM request)
         {
             if (!ModelState.IsValid)
@@ -166,7 +165,7 @@ namespace MisaAsp.Controllers
             return Ok(_response);
         }
 
-        [HttpGet("users/{id}")]
+        [HttpGet("users/id={id}")]
         public async Task<IActionResult> GetUserById(int id)
         {
             var user = await _accountService.GetUserByIdAsync(id);

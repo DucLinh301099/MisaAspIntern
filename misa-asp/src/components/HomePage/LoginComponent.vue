@@ -66,32 +66,7 @@ export default {
   },
   methods: {
     async login() {
-      try {
-        const data = await account.login(this.emailOrPhoneNumber, this.password);
-        const role = localStorage.getItem("role");
-        const lastName = localStorage.getItem("lastName");
-        console.log("Role from localStorage:", role);
-        console.log("Last Name from localStorage:", lastName);
-
-        if (role === "Admin") {
-          this.$router.push("/payment"); // this.$router.push("/admin"); // thay thể router admin ở đây khi đăng nhập.
-        } else {
-          this.$router.push("/userAccount");
-        }
-      } catch (error) {
-        console.error("There was an error logging in the user:", error);
-        let errorMessage;
-        if (
-          error.response &&
-          error.response.data &&
-          error.response.data.message
-        ) {
-          errorMessage = error.response.data.message;
-        } else {
-          errorMessage = "Tài khoản hoặc mật khẩu sai. Vui lòng thử lại.";
-        }
-        alert(errorMessage);
-      }
+      await account.login(this.emailOrPhoneNumber, this.password);
     },
   },
 };

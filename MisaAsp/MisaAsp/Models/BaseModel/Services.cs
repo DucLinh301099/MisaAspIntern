@@ -1,22 +1,28 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MisaAsp.Models.BaseModel
 {
+    [Table("services", Schema = "public")]
     public class Services
     {
-        [Required]
+        [Key]
+        [Column("id")]
         public int Id { get; set; }
-        [Required]
-        [StringLength(100)]
+
+        [Column("name")]
+        [StringLength(255)]
         public string Name { get; set; }
-        [Required]
-        [StringLength(100)]
+
+        [Column("location")]
+        [StringLength(255)]
         public string Location { get; set; }
-        [Required]
-        [StringLength(100)]
+
+        [Column("price")]
+        [StringLength(255)]
         public string Price { get; set; }
-        [Required]
-        [StringLength(100)]
+
+        [Column("logo")]
         public string Logo { get; set; }
     }
 }
