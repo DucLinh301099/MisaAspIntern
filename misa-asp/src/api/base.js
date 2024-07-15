@@ -1,4 +1,5 @@
 import axios from 'axios';
+import Api from '../api/apiConst';
 
 export const base = {
   apiClient: axios.create({
@@ -11,28 +12,31 @@ export const base = {
 
   async postApi(url, params, handleSuccess, handleError, handleException, isAuthen = false) {
     try {
-      const config = await base.addHeaders(isAuthen);
-      const response = await base.apiClient['post'](url, params, config);
-      if (response.IsSuccess) {
-        if (handleSuccess && typeof handleSuccess == 'function') {
+      const config = await this.addHeaders(isAuthen);
+      const response = await this.apiClient.post(url, params, config);
+
+      
+
+      if (response.data && response.data.IsSuccess) {
+        if (handleSuccess && typeof handleSuccess === 'function') {
           handleSuccess(response.data.data);
         }
-      }
-      else {
-        if (response.message) {
-          alert(response.message);  
-        }
-        
-        if (handleError && typeof handleError == 'function') {
-          handleError(response.data.data);
+      } else {
+        if (response.data && !response.data.IsSuccess) {
+          alert(response.data.message);
+
+          if (handleError && typeof handleError === 'function') {
+            handleError(response.data.data);
+          }
         }
       }
       return response.data;
     } catch (error) {
       alert('Có lỗi trong quá trình xử lý.');
-      if (handleException && typeof handleException == 'function') {
-          handleException();
-        }
+      
+      if (handleException && typeof handleException === 'function') {
+        handleException();
+      }
     }
   },
 

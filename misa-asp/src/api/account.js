@@ -7,27 +7,34 @@ export const account = {
   async login(emailOrPhoneNumber, password) {
     let params = {
       EmailOrPhoneNumber: emailOrPhoneNumber,
-      Password: password
+      Password: password,
     };
-    const response = await base.postApi(Api.login, params,
-      function handleSuccess() {
-        localStorage.setItem('role', response.role);
-        localStorage.setItem('lastName', response.lastName);
 
-        if (role === "Admin") {
-          this.$router.push("/payment"); // this.$router.push("/admin"); // thay thể router admin ở đây khi đăng nhập.
+    // Sử dụng arrow function để đảm bảo `this` trỏ đúng đến instance Vue hiện tại
+    const response = await base.postApi(
+      Api.login.url,
+      params,
+      (responseData) => {
+        localStorage.setItem('role', responseData.role);
+        localStorage.setItem('lastName', responseData.lastName);
+
+        if (responseData.role === 'Admin') {
+          this.$router.push('/payment'); // Replace with actual admin route if necessary.
         } else {
-          this.$router.push("/userAccount");
+          this.$router.push('/userAccount');
         }
       },
-      function handleError(response) {
-        if (!response || !response.message) {
-          errorMessage = "Tài khoản hoặc mật khẩu sai. Vui lòng thử lại.";
+      (responseData) => {
+        let errorMessage = 'Tài khoản hoặc mật khẩu sai. Vui lòng thử lại.';
+        if (responseData && responseData.message) {
+          errorMessage = responseData.message;
         }
         alert(errorMessage);
       }
     );
+    return response;
   },
+
 
   async getAllUser() {
     return response = await base.getAuthenApi(Api.getAllUser)
