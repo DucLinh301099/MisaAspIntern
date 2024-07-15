@@ -6,8 +6,9 @@ export const bankAccount = {
   // function tạo mới 1 tk ngân hàng theo loại
   // có 2 loại: nhận và chi
   async createBankAccount(accountNumber, bankName, branch, typeOfBank) {
-     const config = await base.addHeaders();
-    const response = await base.apiClient.post(Api.bank.url, {
+    const { url, method } = Api.bank;
+    const config = await base.addHeaders();
+    const response = await base.apiClient[method](url, {
       AccountNumber: accountNumber,
       BankName: bankName,
       Branch: branch,

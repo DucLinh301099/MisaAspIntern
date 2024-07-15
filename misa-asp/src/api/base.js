@@ -7,7 +7,9 @@ export const base = {
     baseURL: 'https://localhost:7173/api', 
     headers: {
       'Content-Type': 'application/json',
+
     },
+    withCredentials: true,
   }),
 
   async addHeaders(config = {}) {
@@ -35,3 +37,4 @@ export const base = {
     return null;
   },
 };
+

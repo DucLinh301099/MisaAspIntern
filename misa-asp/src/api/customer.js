@@ -3,8 +3,9 @@ import Api from '../api/apiConst.js';
 
 export const customer = {
   async createCustomer(objectId, objectName, taxCode, address, phoneNumber) {
+    const { url, method } = Api.customer;
     const config = await base.addHeaders();
-    const response = await base.apiClient.post(Api.customer.url, {
+    const response = await base.apiClient[method](url, {
       ObjectId: objectId,
       ObjectName: objectName,
       TaxCode: taxCode,

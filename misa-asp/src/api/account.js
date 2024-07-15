@@ -6,7 +6,8 @@ import Api from '../api/apiConst';
 export const account = {
   async login(emailOrPhoneNumber, password) {
     try {
-      const response = await base.apiClient.post(Api.login.url, {
+      const { url, method } = Api.login;
+      const response = await base.apiClient[method](url, {
         EmailOrPhoneNumber: emailOrPhoneNumber,
         Password: password
       });
@@ -26,7 +27,8 @@ export const account = {
 
   async getAllUser() {
     try {
-      const response = await base.apiClient.get(Api.getAllUser.url, base.addHeaders());
+      const { url, method } = Api.getAllUser;
+      const response = await base.apiClient[method](url, base.addHeaders());
       console.log('Protected data fetched successfully:', response.data);
       return response.data.data;
     } catch (error) {
@@ -36,7 +38,8 @@ export const account = {
   },
 
   async register(firstName, lastName, email, phoneNumber, password, roleId) {
-    const response = await base.apiClient.post(Api.register.url, {
+    const { url, method } = Api.register;
+    const response = await base.apiClient[method](url, {
       FirstName: firstName,
       LastName: lastName,
       Email: email,
@@ -48,18 +51,20 @@ export const account = {
   },
 
   async createEmployee(employeeCode, employeeName, department, mobilePhone) {
+    const { url, method } = Api.createEmployee;
     const config = await base.addHeaders();
-    const response = await base.apiClient.post(Api.createEmployee.url, {
+    const response = await base.apiClient[method](url, {
       EmployeeCode: employeeCode,
       EmployeeName: employeeName,
       Department: department,
       MobilePhone: mobilePhone,
-    },config);
+    }, config);
     return response.data;
   },
 
   async createUser(firstName, lastName, email, phoneNumber, password, roleId) {
-    const response = await base.apiClient.post(Api.register.url, {
+    const { url, method } = Api.register;
+    const response = await base.apiClient[method](url, {
       FirstName: firstName,
       LastName: lastName,
       Email: email,
@@ -72,7 +77,8 @@ export const account = {
 
   async getUserById(id) {
     try {
-      const response = await base.apiClient.get(`${Api.getUserById.url}${id}`, base.addHeaders());
+      const { url, method } = Api.getUserById;
+      const response = await base.apiClient[method](`${url}${id}`, base.addHeaders());
       return response.data;
     } catch (error) {
       throw error.response ? error.response.data : error.message;
@@ -80,23 +86,27 @@ export const account = {
   },
 
   async forgotPassword(email) {
-    const response = await base.apiClient.post(Api.password.url, { Email: email });
+    const { url, method } = Api.password;
+    const response = await base.apiClient[method](url, { Email: email });
     return response.data;
   },
 
   async updateUser(user) {
-    const response = await base.apiClient.put(`${Api.updateUser.url}${user.id}`, user, base.addHeaders());
+    const { url, method } = Api.updateUser;
+    const response = await base.apiClient[method](`${url}${user.id}`, user, base.addHeaders());
     return response.data;
   },
 
   async deleteUserById(id) {
-    const response = await base.apiClient.delete(`${Api.deleteUserById.url}${id}`, base.addHeaders());
+    const { url, method } = Api.deleteUserById;
+    const response = await base.apiClient[method](`${url}${id}`, base.addHeaders());
     return response.data;
   },
 
   async logout() {
     try {
-      await base.apiClient.post('/Account/logout');
+      const { url, method } = Api.logout;
+      await base.apiClient[method](url);
       localStorage.removeItem('role');
       localStorage.removeItem('lastName');
     } catch (error) {

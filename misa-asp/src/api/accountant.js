@@ -8,7 +8,8 @@ export const accountant = {
   // function lấy thông tin tất cả các dịch vụ kế toán hiển thị trong home page
   async getServices() {
     try {
-      const response = await base.apiClient.get(Api.accountant.url);
+      const { url, method } = Api.accountant;
+      const response = await base.apiClient[method](url);
       return response.data;
     } catch (error) {
       console.error('Failed to fetch services:', error);
