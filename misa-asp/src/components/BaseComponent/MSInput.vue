@@ -13,7 +13,7 @@
 
 <script>
 export default {
-  name: "BaseInput",
+  name: "MSInput",
   props: {
     value: {
       type: Object,

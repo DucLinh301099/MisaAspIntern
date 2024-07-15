@@ -5,7 +5,7 @@
     </label>
     <div class="input-container">
       <div class="input-with-button" :class="{ focus: isInputFocused }">
-        <BaseInput
+        <MSInput
           class="base-input"
           :type="type"
           :value="inputValue"
@@ -68,16 +68,16 @@
 </template>
 
 <script>
-import BaseInput from "../BaseComponent/BaseInputComponent.vue";
+import MSInput from "../BaseComponent/MSInput.vue";
 import Multiselect from "vue-multiselect";
 import "vue-multiselect/dist/vue-multiselect.css";
 import Modal from "../BaseComponent/Modal.vue";
 import { base } from "../../api/base";
 
 export default {
-  name: "ComboboxInput",
+  name: "MSCombobox",
   components: {
-    BaseInput,
+    MSInput,
     Multiselect,
     Modal,
   },
@@ -168,7 +168,9 @@ export default {
 
       try {
         this.buildUrlRequest(this.config);
-        const response = await base.apiClient[this.config.method](this.config.url);
+        const response = await base.apiClient[this.config.method](
+          this.config.url
+        );
         this.optionsData = this.extractData(response);
       } catch (error) {
         this.optionsData = [];

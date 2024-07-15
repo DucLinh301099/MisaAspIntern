@@ -76,7 +76,7 @@ import "vue-multiselect/dist/vue-multiselect.css";
 import { base } from "../../api/base";
 
 export default {
-  name: "ComboboxGrid",
+  name: "MSComboboxGrid",
   components: {
     Multiselect,
   },

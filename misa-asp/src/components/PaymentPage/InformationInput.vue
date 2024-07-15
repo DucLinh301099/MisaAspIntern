@@ -3,7 +3,7 @@
   <div class="information-input-wrapper">
     <div class="input-container">
       <label for="so-cmnd">Số CMND</label>
-      <BaseInput
+      <MSInput
         v-model="soCMND"
         placeholder="Số CMND"
         class="base-input cmnd-input"
@@ -15,7 +15,7 @@
     <div class="input-container-2">
       <div class="input-field">
         <label for="ngay-cap">Ngày cấp</label>
-        <BaseInput
+        <MSInput
           v-model="ngayCap"
           type="date"
           placeholder="dd/mm/yyyy"
@@ -27,7 +27,7 @@
       </div>
       <div class="input-field">
         <label for="noi-cap">Nơi cấp</label>
-        <BaseInput
+        <MSInput
           v-model="noiCap"
           placeholder="Nơi cấp"
           class="base-input place-input"
@@ -41,12 +41,12 @@
 </template>
 
 <script>
-import BaseInput from "../BaseComponent/BaseInputComponent.vue";
+import MSInput from "../BaseComponent/MSInput.vue";
 
 export default {
   name: "InformationInput",
   components: {
-    BaseInput,
+    MSInput,
   },
   data() {
     return {

@@ -1,6 +1,6 @@
 <template>
   <div class="accounting-component">
-    <label for="accounting" class="accounting">Hạch toán</label>
+    <label for="accounting" class="accounting">{{ label }}</label>
     <table class="accounting-table">
       <thead>
         <tr>
@@ -20,7 +20,7 @@
             :key="colIndex"
           >
             <div v-if="column.dataType === 'dropdown'">
-              <ComboboxGrid
+              <MSComboboxGrid
                 v-model="row[column.fieldName]"
                 :config="column.dropDownConfig"
                 @update:selectedRow="updateRowField(rowIndex, column, $event)"
@@ -53,12 +53,12 @@
 </template>
 
 <script>
-import ComboboxGrid from "../ControlComponent/ComboboxGrid.vue";
+import MSComboboxGrid from "../ControlComponent/MSComboboxGrid.vue";
 
 export default {
   name: "MSGrid",
   components: {
-    ComboboxGrid,
+    MSComboboxGrid,
   },
   props: {
     submitTotal: Function,
@@ -78,6 +78,10 @@ export default {
     configColumGrid: {
       type: Object,
       default: true,
+    },
+    label: {
+      type: String,
+      default: null,
     },
   },
   data() {

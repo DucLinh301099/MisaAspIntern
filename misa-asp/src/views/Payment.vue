@@ -11,14 +11,14 @@
       <div class="input-information-right">
         <div class="account-input-container">
           <div class="account-input-wrapper">
-            <ComboboxInput
+            <MSCombobox
               label="Tài khoản chi"
               @update:selectedRow="updateSelectedRow('bankExpense', $event)"
               :config="paymentConfigCombo.comboxConfig.bankExpense"
               :value="payment.accountExpenseNumber"
               :ComponentAdd="createBankAccountComponent"
             />
-            <BaseInput
+            <MSInput
               v-model="bankNameInput"
               class="base-input second-input"
               :class="{ onFocus: isBankNameInputFocused }"
@@ -29,14 +29,14 @@
             />
           </div>
           <div class="account-input-wrapper">
-            <ComboboxInput
+            <MSCombobox
               label="Đối Tượng"
               @update:selectedRow="updateSelectedRow('customer', $event)"
               :config="paymentConfigCombo.comboxConfig.customer"
               :value="payment.customerName"
               :ComponentAdd="createCustomerComponent"
             />
-            <BaseInput
+            <MSInput
               v-model="addressValue"
               class="base-input second-input"
               :class="{ onFocus: isCustomerFocused }"
@@ -47,7 +47,7 @@
             />
           </div>
           <div class="account-input-wrapper">
-            <ComboboxInput
+            <MSCombobox
               v-if="!hideAccountReceive"
               label="Tài Khoản Nhận"
               :showButton="false"
@@ -55,7 +55,7 @@
               :value="payment.accountReceiveNumber"
               :config="paymentConfigCombo.comboxConfig.bankReceive"
             />
-            <BaseInput
+            <MSInput
               v-if="!hideAccountReceive"
               v-model="accountReceiveValue"
               class="base-input second-input"
@@ -75,7 +75,7 @@
                 class="input-with-button-1"
                 :class="{ onFocus: isInputValueFocused }"
               >
-                <BaseInput
+                <MSInput
                   v-model="inputValueCustomer"
                   :value="defaultBillContent"
                   :validator="inputValidator"
@@ -88,7 +88,7 @@
             </div>
           </div>
           <div class="account-input-wrapper">
-            <ComboboxInput
+            <MSCombobox
               v-if="!hideCreateEmployeeInput"
               label="Nhân viên"
               @update:selectedRow="updateSelectedRow('employee', $event)"
@@ -109,7 +109,7 @@
         </div>
       </div>
       <div class="input-information-center">
-        <DateTimeComponent
+        <DateTimeInput
           :voucherType="voucherType"
           :value="{
             ngayHachToan: payment.ngayHachToan,
@@ -122,11 +122,15 @@
         />
       </div>
       <div class="input-information-left">
-        <SummaryComponent :totalAmount="totalAmount" />
+        <div class="summary-component">
+          <div class="total-label">Tổng tiền</div>
+          <div class="total-amount">{{ formattedTotalAmount }}</div>
+        </div>
       </div>
     </div>
     <div class=" ">
       <MSGrid
+        label="Hạch toán"
         :modelValue="payment.paymentDetail"
         @changeValueInput="changeValueInput"
         :configColumGrid="paymentConfigCombo.gridConfig"
@@ -146,11 +150,11 @@
 
 <script>
 import HeaderPayment from "../components/PaymentPage/HeaderPayment.vue";
-import ComboboxInput from "../components/ControlComponent/ComboboxInput.vue";
-import BaseInput from "../components/BaseComponent/BaseInputComponent.vue";
-import DateTimeComponent from "../components/ControlComponent/DateTimeComponent.vue";
+import MSCombobox from "../components/ControlComponent/MSCombobox.vue";
+import MSInput from "../components/BaseComponent/MSInput.vue";
+import DateTimeInput from "../components/ControlComponent/DateTimeInput.vue";
 import FooterPayment from "../components/PaymentPage/FooterPayment.vue";
-import SummaryComponent from "../components/ControlComponent/SummaryComponent.vue";
+
 import MSGrid from "../components/ControlComponent/MSGrid.vue";
 import AttachFile from "../components/PaymentPage/AttachFile.vue";
 
@@ -165,11 +169,11 @@ export default {
   name: "Payment",
   components: {
     HeaderPayment,
-    ComboboxInput,
-    BaseInput,
-    DateTimeComponent,
+    MSCombobox,
+    MSInput,
+    DateTimeInput,
     FooterPayment,
-    SummaryComponent,
+
     MSGrid,
     AttachFile,
     InformationInput,
@@ -230,6 +234,9 @@ export default {
     },
     defaultBillContent() {
       return `Chi tiền cho ${this.inputValueCustomer}`;
+    },
+    formattedTotalAmount() {
+      return this.totalAmount;
     },
   },
   methods: {
@@ -296,6 +303,23 @@ export default {
 </script>
 
 <style scoped>
+.summary-component {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  padding: 0px 20px 0 20px;
+}
+
+.total-label {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.total-amount {
+  font-size: 36px;
+  font-weight: bold;
+}
 .information-input-wrapper {
   display: flex;
   flex-direction: row;

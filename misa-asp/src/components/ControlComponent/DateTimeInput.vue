@@ -6,7 +6,7 @@
         class="input-with-button"
         :class="{ focused: isNgayHachToanFocused }"
       >
-        <BaseInput
+        <MSInput
           :value="ngayHachToan"
           @onInput="updateNgayHachToan"
           type="date"
@@ -18,7 +18,7 @@
     <div class="form-group">
       <label for="ngay-chung-tu">Ngày chứng từ</label>
       <div class="input-with-button" :class="{ focused: isNgayChungTuFocused }">
-        <BaseInput
+        <MSInput
           :value="ngayChungTu"
           @onInput="updateNgayChungTu"
           type="date"
@@ -36,7 +36,7 @@
           focused: soChungTu && isSoChungTuFocused,
         }"
       >
-        <BaseInput
+        <MSInput
           :value="soChungTu"
           @onInput="updateSoChungTu"
           @focus="handleFocus('isSoChungTuFocused')"
@@ -64,12 +64,12 @@
 </template>
 
 <script>
-import BaseInput from "../BaseComponent/BaseInputComponent.vue";
+import MSInput from "../BaseComponent/MSInput.vue";
 
 export default {
-  name: "DateTimeComponent",
+  name: "DateTimeInput",
   components: {
-    BaseInput,
+    MSInput,
   },
   props: {
     voucherType: {
