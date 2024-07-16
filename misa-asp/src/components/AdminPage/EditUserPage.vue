@@ -56,6 +56,7 @@
         </p>
       </div>
       <form @submit.prevent="saveUser" class="form-container" v-if="editUser">
+        <h2 class="form-title">Chỉnh Sửa Thông Tin Người Dùng</h2>
         <div class="form-group-inline">
           <div class="form-group">
             <input
@@ -152,7 +153,9 @@ export default {
   background-color: #f0f2f5;
   font-family: Arial, sans-serif;
 }
-
+h2{
+margin-bottom: 40px;
+}
 .sidebar {
   width: 200px;
   background-color: #ffffff;
@@ -240,6 +243,7 @@ export default {
   border-radius: 3px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   width: auto;
+  padding: 20px 50px 50px 50px; 
 }
 
 .form-group-inline {
@@ -263,9 +267,9 @@ export default {
 }
 
 .form-group input:focus {
-  border-color: #007bff;
+  border-color: #1fa153;
   outline: none;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  
 }
 a {
   color: white;

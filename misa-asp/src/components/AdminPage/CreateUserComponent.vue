@@ -48,7 +48,7 @@
     </div>
     <div class="content">
       <div class="header">
-        <h1>Tạo Mới User</h1>
+        <h1><br></h1>
       </div>
       <div class="create">
         <p class="links">
@@ -329,6 +329,7 @@ a {
   font-size: 16px;
   display: flex;
   align-items: center;
+  margin-top: 10px;
 }
 
 .create-button i {
