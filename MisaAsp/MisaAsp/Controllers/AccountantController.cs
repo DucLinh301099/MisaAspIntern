@@ -23,7 +23,17 @@ namespace MisaAsp.Controllers
         [HttpGet("list")]
         public async Task<IActionResult> GetServices()
         {
-            _response.Data = await _accountantService.GetServicesAsync();
+            
+            var services = await _accountantService.GetServicesAsync();
+
+            if (services != null && services.Any())
+            {
+                _response.HandleSuccess("Lấy thông tin dịch vụ thành công", services);
+            }
+            else
+            {
+                _response.HandleError("Lấy thông tin dịch vụ thất bại");
+            }
             return Ok(_response);
         }
     }

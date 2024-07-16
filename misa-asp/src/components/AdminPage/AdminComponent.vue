@@ -96,7 +96,7 @@
 </template>
 
 <script>
-import { account} from "../../api/account";
+import { account } from "../../api/account";
 
 export default {
   name: "AdminComponent",
@@ -114,15 +114,9 @@ export default {
   },
   methods: {
     async loadUsers() {
-      try {
-        const response = await account.getAllUser();
-        this.users = response;
-      } catch (error) {
-        console.error("Error fetching users:", error);
-        alert(
-          "Failed to fetch user data: " +
-            (error.response ? error.response.data.message : error.message)
-        );
+      let res = await account.getAllUser();
+      if (res.isSuccess) {
+        this.users = res.data;
       }
     },
     searchUsers() {
@@ -135,14 +129,13 @@ export default {
       this.$router.push({ path: `/edit-user/${userId}` });
     },
     async deleteUser(id) {
-      if (confirm("Are you sure you want to delete this user?")) {
+      if (confirm("Bạn có chắc chắn muốn xóa người dùng này")) {
         try {
           await account.deleteUserById(id);
           this.users = this.users.filter((user) => user.id !== id);
-          alert("User deleted successfully!");
+          alert("Xóa người dùng thành công");
         } catch (error) {
-          console.error("Error deleting user:", error);
-          alert("Failed to delete user: " + error.message);
+          alert("Xóa người dùng thất bại: " + error.message);
         }
       }
     },
@@ -177,7 +170,13 @@ export default {
   flex-direction: column;
   justify-content: space-between;
 }
-
+.create-user {
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+}
 .sidebar .logo {
   display: flex;
   justify-content: center;
@@ -267,8 +266,9 @@ export default {
   color: white;
   background-color: #dc3545;
   border: none;
-  border-radius: 5px;
+  border-radius: 3px;
   cursor: pointer;
+  font-weight: bold;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -276,7 +276,7 @@ export default {
 }
 
 .logout-button:hover {
-  color: #007bff;
+  color: #bebbbb;
 }
 
 .search-create-container {
@@ -289,9 +289,10 @@ export default {
 .search-box input {
   padding: 10px;
   border: 1px solid #ddd;
-  border-radius: 5px;
+  border-radius: 3px;
   font-size: 16px;
   width: 250px;
+  outline: none;
 }
 
 .create-user .create-button {
@@ -299,8 +300,9 @@ export default {
   color: white;
   border: none;
   padding: 10px 20px;
-  border-radius: 5px;
+  border-radius: 3px;
   cursor: pointer;
+  font-weight: bold;
   font-size: 16px;
   display: flex;
   align-items: center;
@@ -353,8 +355,10 @@ export default {
   margin-right: 10px;
   padding: 8px 12px;
   border: none;
-  border-radius: 3px;
+  border-radius: 2px;
   cursor: pointer;
+  font-weight: bold;
+  font-family: Arial;
   transition: background-color 0.3s ease;
 }
 

@@ -165,12 +165,9 @@ export default {
       if (!this.config || !this.config.endpoint) {
         return;
       }
-
       try {
         base.buildUrlRequest(this.config);
-        const response = await base.apiClient[this.config.method](
-          this.config.url
-        );
+        const response = await base.getApi(this.config.url);
         this.optionsData = this.extractData(response);
       } catch (error) {
         this.optionsData = [];

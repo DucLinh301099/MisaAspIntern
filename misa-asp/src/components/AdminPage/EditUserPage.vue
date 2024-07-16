@@ -55,16 +55,12 @@
           <router-link to="/admin">Quay lại danh sách User</router-link>
         </p>
       </div>
-      <form
-        @submit.prevent="saveUser"
-        class="form-container"
-        v-if="editingUser"
-      >
+      <form @submit.prevent="saveUser" class="form-container" v-if="editUser">
         <div class="form-group-inline">
           <div class="form-group">
             <input
               type="text"
-              v-model="editingUser.firstName"
+              v-model="editUser.firstName"
               placeholder="Họ và đệm"
               required
             />
@@ -72,7 +68,7 @@
           <div class="form-group">
             <input
               type="text"
-              v-model="editingUser.lastName"
+              v-model="editUser.lastName"
               placeholder="Tên"
               required
             />
@@ -81,7 +77,7 @@
         <div class="form-group">
           <input
             type="email"
-            v-model="editingUser.email"
+            v-model="editUser.email"
             placeholder="Email"
             required
           />
@@ -89,7 +85,7 @@
         <div class="form-group">
           <input
             type="text"
-            v-model="editingUser.phoneNumber"
+            v-model="editUser.phoneNumber"
             placeholder="Số điện thoại"
             required
           />
@@ -114,13 +110,13 @@ export default {
   props: ["id"],
   data() {
     return {
-      editingUser: null,
+      editUser: null,
     };
   },
   async created() {
     try {
       const response = await account.getUserById(this.id);
-      this.editingUser = response;
+      this.editUser = response;
     } catch (error) {
       console.error("Error fetching user:", error);
       alert(
@@ -132,7 +128,7 @@ export default {
   methods: {
     async saveUser() {
       try {
-        await account.updateUser(this.editingUser);
+        await account.updateUser(this.editUser);
         alert("User updated successfully!");
         this.$router.push("/admin");
       } catch (error) {
@@ -224,7 +220,7 @@ export default {
   background-color: #ffffff;
   padding: 15px 20px;
   color: #333;
-  border-radius: 5px;
+  border-radius: 3px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
   display: flex;
@@ -241,7 +237,7 @@ export default {
 .form-container {
   background-color: #fff;
   padding: 40px 20px 40px 20px;
-  border-radius: 8px;
+  border-radius: 3px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   width: auto;
 }
@@ -251,11 +247,7 @@ export default {
   gap: 20px;
   padding-bottom: 0px;
 }
-.form-group-button {
-  display: flex;
-  gap: 20px;
-  justify-content: flex-start;
-}
+
 .form-group {
   margin-bottom: 15px;
   padding-bottom: 20px;
@@ -266,7 +258,7 @@ export default {
   padding: 10px;
   font-size: 16px;
   border: 1px solid #ddd;
-  border-radius: 5px;
+  border-radius: 2.5px;
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
@@ -278,37 +270,37 @@ export default {
 a {
   color: white;
 }
-.edit-button {
-  background-color: #28a745;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
+.form-group-button {
   display: flex;
-  align-items: center;
+  gap: 10px;
 }
 
-.edit-button:hover {
-  background-color: #218838;
+.edit-button,
+.cancel-button {
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+  border: none;
+  border-radius: 3px;
+}
+
+.edit-button {
+  background-color: #4caf50; /* Màu xanh lá cây */
+  color: white;
 }
 
 .cancel-button {
-  background-color: #dc3545;
+  background-color: #f44336; /* Màu đỏ */
   color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-  display: flex;
-  align-items: center;
-  margin-left: 10px;
 }
 
+.edit-button:hover,
 .cancel-button:hover {
-  background-color: #c82333;
+  opacity: 0.9;
 }
 
 .create {
@@ -320,8 +312,13 @@ a {
   display: inline-block;
   background-color: #007bff;
   color: white;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
   padding: 10px 20px;
-  border-radius: 5px;
+  border-radius: 2.5px;
   text-decoration: none;
   transition: background-color 0.3s ease;
 }

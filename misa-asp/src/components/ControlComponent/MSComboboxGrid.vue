@@ -124,9 +124,7 @@ export default {
         return;
       }
       try {
-        const response = await base.apiClient[this.config.method](
-          this.config.endpoint
-        );
+        const response = await base.getApi(this.config.endpoint);
         if (
           response.data &&
           Array.isArray(response.data) // Giả định API trả về danh sách các objects
