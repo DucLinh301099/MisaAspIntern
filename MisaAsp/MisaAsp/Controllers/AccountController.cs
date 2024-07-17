@@ -102,8 +102,7 @@ namespace MisaAsp.Controllers
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        [HttpPost("login")]
-        
+        [HttpPost("login")]    
         public async Task<IActionResult> Login([FromBody] LoginRequestVM request)
         {
             if (!ModelState.IsValid)
@@ -167,6 +166,7 @@ namespace MisaAsp.Controllers
         }
 
         [HttpGet("users/{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetUserById(int id)
         {
             var user = await _accountService.GetUserByIdAsync(id);
@@ -189,7 +189,7 @@ namespace MisaAsp.Controllers
         /// <param name="user"></param>
         /// <returns></returns>
         [HttpPut("update")]
-        [Authorize(Roles = "Admin,User")] // Chỉ admin và người dùng mới có quyền truy cập
+        [Authorize(Roles = "Admin")] // Chỉ admin và người dùng mới có quyền truy cập
         public async Task<IActionResult> UpdateUser(UpdateUserVM user)
         {
             var result = await _accountService.UpdateUserAsync(user);

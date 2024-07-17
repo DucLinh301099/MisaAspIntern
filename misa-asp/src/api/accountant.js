@@ -2,21 +2,22 @@
 import { base } from '../api/base.js';
 import Api from '../api/apiConst.js'
 
-
-
 export const accountant = {
-  // function lấy thông tin tất cả các dịch vụ kế toán hiển thị trong home page
-  async getServices() {
-    try {
-      const { url, method } = Api.accountant;
-      const response = await base.apiClient[method](url);
-      return response.data;
-    } catch (error) {
-      console.error('Failed to fetch services:', error);
-      throw error;
-    }
+  /**
+   * Hàm hiện thị tất cả các dịch vụ kế toán trong home page
+   * @returns 
+   */
+  async getServices() {     
+      return await base.getApi(Api.accountant.url, null);
+      
+    
   },
-// function tìm kiếm dịch vụ kế toán theo tên
+/**
+ * Hàm tìm kiếm dịch vụ kế toán theo tên
+ * @param {*} services 
+ * @param {*} searchQuery 
+ * @returns 
+ */
   filterServices(services, searchQuery) {
     if (!services || !Array.isArray(services.data) || !services.data.length) {
       return [];

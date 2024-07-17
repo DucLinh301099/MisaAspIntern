@@ -1,108 +1,177 @@
-// src/services/account.js
 
 import { base } from '../api/base.js';
 import Api from '../api/apiConst';
+import router from '../router';
 
 export const account = {
+  /**
+   * Hàm đăng nhập 
+   * home page
+   * @param {*} emailOrPhoneNumber 
+   * @param {*} password 
+   * @returns 
+   */
   async login(emailOrPhoneNumber, password) {
-    try {
-      const { url, method } = Api.login;
-      const response = await base.apiClient[method](url, {
-        EmailOrPhoneNumber: emailOrPhoneNumber,
-        Password: password
-      });
+    let params = {
+      EmailOrPhoneNumber: emailOrPhoneNumber,
+      Password: password,
+    };
+    const response = await base.postApi(
+      Api.login.url,
+      params,
+      (responseData) => {
+        localStorage.setItem('role', responseData.role);
+        localStorage.setItem('lastName', responseData.lastName);
 
-      if (response.status === 200) {
-        const { role, lastName } = response.data.data;
-        localStorage.setItem('role', role);
-        localStorage.setItem('lastName', lastName);
-        return response.data;
-      } else {
-        throw new Error('Login failed');
+        if (responseData.role === 'Admin') {
+          router.push('/payment');
+        } else {
+          router.push('/userAccount');
+        }
+      },
+      (responseData) => {
+        let errorMessage = 'Tài khoản hoặc mật khẩu sai. Vui lòng thử lại.';
+        if (responseData && responseData.message) {
+          errorMessage = responseData.message;
+        }
+        alert(errorMessage);
       }
-    } catch (error) {
-      throw error;
-    }
+    );
+    return response;
   },
 
-  async getAllUser() {
-    try {
-      const { url, method } = Api.getAllUser;
-      const response = await base.apiClient[method](url, base.addHeaders());
-      console.log('Protected data fetched successfully:', response.data);
-      return response.data.data;
-    } catch (error) {
-      console.error('Error fetching protected data:', error.response ? error.response.data : error.message);
-      throw error.response ? error.response.data : error.message;
-    }
-  },
-
+  /**
+   * Hàm đăng ký tạo mới tài khoản
+   * home page
+   * @param {*} firstName 
+   * @param {*} lastName 
+   * @param {*} email 
+   * @param {*} phoneNumber 
+   * @param {*} password 
+   * @param {*} roleId 
+   * @returns 
+   */
   async register(firstName, lastName, email, phoneNumber, password, roleId) {
-    const { url, method } = Api.register;
-    const response = await base.apiClient[method](url, {
+    let params = {
       FirstName: firstName,
       LastName: lastName,
       Email: email,
       PhoneNumber: phoneNumber,
       Password: password,
       RoleId: roleId
-    });
-    return response.data;
+    };
+    const reponse = await base.postApi(Api.register.url, params);
+    return reponse.data;
+  },
+   
+  /**
+   * Hàm hiển thị tất cả user trong admin page
+   * @returns 
+   */
+  async getAllUser() {
+    return await base.getAuthenApi(Api.getAllUser.url, null);
   },
 
+  /**
+   * Hàm tạo mới 1 employee trong payment page
+   * @param {*} employeeCode 
+   * @param {*} employeeName 
+   * @param {*} department 
+   * @param {*} mobilePhone 
+   * @returns 
+   */
   async createEmployee(employeeCode, employeeName, department, mobilePhone) {
-    const { url, method } = Api.createEmployee;
-    const config = await base.addHeaders();
-    const response = await base.apiClient[method](url, {
+    let params = {
       EmployeeCode: employeeCode,
       EmployeeName: employeeName,
       Department: department,
       MobilePhone: mobilePhone,
-    }, config);
-    return response.data;
+    };
+    const reponse = await base.postApi(Api.createEmployee.url, params);
+    return reponse.data;
   },
 
+  /**
+   * Hàm tạo mới 1 một user trong admin page
+   * @param {*} firstName 
+   * @param {*} lastName 
+   * @param {*} email 
+   * @param {*} phoneNumber 
+   * @param {*} password 
+   * @param {*} roleId 
+   * @returns 
+   */
   async createUser(firstName, lastName, email, phoneNumber, password, roleId) {
-    const { url, method } = Api.register;
-    const response = await base.apiClient[method](url, {
+    let params = {
       FirstName: firstName,
       LastName: lastName,
       Email: email,
       PhoneNumber: phoneNumber,
       Password: password,
       RoleId: roleId
-    });
-    return response.data;
+    };
+    const reponse = await base.postApi(Api.register.url, params);
+    return reponse.data;
   },
 
+  /**
+   * Hàm tìm kiếm user theo id
+   * @param {*} id 
+   * @returns 
+   */
   async getUserById(id) {
     try {
-      const { url, method } = Api.getUserById;
-      const response = await base.apiClient[method](`${url}${id}`, base.addHeaders());
+      const response = await base.getAuthenApi(Api.getUserById.url,id);
       return response.data;
     } catch (error) {
       throw error.response ? error.response.data : error.message;
     }
   },
 
+  /**
+   * Hàm quên mật khẩu
+   * @param {*} email 
+   * @returns 
+   */
   async forgotPassword(email) {
     const { url, method } = Api.password;
     const response = await base.apiClient[method](url, { Email: email });
     return response.data;
   },
 
+  /**
+   * Hàm update user theo Id
+   * @param {*} user 
+   * @returns 
+   */
   async updateUser(user) {
-    const { url, method } = Api.updateUser;
-    const response = await base.apiClient[method](`${url}${user.id}`, user, base.addHeaders());
-    return response.data;
-  },
-
+      try {      
+        const getUser = await this.getUserById(user.id);
+        if (getUser) {              
+          const response = await base.putAuthenApi(Api.updateUser.url,user);            
+          return response.data;
+        } else {
+          throw new Error('User not found');
+        }
+      } catch (error) {
+      
+        throw error;
+      }
+    },
+  /**
+   * Hàm xóa user theo id
+   * @param {*} id 
+   * @returns 
+   */
   async deleteUserById(id) {
-    const { url, method } = Api.deleteUserById;
-    const response = await base.apiClient[method](`${url}${id}`, base.addHeaders());
+    
+    const response = await base.deleteAuthenApi(Api.deleteUserById.url,id);
     return response.data;
   },
 
+  /**
+   * 
+   */
   async logout() {
     try {
       const { url, method } = Api.logout;

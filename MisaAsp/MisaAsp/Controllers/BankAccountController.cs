@@ -52,7 +52,7 @@ namespace MisaAsp.Controllers
         /// dùng roleid để xác định 2 loại tài khoản
         /// 1 là tài khoản chi, 2 là tài khoản nhận
         /// </summary>
-        /// <param name="roleId"></param>
+        /// <param name="typeOfBank"></param>
         /// <returns></returns>
         [HttpGet("bank-account")]
         [AllowAnonymous]

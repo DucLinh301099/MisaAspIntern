@@ -78,7 +78,12 @@ namespace MisaAsp.Services
         {
             return await _accountRepo.IsPhoneUniqueAsync(phoneNumber);
         }
-
+        /// <summary>
+        /// Fuction xử lý đăng ký tài khoản
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public async Task<int> RegisterUserAsync(RegistrationRequestVM request)
         {
             if (request != null)
@@ -103,7 +108,14 @@ namespace MisaAsp.Services
         {
             return await _accountRepo.CreateEmployeeAsync(request);
         }
-
+        /// <summary>
+        /// function xử lý đăng nhập
+        /// tạo token và lưu nó vào cookie
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        /// <exception cref="ArgumentNullException"></exception>
         public async Task<AuthResult> AuthenticateUserAsync(LoginRequestVM request)
         {
             if (request != null)
@@ -142,7 +154,7 @@ namespace MisaAsp.Services
                     var cookieOptions = new CookieOptions
                     {
                         //HttpOnly = true,
-                        Secure = true, // Đảm bảo cookie chỉ được gửi qua HTTPS
+                        // Secure = true, // Đảm bảo cookie chỉ được gửi qua HTTPS
                         SameSite = SameSiteMode.Strict,
                         Expires = DateTime.UtcNow.AddHours(tokenExpiryInHours)
                     };
@@ -165,6 +177,11 @@ namespace MisaAsp.Services
             return await _accountRepo.ForgotPasswordAsync(request);
         }
 
+        /// <summary>
+        /// Hàm gán mật khẩu thành chuỗi ký tự MD5
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         private string GetMd5Hash(string input)
         {
             if (!string.IsNullOrEmpty(input))

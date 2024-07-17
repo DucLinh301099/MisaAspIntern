@@ -48,7 +48,7 @@
     </div>
     <div class="content">
       <div class="header">
-        <h1>Tạo Mới User</h1>
+        <h1><br></h1>
       </div>
       <div class="create">
         <p class="links">
@@ -56,48 +56,58 @@
         </p>
       </div>
       <form @submit.prevent="createUser" class="form-container">
+        <h2 class="form-title">Tạo mới người dùng</h2>
         <div class="form-group-inline">
           <div class="form-group">
-            <input
-              type="text"
-              v-model="firstName"
-              placeholder="Họ và đệm"
-              required
-            />
+            <label class="label">Họ và đệm</label>
+            <input type="text" v-model="firstName" required />
           </div>
           <div class="form-group">
-            <input type="text" v-model="lastName" placeholder="Tên" required />
+            <label class="label"
+              >Tên
+              <span class="required">*</span>
+            </label>
+            <input type="text" v-model="lastName" required />
           </div>
         </div>
-        <div class="form-group">
-          <input type="text" v-model="email" placeholder="Email" required />
-          <div v-if="errors.Email" class="error">{{ errors.Email }}</div>
-        </div>
-        <div class="form-group">
-          <input
-            type="text"
-            v-model="phoneNumber"
-            placeholder="Số điện thoại"
-            required
-          />
-          <div v-if="errors.PhoneNumber" class="error">
-            {{ errors.PhoneNumber }}
+        <div class="form-group-inline">
+          <div class="form-group">
+            <label class="label"
+              >Email
+              <span class="required">*</span>
+            </label>
+            <input type="text" v-model="email" required />
+            <div v-if="errors.Email" class="error">{{ errors.Email }}</div>
+          </div>
+          <div class="form-group">
+            <label class="label"
+              >Số điện thoại
+              <span class="required">*</span>
+            </label>
+            <input type="text" v-model="phoneNumber" required />
+            <div v-if="errors.PhoneNumber" class="error">
+              {{ errors.PhoneNumber }}
+            </div>
           </div>
         </div>
-        <div class="form-group">
-          <input
-            type="password"
-            v-model="password"
-            placeholder="Mật khẩu"
-            required
-          />
-        </div>
-        <div class="form-group">
-          <select v-model="roleId" required>
-            <option value="" disabled>Chọn quyền</option>
-            <option value="1">Admin</option>
-            <option value="2">User</option>
-          </select>
+        <div class="form-group-inline">
+          <div class="form-group">
+            <label class="label"
+              >Mật khẩu
+              <span class="required">*</span>
+            </label>
+            <input type="text" v-model="password" required />
+          </div>
+          <div class="form-group">
+            <label class="label"
+              >Quyền người dùng
+              <span class="required">*</span>
+            </label>
+            <select v-model="roleId" required>
+              <option value="1">Admin</option>
+              <option value="2">User</option>
+            </select>
+          </div>
         </div>
 
         <button type="submit" class="create-button">Tạo mới User</button>
@@ -126,35 +136,38 @@ export default {
   },
   methods: {
     async createUser() {
-  try {
-    await account.register(
-      this.firstName,
-      this.lastName,
-      this.email,
-      this.phoneNumber,
-      this.password,
-      this.roleId
-    );
-    alert("User created successfully!");
-    this.$router.push("/admin");
-  } catch (error) {
-    this.errors = {};
-    this.generalError = "";
+      try {
+        await account.register(
+          this.firstName,
+          this.lastName,
+          this.email,
+          this.phoneNumber,
+          this.password,
+          this.roleId
+        );
+        alert("User created successfully!");
+        this.$router.push("/admin");
+      } catch (error) {
+        this.errors = {};
+        this.generalError = "";
 
-    // Extract error messages
-    const errorMsgs = error.message.split(", ");
+        // Extract error messages
+        const errorMsgs = error.message.split(", ");
 
-    // Handle specific validation errors
-    this.errors.Email = errorMsgs.find((msg) => msg.includes("Email error"));
-    this.errors.PhoneNumber = errorMsgs.find((msg) => msg.includes("Phone number error"));
+        // Handle specific validation errors
+        this.errors.Email = errorMsgs.find((msg) =>
+          msg.includes("Email error")
+        );
+        this.errors.PhoneNumber = errorMsgs.find((msg) =>
+          msg.includes("Phone number error")
+        );
 
-    // Handle general error if no specific errors are found
-    if (!this.errors.Email && !this.errors.PhoneNumber) {
-      this.generalError = error.message;
-    }
-  }
-}
-
+        // Handle general error if no specific errors are found
+        if (!this.errors.Email && !this.errors.PhoneNumber) {
+          this.generalError = error.message;
+        }
+      }
+    },
   },
 };
 </script>
@@ -168,7 +181,14 @@ export default {
   background-color: #f0f2f5;
   font-family: Arial, sans-serif;
 }
-
+.required {
+  color: red;
+}
+h2 {
+  font-weight: bold;
+  padding-bottom: 30px;
+  font-size: 28px;
+}
 .sidebar {
   width: 200px;
   background-color: #ffffff;
@@ -236,7 +256,7 @@ export default {
   background-color: #ffffff;
   padding: 15px 20px;
   color: #333;
-  border-radius: 5px;
+  border-radius: 3px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
   display: flex;
@@ -253,9 +273,10 @@ export default {
 .form-container {
   background-color: #fff;
   padding: 40px 20px 40px 20px;
-  border-radius: 8px;
+  border-radius: 3px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   width: auto;
+  padding: 15px 50px 50px 50px;
 }
 
 .form-group-inline {
@@ -263,17 +284,12 @@ export default {
   gap: 20px;
 }
 
-.form-group {
-  margin-bottom: 15px;
-}
-
-.form-group input,
-.form-group select {
+.form-group input {
   width: 100%;
   padding: 10px;
   font-size: 16px;
   border: 1px solid #ddd;
-  border-radius: 5px;
+  border-radius: 2.5px;
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 a {
@@ -281,21 +297,39 @@ a {
 }
 .form-group input:focus,
 .form-group select:focus {
-  border-color: #007bff;
+  border-color: rgb(10, 146, 10);
   outline: none;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 
+.form-group select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 2.5px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+  background: white;
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3csvg%20xmlns%3d%22http%3a//www.w3.org/2000/svg%22%20viewBox%3d%220%200%204%205%22%3e%3cpath%20fill%3d%22%23333%22%20d%3d%22M2%205L0%202h4L2%205z%22/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 10px;
+}
 .create-button {
   background-color: #007bff;
   color: white;
   border: none;
   padding: 10px 20px;
-  border-radius: 5px;
+  border-radius: 2.5px;
+  cursor: pointer;
+  font-weight: bold;
   cursor: pointer;
   font-size: 16px;
   display: flex;
   align-items: center;
+  margin-top: 10px;
 }
 
 .create-button i {
@@ -327,7 +361,9 @@ a {
   background-color: #28a745;
   color: white;
   padding: 10px 20px;
-  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  border-radius: 2.5px;
   text-decoration: none;
   transition: background-color 0.3s ease;
 }

@@ -18,7 +18,7 @@ const Api = {
         method: 'get'
     },
     register: {
-        url: 'Account/register',
+        url: '/Account/register',
         method: 'post'
     },
     createEmployee: {
@@ -27,15 +27,15 @@ const Api = {
     },
 
     getUserById:{
-        url: 'Account/users/',
+        url: 'Account/users',
         method: 'get'
     },
     updateUser:{
-       url: 'Account/users/',
+       url: 'Account/update',
        method: 'put'
     },
     deleteUserById:{
-        url:'Account/users/',
+        url:'Account/users',
         method:'delete'
     },
     bank: {

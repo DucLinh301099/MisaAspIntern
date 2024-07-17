@@ -1,34 +1,46 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MisaAsp.Models.BaseModel
 {
-    public class Users
+    [Table("users", Schema = "public")]
+    public class User
     {
-        [Required]
+        [Key]
+        [Column("id")]
         public int Id { get; set; }
 
         [Required]
-        [StringLength(100)]
+        [Column("firstname")]
+        [StringLength(255)]
         public string FirstName { get; set; }
 
         [Required]
-        [StringLength(100)]
+        [Column("lastname")]
+        [StringLength(255)]
         public string LastName { get; set; }
 
         [Required]
+        [Column("email")]
+        [StringLength(255)]
         [EmailAddress]
-        [StringLength(100)]
         public string Email { get; set; }
 
         [Required]
-        [Phone]
-        [StringLength(100)]
+        [Column("phonenumber")]
+        [StringLength(20)]
         public string PhoneNumber { get; set; }
 
-    
         [Required]
+        [Column("password")]
+        [StringLength(255)]
+        public string Password { get; set; }
+
+        [Required]
+        [Column("roleid")]
         public int RoleId { get; set; }
 
-        
+        [ForeignKey("RoleId")]
+        public virtual Role Role { get; set; }
     }
 }

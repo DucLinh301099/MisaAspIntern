@@ -17,6 +17,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHttpContextAccessor();
 
+// Cấu hình Domain tới FE
 var corsOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>();
 builder.Services.AddCors(options =>
 {
@@ -49,7 +50,7 @@ builder.Services.AddScoped<IBankAccountRepository, BankAccountRepository>();
 builder.Services.AddScoped<ResOutput>();
 #endregion
 
-
+//Thiết lập cơ chế xác thực và các tham số cần thiết để xác thực JWT.
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -88,14 +89,14 @@ builder.Services.AddScoped<IDbConnection>(sp =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Cấu hình pipeline xử lý yêu cầu HTTP.
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
-    // Enable middleware to serve generated Swagger as a JSON endpoint.
+    // Kích hoạt middleware để phục vụ Swagger được sinh ra như là một endpoint JSON.
     app.UseSwagger();
-    // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
-    // specifying the Swagger JSON endpoint.
+    // Kích hoạt middleware để phục vụ swagger-ui (HTML, JS, CSS, v.v.),
+    // chỉ định endpoint JSON của Swagger.
     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "MisaAsp v1"));
 }
 
