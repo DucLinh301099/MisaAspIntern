@@ -125,11 +125,14 @@ namespace MisaAsp.Repositories
             return await ExecuteProcScalarAsync<bool>("authenticateuser", parameters);
         }
 
-        public async Task<bool> ForgotPasswordAsync(ForgotPasswordRequestVM email)
-        {        
-            var parameters = new 
-            {Email= email.Email };
+        public async Task<bool> ForgotPasswordAsync(ForgotPasswordRequestVM request)
+        {
+            var parameters = new
+            {
+                Email = request.Email
+            };
             return await ExecuteProcSingleScalarAsync<bool>("checkemailexists", parameters);
+           
         }
 
         public async Task<RoleAccount> GetUserRoleAsync(string emailOrPhoneNumber)

@@ -55,7 +55,7 @@ namespace MisaAsp.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("customer")]
-       
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetCustomer()
         {
             var customers = await _customerService.GetAllCustomerAsync();

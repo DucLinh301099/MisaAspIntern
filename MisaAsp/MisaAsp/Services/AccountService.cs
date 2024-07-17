@@ -11,8 +11,7 @@ namespace MisaAsp.Services
 {
     public interface IAccountService
     {
-        Task<bool> IsEmailUniqueAsync(string email);
-        Task<bool> IsPhoneUniqueAsync(string phone);
+        
         Task<int> RegisterUserAsync(RegistrationRequestVM request);
         Task<AuthResult> AuthenticateUserAsync(LoginRequestVM request);
         Task<IEnumerable<UserRequestVM>> GetAllUsersAsync();
@@ -69,12 +68,12 @@ namespace MisaAsp.Services
             return user?.LastName;
         }
 
-        public async Task<bool> IsEmailUniqueAsync(string email)
+        private async Task<bool> IsEmailUniqueAsync(string email)
         {
             return await _accountRepo.IsEmailUniqueAsync(email);
         }
 
-        public async Task<bool> IsPhoneUniqueAsync(string phoneNumber)
+        private async Task<bool> IsPhoneUniqueAsync(string phoneNumber)
         {
             return await _accountRepo.IsPhoneUniqueAsync(phoneNumber);
         }
@@ -172,9 +171,9 @@ namespace MisaAsp.Services
             return null;
         }
 
-        public async Task<bool> ForgotPasswordAsync(ForgotPasswordRequestVM user)
+        public async Task<bool> ForgotPasswordAsync(ForgotPasswordRequestVM request)
         {
-            return await _accountRepo.ForgotPasswordAsync(user);
+            return await _accountRepo.ForgotPasswordAsync(request);
         }
 
         /// <summary>

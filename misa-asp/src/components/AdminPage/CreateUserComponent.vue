@@ -40,7 +40,6 @@
               <span class="required">*</span>
             </label>
             <input type="text" v-model="email" required />
-            <div v-if="errors.Email" class="error">{{ errors.Email }}</div>
           </div>
           <div class="form-group">
             <label class="label"
@@ -48,9 +47,6 @@
               <span class="required">*</span>
             </label>
             <input type="text" v-model="phoneNumber" required />
-            <div v-if="errors.PhoneNumber" class="error">
-              {{ errors.PhoneNumber }}
-            </div>
           </div>
         </div>
         <div class="form-group-inline">
@@ -59,7 +55,7 @@
               >Mật khẩu
               <span class="required">*</span>
             </label>
-            <input type="text" v-model="password" required />
+            <input type="password" v-model="password" required />
           </div>
           <div class="form-group">
             <label class="label"
@@ -74,7 +70,6 @@
         </div>
 
         <button type="submit" class="create-button">Tạo mới User</button>
-        <div v-if="generalError" class="error">{{ generalError }}</div>
       </form>
     </div>
   </div>
@@ -99,8 +94,7 @@ export default {
       phoneNumber: "",
       password: "",
       roleId: "",
-      errors: {},
-      generalError: "",
+
       alertMessage: "",
       alertType: "info",
       alertVisible: false,
@@ -123,16 +117,7 @@ export default {
           this.$router.push("/admin");
         }, 1500);
       } catch (error) {
-        this.errors = {};
-        this.generalError = "";
-        const errorMsgs = error.message.split(", ");
-        this.errors.Email = errorMsgs.find((msg) => msg.includes("Email Lỗi"));
-        this.errors.PhoneNumber = errorMsgs.find((msg) =>
-          msg.includes("Số điện thoại lỗi")
-        );
-        if (!this.errors.Email && !this.errors.PhoneNumber) {
-          this.generalError = error.message;
-        }
+        this.showAlert("Người dùng tạo mới thất bại!", "error");
       }
     },
     showAlert(message, type) {

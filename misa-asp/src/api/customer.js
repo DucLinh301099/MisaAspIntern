@@ -20,7 +20,7 @@ export const customer = {
       Address: address,
       PhoneNumber: phoneNumber
     };
-    const reponse = await base.postApi(Api.customer.url, params);
+    const reponse = await base.postAuthenApi(Api.customer.url, params);
     return reponse.data;
     
   }

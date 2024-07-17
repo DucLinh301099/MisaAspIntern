@@ -12,7 +12,7 @@ namespace MisaAsp.Models.ViewModel
         [StringLength(100)]
         public string LastName { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Email không được để trống")]
         [EmailAddress]
         public string Email { get; set; }
 

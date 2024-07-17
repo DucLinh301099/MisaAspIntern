@@ -1,6 +1,14 @@
 <template>
   <div class="forgot-password-page">
     <div class="forgot-password-container">
+      <MSAlert
+        :message="alertMessage"
+        :type="alertType"
+        :visible="alertVisible"
+        :isClose="alertIsClose"
+        @close="alertVisible = false"
+        @cancel="alertVisible = false"
+      />
       <div class="logo-section">
         <router-link to="/">
           <img
@@ -18,6 +26,13 @@
         <button type="submit" class="forgot-password-button">
           Gửi Yêu Cầu
         </button>
+        <div class="extra-links">
+          <p>
+            Quay lại đăng nhập
+            <router-link to="/login">Đăng Nhập</router-link>
+          </p>
+          <p><router-link to="/href">Trợ giúp</router-link></p>
+        </div>
       </form>
     </div>
   </div>
@@ -25,26 +40,43 @@
 
 <script>
 import { account } from "../../api/account";
+import MSAlert from "../BaseComponent/MSAlert.vue";
 
 export default {
   name: "ForgotPasswordComponent",
+  components: {
+    MSAlert,
+  },
   data() {
     return {
       email: "",
+      alertMessage: "",
+      alertType: "info",
+      alertVisible: false,
+      alertIsClose: false,
     };
   },
   methods: {
     async forgotPassword() {
-      try {
-        const response = await account.forgotPassword(this.email);
-        if (response != null) {
-          alert("Yêu cầu làm mới mật khẩu đã được gửi đến Email của bạn");
-        } else {
-          throw new Error("Vui lòng nhập lại email chính xác");
-        }
-      } catch (error) {
-        alert("Không tim thấy email: " + error);
+      const response = await account.forgotPassword(this.email);
+      if (response) {
+        this.showAlert(
+          "Yêu cầu làm mới mật khẩu đã được gửi đến Email của bạn",
+          "success"
+        );
+      } else {
+        this.showAlert(
+          "Vui lòng nhập lại email chính xác hoặc thử lại sau",
+          "error"
+        );
       }
+    },
+    showAlert(message, type) {
+      this.alertMessage = message;
+      this.alertType = type;
+      this.alertVisible = true;
+      this.alertIsConfirm = false;
+      this.alertIsClose = true;
     },
   },
 };

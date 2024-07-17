@@ -80,7 +80,7 @@ namespace MisaAsp.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("employee")]
-        
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetEmployee()
         {
             var employees = await _accountService.GetAllEmployeeAsync();
@@ -232,16 +232,15 @@ namespace MisaAsp.Controllers
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        [HttpGet("forgot-password")]
-       
-        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequestVM email)
-        {
-           
-            var emailCheck = await _accountService.ForgotPasswordAsync(email);
+        [HttpPost("forgot-password")]
 
-            if (emailCheck != null)
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequestVM request)
+        {
+            var emailExists = await _accountService.ForgotPasswordAsync(request);
+
+            if (emailExists)
             {
-                _response.HandleSuccess("Liên kết đặt lại mật khẩu đã được gửi đến email của bạn", email);
+                _response.HandleSuccess("Liên kết đặt lại mật khẩu đã được gửi đến email của bạn", emailExists);
             }
             else
             {

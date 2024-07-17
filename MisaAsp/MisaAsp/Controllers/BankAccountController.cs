@@ -55,7 +55,7 @@ namespace MisaAsp.Controllers
         /// <param name="typeOfBank"></param>
         /// <returns></returns>
         [HttpGet("bank-account")]
-        [AllowAnonymous]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetBankAccountsByTypeAsync(int typeOfBank)
         {
             var bankAccount = await _bankaccountService.GetBankAccountsByTypeAsync(typeOfBank);

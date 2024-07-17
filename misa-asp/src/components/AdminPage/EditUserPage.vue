@@ -101,19 +101,21 @@ export default {
   },
   methods: {
     async saveUser() {
-      try {
-        await account.updateUser(this.editUser);
+      const response = await account.updateUser(this.editUser);
+
+      if (response) {
         this.showAlert("Người dùng cập nhật thành công!", "success");
         setTimeout(() => {
           this.$router.push("/admin");
         }, 1500);
-      } catch (error) {
+      } else {
         this.showAlert(
-          "Lỗi khi cập nhật người dùng: " + error.message,
+          "Lỗi khi cập nhật người dùng: " + response.message,
           "error"
         );
       }
     },
+
     cancelEdit() {
       this.$router.push("/admin");
     },

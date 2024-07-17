@@ -37,7 +37,7 @@ export const base = {
         }
       } else {
         
-        alert(response.data.message);
+        //alert(response.data.message);
         if (handleError && typeof handleError === 'function') {
           handleError(response.data.data);
         }

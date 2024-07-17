@@ -39,7 +39,6 @@
         </div>
         <div class="form-group">
           <input type="text" v-model="email" placeholder="Email" required />
-          <div v-if="errors.Email" class="error">{{ errors.Email }}</div>
         </div>
         <div class="form-group">
           <input
@@ -48,9 +47,6 @@
             placeholder="Số điện thoại"
             required
           />
-          <div v-if="errors.PhoneNumber" class="error">
-            {{ errors.PhoneNumber }}
-          </div>
         </div>
         <div class="form-group">
           <input
@@ -73,7 +69,7 @@
           của MISA.
         </p>
         <button type="submit" class="register-button">Đăng ký</button>
-        <div v-if="generalError" class="error">{{ generalError }}</div>
+
         <div class="extra-links">
           <p>
             Bạn đã có tài khoản?
@@ -99,8 +95,6 @@ export default {
       phoneNumber: "",
       password: "",
       roleId: "",
-      errors: {},
-      generalError: "",
     };
   },
   methods: {
@@ -117,22 +111,7 @@ export default {
         alert("Người dùng đã được đăng ký!");
         this.$router.push("/login");
       } catch (error) {
-        this.errors = {};
-        this.generalError = "";
-
-        const errorMsgs = error.message.split(", ");
-
-        // xử lý nếu email hoặc sđt nhập lỗi
-        this.errors.Email = errorMsgs.find((msg) =>
-          msg.includes("Email error")
-        );
-        this.errors.PhoneNumber = errorMsgs.find((msg) =>
-          msg.includes("Phone number error")
-        );
-
-        if (!this.errors.Email && !this.errors.PhoneNumber) {
-          this.generalError = error.message;
-        }
+        alert("Người dùng tạo mới thất bại!", "error");
       }
     },
   },

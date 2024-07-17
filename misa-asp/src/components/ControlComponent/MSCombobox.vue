@@ -167,7 +167,7 @@ export default {
       }
       try {
         base.buildUrlRequest(this.config);
-        const response = await base.getApi(this.config.url);
+        const response = await base.getAuthenApi(this.config.url);
         this.optionsData = this.extractData(response);
       } catch (error) {
         this.optionsData = [];
