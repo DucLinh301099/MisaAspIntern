@@ -5,23 +5,19 @@
     </router-link>
     <ul class="menu">
       <li>
-        <router-link to="/"
+        <router-link to="/admin"
           ><i class="fa fa-tachometer"></i> Dashboard</router-link
         >
       </li>
       <li>
-        <router-link to="/"><i class="fa fa-users"></i> User</router-link>
+        <router-link to="/"><i class="fa fa-users"></i> Users</router-link>
       </li>
       <li>
-        <router-link to="/"
-          ><i class="fa fa-user"></i> User Profile</router-link
+        <router-link to="/payment"
+          ><i class="fa fa-credit-card"></i> Payment</router-link
         >
       </li>
-      <li>
-        <router-link to="/"
-          ><i class="fa fa-credit-card"></i> Account</router-link
-        >
-      </li>
+      
       <li>
         <router-link to="/"><i class="fa fa-bar-chart"></i> Charts</router-link>
       </li>

@@ -15,7 +15,7 @@
       </div>
       <div class="create">
         <p class="links">
-          <router-link to="/admin">Quay lại danh sách User</router-link>
+          <router-link to="/admin">Quay lại danh sách Users</router-link>
         </p>
       </div>
       <form @submit.prevent="saveUser" class="form-container" v-if="editUser">
@@ -70,12 +70,14 @@
 import { account } from "../../api/account";
 import SideBarComponent from "../AdminPage/SideBarComponent.vue";
 import MSAlert from "../BaseComponent/MSAlert.vue";
+import MSInput from "../BaseComponent/MSInput.vue";
 
 export default {
   name: "EditUserPage",
   components: {
     SideBarComponent,
     MSAlert,
+    MSInput,
   },
   props: ["id"],
   data() {

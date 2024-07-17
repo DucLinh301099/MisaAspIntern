@@ -28,7 +28,7 @@
             type="text"
             v-model="searchQuery"
             @input="searchUsers"
-            placeholder="Tìm Kiếm"
+            placeholder="Tìm kiếm theo tên "
           />
         </div>
         <div class="create-user">

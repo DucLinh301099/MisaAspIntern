@@ -24,7 +24,7 @@ export const account = {
         localStorage.setItem('lastName', responseData.lastName);
 
         if (responseData.role === 'Admin') {
-          router.push('/payment');
+          router.push('/admin');
         } else {
           router.push('/userAccount');
         }
