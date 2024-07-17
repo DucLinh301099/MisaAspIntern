@@ -134,9 +134,16 @@ export const account = {
    * @returns 
    */
   async forgotPassword(email) {
-    const { url, method } = Api.password;
-    const response = await base.apiClient[method](url, { Email: email });
-    return response.data;
+   
+    try {
+      let params = {
+        Email: email,
+      };
+     const reponse = await base.postApi(Api.password.url, params);
+     return reponse.data;
+    }catch (error) {  
+    throw error; // Ném lỗi ra để các hàm gọi bên ngoài có thể xử lý
+   }
   },
 
   /**
@@ -163,23 +170,25 @@ export const account = {
    * @param {*} id 
    * @returns 
    */
-  async deleteUserById(id) {
-    
-    const response = await base.deleteAuthenApi(Api.deleteUserById.url,id);
+  async deleteUserById(id) { 
+  try {
+    const response = await base.deleteAuthenApi(Api.deleteUserById.url, id);
     return response.data;
+   }catch (error) {  
+    throw error; // Ném lỗi ra để các hàm gọi bên ngoài có thể xử lý
+   }
   },
 
   /**
-   * 
+   * Hàm đăng xuất thông tin người dùng
+   * Hàm này gọi api xóa token trong cookie
    */
   async logout() {
     try {
-      const { url, method } = Api.logout;
-      await base.apiClient[method](url);
-      localStorage.removeItem('role');
-      localStorage.removeItem('lastName');
-    } catch (error) {
-      throw error.response ? error.response.data : error.message;
-    }
+    const response = await base.postApi(Api.logout.url);
+    return response.data;
+  } catch (error) {  
+    throw error; // Ném lỗi ra để các hàm gọi bên ngoài có thể xử lý
+  }
   }
 }

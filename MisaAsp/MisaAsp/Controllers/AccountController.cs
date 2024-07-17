@@ -232,22 +232,16 @@ namespace MisaAsp.Controllers
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        [HttpPost("forgot-password")]
+        [HttpGet("forgot-password")]
        
-        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequestVM request)
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequestVM email)
         {
-            var _response = new ResOutput();
-            if (!ModelState.IsValid)
-            {
-                _response.HandleError();
-                return Ok(_response);
-            }
+           
+            var emailCheck = await _accountService.ForgotPasswordAsync(email);
 
-            var result = await _accountService.ForgotPasswordAsync(request);
-
-            if (result)
+            if (emailCheck != null)
             {
-                _response.HandleSuccess("Liên kết đặt lại mật khẩu đã được gửi đến email của bạn");
+                _response.HandleSuccess("Liên kết đặt lại mật khẩu đã được gửi đến email của bạn", email);
             }
             else
             {

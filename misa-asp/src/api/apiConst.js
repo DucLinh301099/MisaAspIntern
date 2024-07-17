@@ -10,7 +10,7 @@ const Api = {
         method: 'get'
     },
     login: {
-        url: '/Account/login',
+        url: 'Account/login',
         method: 'post'
     },
     getAllUser: {
@@ -18,7 +18,7 @@ const Api = {
         method: 'get'
     },
     register: {
-        url: '/Account/register',
+        url: 'Account/register',
         method: 'post'
     },
     createEmployee: {
@@ -33,6 +33,10 @@ const Api = {
     updateUser:{
        url: 'Account/update',
        method: 'put'
+    },
+    logout: {
+        url: 'Account/logout',  
+        method: 'post'
     },
     deleteUserById:{
         url:'Account/users',

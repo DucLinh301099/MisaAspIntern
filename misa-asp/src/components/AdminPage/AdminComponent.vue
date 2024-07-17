@@ -1,49 +1,18 @@
 <template>
   <div class="admin-page">
-    <div class="sidebar">
-      <router-link to="/" class="logo">
-        <img src="https://asp.misa.vn/Content/Images/SVG/Logo.svg" alt="Logo" />
-      </router-link>
-      <ul class="menu">
-        <li>
-          <router-link to="/"
-            ><i class="fa fa-tachometer"></i> Dashboard</router-link
-          >
-        </li>
-        <li>
-          <router-link to="/"><i class="fa fa-users"></i> User</router-link>
-        </li>
-        <li>
-          <router-link to="/"
-            ><i class="fa fa-user"></i> User Profile</router-link
-          >
-        </li>
-        <li>
-          <router-link to="/"
-            ><i class="fa fa-credit-card"></i> Account</router-link
-          >
-        </li>
-        <li>
-          <router-link to="/"
-            ><i class="fa fa-bar-chart"></i> Charts</router-link
-          >
-        </li>
-        <li>
-          <router-link to="/"><i class="fa fa-pencil"></i> Forms</router-link>
-        </li>
-        <li>
-          <router-link to="/"><i class="fa fa-th"></i> Apps</router-link>
-        </li>
-        <li>
-          <router-link to="/"><i class="fa fa-map"></i> Maps</router-link>
-        </li>
-        <li>
-          <router-link to="/"><i class="fa fa-file"></i> Pages</router-link>
-        </li>
-      </ul>
-    </div>
+    <SideBarComponent />
     <div class="content">
       <div class="header">
+        <MSAlert
+          :message="alertMessage"
+          :type="alertType"
+          :visible="alertVisible"
+          :isConfirm="alertIsConfirm"
+          :isClose="alertIsClose"
+          @close="alertVisible = false"
+          @confirm="handleConfirm"
+          @cancel="alertVisible = false"
+        />
         <h1>Dashboard</h1>
         <div class="user-info">
           <img :src="userAvatar" alt="Avatar" class="avatar" />
@@ -97,9 +66,14 @@
 
 <script>
 import { account } from "../../api/account";
-
+import SideBarComponent from "../AdminPage/SideBarComponent.vue";
+import MSAlert from "../BaseComponent/MSAlert.vue";
 export default {
   name: "AdminComponent",
+  components: {
+    SideBarComponent,
+    MSAlert,
+  },
   data() {
     return {
       users: [],
@@ -107,6 +81,12 @@ export default {
       userName: localStorage.getItem("lastName") || "",
       userAvatar:
         "https://static.vecteezy.com/system/resources/thumbnails/007/407/996/small/user-icon-person-icon-client-symbol-login-head-sign-icon-design-vector.jpg", // Placeholder avatar, you can replace with actual URL
+      alertMessage: "",
+      alertType: "info",
+      alertVisible: false,
+      alertIsConfirm: false,
+      confirmAction: null,
+      alertIsClose: false,
     };
   },
   async created() {
@@ -129,23 +109,54 @@ export default {
       this.$router.push({ path: `/edit-user/${userId}` });
     },
     async deleteUser(id) {
-      if (confirm("Bạn có chắc chắn muốn xóa người dùng này")) {
-        try {
-          await account.deleteUserById(id);
-          this.users = this.users.filter((user) => user.id !== id);
-          alert("Xóa người dùng thành công");
-        } catch (error) {
-          alert("Xóa người dùng thất bại: " + error.message);
+      this.showConfirm(
+        "Bạn có chắc chắn muốn xóa người dùng này?",
+        async () => {
+          try {
+            await account.deleteUserById(id);
+            this.users = this.users.filter((user) => user.id !== id);
+            this.showAlert("Xóa người dùng thành công", "info");
+          } catch (error) {
+            this.showAlert(
+              "Xóa người dùng thất bại: " + error.message,
+              "error"
+            );
+          }
         }
-      }
+      );
     },
-    logout() {
-      // Xóa role và lastName khỏi localStorage
-      localStorage.removeItem("role");
-      localStorage.removeItem("lastName");
-
-      // Chuyển hướng về trang đăng nhập
-      this.$router.push("/login");
+    async logout() {
+      // Hiển thị hộp thoại xác nhận
+      this.showConfirm("Bạn có chắc chắn muốn đăng xuất không?", async () => {
+        try {
+          await account.logout();
+          localStorage.removeItem("role");
+          localStorage.removeItem("lastName");
+          this.$router.push("/login");
+        } catch (error) {
+          this.showAlert("Đăng xuất thất bại: " + error.message, "error");
+        }
+      });
+    },
+    showAlert(message, type) {
+      this.alertMessage = message;
+      this.alertType = type;
+      this.alertVisible = true;
+      this.alertIsConfirm = false;
+      this.alertIsClose = true;
+    },
+    showConfirm(message, action) {
+      this.alertMessage = message;
+      this.confirmAction = action;
+      this.alertVisible = true;
+      this.alertIsConfirm = true;
+      this.alertIsClose = false;
+    },
+    handleConfirm() {
+      if (this.confirmAction) {
+        this.confirmAction();
+      }
+      this.alertVisible = false;
     },
   },
 };
@@ -159,67 +170,6 @@ export default {
   height: 100vh;
   background-color: #f0f2f5;
   font-family: Arial, sans-serif;
-}
-
-.sidebar {
-  width: 200px;
-  background-color: #ffffff;
-  padding: 20px 0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-.create-user {
-  font-size: 16px;
-  font-weight: bold;
-  text-align: center;
-  vertical-align: middle;
-  cursor: pointer;
-}
-.sidebar .logo {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding-bottom: 18px;
-}
-
-.sidebar .logo img {
-  width: 150px;
-  height: auto;
-  margin-top: 10px;
-}
-
-.sidebar .menu {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-  flex-grow: 1;
-}
-
-.sidebar .menu li {
-  margin: 0;
-}
-
-.sidebar .menu li a {
-  display: flex;
-  align-items: center;
-  text-decoration: none;
-  color: #333;
-  font-size: 16px;
-  padding: 18px 20px;
-  border-left: 3px solid transparent;
-  transition: background-color 0.3s ease, border-color 0.3s ease;
-}
-
-.sidebar .menu li a i {
-  margin-right: 10px;
-}
-
-.sidebar .menu li a:hover,
-.sidebar .menu li a.router-link-active {
-  background-color: #f0f0f0;
-  border-color: #007bff;
 }
 
 .content {

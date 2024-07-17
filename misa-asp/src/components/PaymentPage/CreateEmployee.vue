@@ -84,18 +84,16 @@ export default {
   methods: {
     async createEmployee() {
       try {
-        console.log("Attempting to create employee...");
         const data = await account.createEmployee(
           this.employeeCode,
           this.employeeName,
           this.mobilePhone,
           this.department
         );
-        console.log("Tạo mới nhân viên thành công:", data);
+
         alert("Tạo mới nhân viên thành công!");
-        this.$router.push("/payment"); // Điều hướng đến trang danh sách nhân viên sau khi tạo thành công
+        this.$router.push("/payment");
       } catch (error) {
-        console.error("Lỗi khi tạo mới nhân viên:", error);
         this.generalError = error.message;
       }
     },

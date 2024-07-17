@@ -1,54 +1,17 @@
 <template>
   <div class="admin-page">
-    <div class="sidebar">
-      <router-link to="/" class="logo">
-        <img src="https://asp.misa.vn/Content/Images/SVG/Logo.svg" alt="Logo" />
-      </router-link>
-      <ul class="menu">
-        <li>
-          <router-link to="/dashboard"
-            ><i class="fa fa-tachometer"></i> Dashboard</router-link
-          >
-        </li>
-        <li>
-          <router-link to="/user"><i class="fa fa-users"></i> User</router-link>
-        </li>
-        <li>
-          <router-link to="/user-profile"
-            ><i class="fa fa-user"></i> User Profile</router-link
-          >
-        </li>
-        <li>
-          <router-link to="/account"
-            ><i class="fa fa-credit-card"></i> Account</router-link
-          >
-        </li>
-        <li>
-          <router-link to="/charts"
-            ><i class="fa fa-bar-chart"></i> Charts</router-link
-          >
-        </li>
-        <li>
-          <router-link to="/forms"
-            ><i class="fa fa-pencil"></i> Forms</router-link
-          >
-        </li>
-        <li>
-          <router-link to="/apps"><i class="fa fa-th"></i> Apps</router-link>
-        </li>
-        <li>
-          <router-link to="/maps"><i class="fa fa-map"></i> Maps</router-link>
-        </li>
-        <li>
-          <router-link to="/pages"
-            ><i class="fa fa-file"></i> Pages</router-link
-          >
-        </li>
-      </ul>
-    </div>
+    <SideBarComponent />
     <div class="content">
       <div class="header">
-        <h1><br></h1>
+        <MSAlert
+          :message="alertMessage"
+          :type="alertType"
+          :visible="alertVisible"
+          :isClose="alertIsClose"
+          @close="alertVisible = false"
+          @cancel="alertVisible = false"
+        />
+        <h1><br /></h1>
       </div>
       <div class="create">
         <p class="links">
@@ -119,9 +82,15 @@
 
 <script>
 import { account } from "../../api/account";
+import SideBarComponent from "../AdminPage/SideBarComponent.vue";
+import MSAlert from "../BaseComponent/MSAlert.vue";
 
 export default {
   name: "CreateUserComponent",
+  components: {
+    SideBarComponent,
+    MSAlert,
+  },
   data() {
     return {
       firstName: "",
@@ -132,6 +101,10 @@ export default {
       roleId: "",
       errors: {},
       generalError: "",
+      alertMessage: "",
+      alertType: "info",
+      alertVisible: false,
+      alertIsClose: false,
     };
   },
   methods: {
@@ -145,28 +118,28 @@ export default {
           this.password,
           this.roleId
         );
-        alert("User created successfully!");
-        this.$router.push("/admin");
+        this.showAlert("Người dùng tạo mới thành công!", "success");
+        setTimeout(() => {
+          this.$router.push("/admin");
+        }, 1500);
       } catch (error) {
         this.errors = {};
         this.generalError = "";
-
-        // Extract error messages
         const errorMsgs = error.message.split(", ");
-
-        // Handle specific validation errors
-        this.errors.Email = errorMsgs.find((msg) =>
-          msg.includes("Email error")
-        );
+        this.errors.Email = errorMsgs.find((msg) => msg.includes("Email Lỗi"));
         this.errors.PhoneNumber = errorMsgs.find((msg) =>
-          msg.includes("Phone number error")
+          msg.includes("Số điện thoại lỗi")
         );
-
-        // Handle general error if no specific errors are found
         if (!this.errors.Email && !this.errors.PhoneNumber) {
           this.generalError = error.message;
         }
       }
+    },
+    showAlert(message, type) {
+      this.alertMessage = message;
+      this.alertType = type;
+      this.alertVisible = true;
+      this.alertIsClose = true;
     },
   },
 };

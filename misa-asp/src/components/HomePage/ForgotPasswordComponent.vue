@@ -36,16 +36,14 @@ export default {
   methods: {
     async forgotPassword() {
       try {
-        console.log("Sending forgot password request...");
-        const data = await account.forgotPassword(this.email);
-        console.log("Forgot password request successful:", data);
-        alert("Password reset link has been sent to your email.");
+        const response = await account.forgotPassword(this.email);
+        if (response != null) {
+          alert("Yêu cầu làm mới mật khẩu đã được gửi đến Email của bạn");
+        } else {
+          throw new Error("Vui lòng nhập lại email chính xác");
+        }
       } catch (error) {
-        console.error(
-          "There was an error processing the forgot password request:",
-          error
-        );
-        alert("Email Not Found: " + error);
+        alert("Không tim thấy email: " + error);
       }
     },
   },

@@ -106,32 +106,34 @@ export default {
   methods: {
     async register() {
       try {
-    await account.register(
-      this.firstName,
-      this.lastName,
-      this.email,
-      this.phoneNumber,
-      this.password,
-      this.roleId
-    );
-    alert("User created successfully!");
-    this.$router.push("/login");
-  } catch (error) {
-    this.errors = {};
-    this.generalError = "";
+        await account.register(
+          this.firstName,
+          this.lastName,
+          this.email,
+          this.phoneNumber,
+          this.password,
+          this.roleId
+        );
+        alert("Người dùng đã được đăng ký!");
+        this.$router.push("/login");
+      } catch (error) {
+        this.errors = {};
+        this.generalError = "";
 
-    // Extract error messages
-    const errorMsgs = error.message.split(", ");
+        const errorMsgs = error.message.split(", ");
 
-    // Handle specific validation errors
-    this.errors.Email = errorMsgs.find((msg) => msg.includes("Email error"));
-    this.errors.PhoneNumber = errorMsgs.find((msg) => msg.includes("Phone number error"));
+        // xử lý nếu email hoặc sđt nhập lỗi
+        this.errors.Email = errorMsgs.find((msg) =>
+          msg.includes("Email error")
+        );
+        this.errors.PhoneNumber = errorMsgs.find((msg) =>
+          msg.includes("Phone number error")
+        );
 
-    // Handle general error if no specific errors are found
-    if (!this.errors.Email && !this.errors.PhoneNumber) {
-      this.generalError = error.message;
-    }
-  }
+        if (!this.errors.Email && !this.errors.PhoneNumber) {
+          this.generalError = error.message;
+        }
+      }
     },
   },
 };

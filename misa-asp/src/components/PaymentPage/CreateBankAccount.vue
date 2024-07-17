@@ -88,7 +88,6 @@ export default {
   methods: {
     async createBankAccount() {
       try {
-        console.log("Attempting to create bank account...");
         const data = await bankAccount.createBankAccount(
           this.accountNumber,
           this.bankName,
@@ -102,7 +101,6 @@ export default {
       }
     },
     save() {
-      // Logic for saving without submitting
       alert("Thông tin tài khoản ngân hàng đã được lưu!");
     },
   },

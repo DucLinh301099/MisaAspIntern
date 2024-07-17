@@ -121,7 +121,8 @@ h2 {
   flex: 1;
   padding: 10px;
   border: 1px solid #ccc;
-  border-radius: 4px;
+  border-radius: 3px;
+  outline: none;
 }
 
 .form-group input[type="text"],

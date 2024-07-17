@@ -1,54 +1,17 @@
 <template>
   <div class="admin-page">
-    <div class="sidebar">
-      <router-link to="/" class="logo">
-        <img src="https://asp.misa.vn/Content/Images/SVG/Logo.svg" alt="Logo" />
-      </router-link>
-      <ul class="menu">
-        <li>
-          <router-link to="/dashboard"
-            ><i class="fa fa-tachometer"></i> Dashboard</router-link
-          >
-        </li>
-        <li>
-          <router-link to="/user"><i class="fa fa-users"></i> User</router-link>
-        </li>
-        <li>
-          <router-link to="/user-profile"
-            ><i class="fa fa-user"></i> User Profile</router-link
-          >
-        </li>
-        <li>
-          <router-link to="/account"
-            ><i class="fa fa-credit-card"></i> Account</router-link
-          >
-        </li>
-        <li>
-          <router-link to="/charts"
-            ><i class="fa fa-bar-chart"></i> Charts</router-link
-          >
-        </li>
-        <li>
-          <router-link to="/forms"
-            ><i class="fa fa-pencil"></i> Forms</router-link
-          >
-        </li>
-        <li>
-          <router-link to="/apps"><i class="fa fa-th"></i> Apps</router-link>
-        </li>
-        <li>
-          <router-link to="/maps"><i class="fa fa-map"></i> Maps</router-link>
-        </li>
-        <li>
-          <router-link to="/pages"
-            ><i class="fa fa-file"></i> Pages</router-link
-          >
-        </li>
-      </ul>
-    </div>
+    <SideBarComponent />
     <div class="content">
       <div class="header">
-        <h1>Chỉnh Sửa Thông Tin Người Dùng</h1>
+        <MSAlert
+          :message="alertMessage"
+          :type="alertType"
+          :visible="alertVisible"
+          :isClose="alertIsClose"
+          @close="alertVisible = false"
+          @cancel="alertVisible = false"
+        />
+        <h1><br /></h1>
       </div>
       <div class="create">
         <p class="links">
@@ -105,13 +68,23 @@
 
 <script>
 import { account } from "../../api/account";
+import SideBarComponent from "../AdminPage/SideBarComponent.vue";
+import MSAlert from "../BaseComponent/MSAlert.vue";
 
 export default {
   name: "EditUserPage",
+  components: {
+    SideBarComponent,
+    MSAlert,
+  },
   props: ["id"],
   data() {
     return {
       editUser: null,
+      alertMessage: "",
+      alertType: "info",
+      alertVisible: false,
+      alertIsClose: false,
     };
   },
   async created() {
@@ -119,10 +92,10 @@ export default {
       const response = await account.getUserById(this.id);
       this.editUser = response;
     } catch (error) {
-      console.error("Error fetching user:", error);
-      alert(
-        "Failed to fetch user data: " +
-          (error.response ? error.response.data.message : error.message)
+      this.showAlert(
+        "Lỗi khi hiển thị thông tin: " +
+          (error.response ? error.response.data.message : error.message),
+        "error"
       );
     }
   },
@@ -130,15 +103,26 @@ export default {
     async saveUser() {
       try {
         await account.updateUser(this.editUser);
-        alert("User updated successfully!");
-        this.$router.push("/admin");
+        this.showAlert("Người dùng cập nhật thành công!", "success");
+        setTimeout(() => {
+          this.$router.push("/admin");
+        }, 1500);
       } catch (error) {
-        console.error("Error saving user:", error);
-        alert("Failed to update user: " + error.message);
+        this.showAlert(
+          "Lỗi khi cập nhật người dùng: " + error.message,
+          "error"
+        );
       }
     },
     cancelEdit() {
       this.$router.push("/admin");
+    },
+    showAlert(message, type) {
+      this.alertMessage = message;
+      this.alertType = type;
+      this.alertVisible = true;
+      this.alertIsConfirm = false;
+      this.alertIsClose = true;
     },
   },
 };
@@ -153,8 +137,8 @@ export default {
   background-color: #f0f2f5;
   font-family: Arial, sans-serif;
 }
-h2{
-margin-bottom: 40px;
+h2 {
+  margin-bottom: 40px;
 }
 .sidebar {
   width: 200px;
@@ -243,7 +227,7 @@ margin-bottom: 40px;
   border-radius: 3px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   width: auto;
-  padding: 20px 50px 50px 50px; 
+  padding: 20px 50px 50px 50px;
 }
 
 .form-group-inline {
@@ -269,7 +253,6 @@ margin-bottom: 40px;
 .form-group input:focus {
   border-color: #1fa153;
   outline: none;
-  
 }
 a {
   color: white;

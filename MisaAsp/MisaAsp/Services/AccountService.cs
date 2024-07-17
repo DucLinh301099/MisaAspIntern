@@ -172,9 +172,9 @@ namespace MisaAsp.Services
             return null;
         }
 
-        public async Task<bool> ForgotPasswordAsync(ForgotPasswordRequestVM request)
+        public async Task<bool> ForgotPasswordAsync(ForgotPasswordRequestVM user)
         {
-            return await _accountRepo.ForgotPasswordAsync(request);
+            return await _accountRepo.ForgotPasswordAsync(user);
         }
 
         /// <summary>
