@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MisaAsp.Controllers.Base;
 using MisaAsp.Models.Ulti;
 using MisaAsp.Models.ViewModel;
 using MisaAsp.Services;
@@ -26,12 +27,6 @@ namespace MisaAsp.Controllers
        
         public async Task<IActionResult> Register([FromBody] RegistrationRequestVM request)
         {
-            if (!ModelState.IsValid)
-            {
-                _response.HandleError();
-                return Ok(_response);
-            }
-
             var userId = await _accountService.RegisterUserAsync(request);
 
             if (userId > 0)
@@ -55,12 +50,6 @@ namespace MisaAsp.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateEmployee([FromBody] EmployeeVM request)
         {
-            if (!ModelState.IsValid)
-            {
-                _response.HandleError();
-                return Ok(_response);
-            }
-
             var employeeId = await _accountService.CreateEmployeeAsync(request);
 
             if (employeeId > 0)
@@ -103,19 +92,9 @@ namespace MisaAsp.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost("login")]    
+
         public async Task<IActionResult> Login([FromBody] LoginRequestVM request)
         {
-            if (!ModelState.IsValid)
-            {
-                _response.HandleError("Thất bại");
-                return Ok(_response);
-            }
-
-            if (Request.Cookies.ContainsKey("AuthToken"))
-            {
-                Response.Cookies.Delete("AuthToken");
-            }
-
             var authResult = await _accountService.AuthenticateUserAsync(request);
 
             if (authResult != null && !string.IsNullOrEmpty(authResult.Role))
@@ -173,7 +152,6 @@ namespace MisaAsp.Controllers
             if (user == null)
             {
                 _response.HandleError("Không tìm thấy tài khoản");
-
             }
             else
             {

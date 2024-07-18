@@ -1,16 +1,17 @@
 ﻿
+using MisaAsp.Attribute;
 using System.ComponentModel.DataAnnotations;
 
 namespace MisaAsp.Models.BaseModel
 {
     public class RoleAccount
     {
-        [Required]
+        [RequiredVI]
         public int UserId { get; set; }
-        [Required]
+        [RequiredVI]
         public int RoleId { get; set; }
-        [Required]
-        [StringLength(256)]
+        [RequiredVI]
+        [StringLengthVI(256)]
         public string RoleName { get; set; } 
     }
 }

@@ -6,7 +6,7 @@
     <div class="input-container">
       <div class="input-with-button" :class="{ focus: isInputFocused }">
         <MSInput
-          class="base-input"
+          classCustom="base-input"
           :type="type"
           :value="inputValue"
           @input="handleOnInput"
@@ -231,7 +231,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 .combobox-account-input-wrapper {
   display: flex;
   flex-direction: column;
@@ -246,7 +246,6 @@ label {
 
 .input-container {
   display: flex;
-  align-items: center;
 }
 
 .input-with-button {
@@ -272,17 +271,10 @@ label {
 
 .base-input {
   width: 100%;
-  height: 30px; /* Bạn có thể thay đổi giá trị này nếu cần */
+  height: 30px;
   border: none;
   padding: 0 8px;
   box-sizing: border-box;
-}
-
-.base-input {
-  border: none;
-  padding: 8px;
-  box-sizing: border-box;
-  height: 30px;
   outline: none;
 }
 
@@ -292,17 +284,20 @@ label {
   align-items: center;
   width: 40px;
   height: 40px;
+  max-width: 40px;
   border: none;
   background-color: white;
   cursor: pointer;
   font-size: 24px;
   color: green;
+  margin-left: auto;
 }
 
 .multiselect {
   width: 40px;
   border: none;
   border-left: 1px solid #999;
+  margin-left: auto;
 }
 
 .second-input {
@@ -310,10 +305,11 @@ label {
   border-radius: 2px;
   padding: 8px;
   box-sizing: border-box;
-  height: 33px;
+  height: 32px;
   flex-grow: 1;
-  width: 50%;
   margin-left: 15px;
+  outline: none;
+  margin-top: 17px;
 }
 .second-input:focus {
   border-color: 1px solid #68c75b;

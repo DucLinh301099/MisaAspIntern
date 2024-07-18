@@ -159,6 +159,8 @@ const updatePaymentMethod = (value) => {
 .inline-label {
   margin-left: 10px;
   white-space: nowrap;
+  font-weight: 300;
+  margin-bottom: 0;
 }
 
 .right-section {

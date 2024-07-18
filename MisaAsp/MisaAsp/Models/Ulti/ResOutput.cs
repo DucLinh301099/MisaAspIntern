@@ -6,6 +6,7 @@ namespace MisaAsp.Models.Ulti
     {
         public string Message { get; set; }
         public object Data { get; set; }
+        public object Code { get; set; }
         public bool IsSuccess { get; set; }
         public ResOutput() { }
         public void HandleSuccess(string message, object data = null)
@@ -15,11 +16,18 @@ namespace MisaAsp.Models.Ulti
             IsSuccess = true;
         }
 
-        public void HandleError(string message = "Thất bại", object data = null)
+        public void HandleError(string message = "Thất bại", object data = null, object code = null)
         {
             Message = message;
             Data = data;
             IsSuccess = false;
+            Code = code;
         }
+    }
+
+    public class ColumnError()
+    {
+        public string FieldName { get; set; }
+        public string ErrorCode { get; set; }
     }
 }

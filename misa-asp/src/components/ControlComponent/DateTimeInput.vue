@@ -8,6 +8,7 @@
       >
         <MSInput
           :value="ngayHachToan"
+          classCustom="base-input"
           @onInput="updateNgayHachToan"
           type="date"
           @focus="handleFocus('isNgayHachToanFocused')"
@@ -19,6 +20,7 @@
       <label for="ngay-chung-tu">Ngày chứng từ</label>
       <div class="input-with-button" :class="{ focused: isNgayChungTuFocused }">
         <MSInput
+          classCustom="base-input"
           :value="ngayChungTu"
           @onInput="updateNgayChungTu"
           type="date"
@@ -37,6 +39,7 @@
         }"
       >
         <MSInput
+          classCustom="base-input"
           :value="soChungTu"
           @onInput="updateSoChungTu"
           @focus="handleFocus('isSoChungTuFocused')"
@@ -50,7 +53,8 @@
         class="input-with-button"
         :class="{ focused: isHanQuyetToanFocused }"
       >
-        <BaseInput
+        <MSInput
+          classCustom="base-input"
           :value="hanQuyetToan"
           @onInput="updateHanQuyetToan"
           type="date"
@@ -154,19 +158,17 @@ export default {
   flex-direction: column;
   margin-bottom: 8px;
 }
-
-label {
-  margin-bottom: 2px;
-  font-weight: bold;
-}
-
 .base-input {
   width: 100%;
   height: 30px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  border: none;
   padding: 0 8px;
   box-sizing: border-box;
+  outline: none;
+}
+label {
+  margin-bottom: 2px;
+  font-weight: bold;
 }
 
 .base-input input[type="date"] {

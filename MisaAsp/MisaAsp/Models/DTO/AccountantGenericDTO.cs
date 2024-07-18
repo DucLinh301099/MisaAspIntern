@@ -1,22 +1,23 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using MisaAsp.Attribute;
+using System.ComponentModel.DataAnnotations;
 
 namespace MisaAsp.Models.DTO
 {
     public class AccountantGenericDTO
     {
-        [Required]
+        [RequiredVI]
         public int Id { get; set; }
-        [Required]
-        [StringLength(100)]
+        [RequiredVI]
+        [StringLengthVI(100)]
         public string Name { get; set; }
-        [Required]
-        [StringLength(100)]
+        [RequiredVI]
+        [StringLengthVI(100)]
         public string Location { get; set; }
-        [Required]
-        [StringLength(100)]
+        [RequiredVI]
+        [StringLengthVI(100)]
         public string Price { get; set; }
-        [Required]
-        [StringLength(100)]
+        [RequiredVI]
+        [StringLengthVI(100)]
         public string Logo { get; set; }
     }
 }

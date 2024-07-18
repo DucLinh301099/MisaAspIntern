@@ -1,10 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MisaAsp.Controllers.Base;
 using MisaAsp.Models.Ulti;
 using MisaAsp.Models.ViewModel;
 using MisaAsp.Services;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace MisaAsp.Controllers
 {
@@ -27,15 +26,7 @@ namespace MisaAsp.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateCustomer([FromBody] CustomerVM request)
         {
-            if (!ModelState.IsValid)
-            {
-
-                _response.HandleError();
-                return Ok(_response);
-            }
-
             var customerId = await _customerService.CreateCustomerAsync(request);
-           
 
             if (customerId > 0)
             {
@@ -59,7 +50,6 @@ namespace MisaAsp.Controllers
         public async Task<IActionResult> GetCustomer()
         {
             var customers = await _customerService.GetAllCustomerAsync();
-            
 
             if (customers != null && customers.Any())
             {

@@ -3,15 +3,14 @@
     <div v-if="visible" class="alert-box" :class="type">
       <div class="alert-content">
         <span class="alert-message">{{ message }}</span>
-        <button v-if="isClose" class="close-button" @click="$emit('close')">
-          X
-        </button>
       </div>
-      <div v-if="isConfirm" class="confirm-buttons">
-        <button class="confirm-button" @click="$emit('confirm')">
+      <div v-if="isConfirm" class="comfirm-buttons">
+        <button class="comfirm-button-ms" @click="$emit('confirm')">
           Xác nhận
         </button>
-        <button class="cancel-button" @click="$emit('cancel')">Hủy</button>
+        <button v-if="isShow" class="cancel-button-ms" @click="$emit('cancel')">
+          Hủy
+        </button>
       </div>
     </div>
   </transition>
@@ -37,7 +36,7 @@ export default {
       type: Boolean,
       required: true,
     },
-    isClose: {
+    isShow: {
       type: Boolean,
       required: true,
     },
@@ -54,7 +53,13 @@ export default {
 .fade-leave-to {
   opacity: 0;
 }
-
+.cancel-button-ms,
+.comfirm-button-ms {
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+  width: 100px;
+}
 .alert-box {
   position: fixed;
   top: 50px;
@@ -81,9 +86,8 @@ export default {
   margin-right: 10px;
 }
 
-.close-button,
-.confirm-button,
-.cancel-button {
+.comfirm-button-ms,
+.cancel-button-ms {
   padding: 5px 10px;
   border: none;
   border-radius: 3px;
@@ -95,23 +99,28 @@ export default {
   scale: 1.2;
 }
 
-.confirm-buttons {
+.comfirm-buttons {
   display: flex;
   justify-content: flex-end;
   margin-top: 10px;
 }
 
-.confirm-button {
+.comfirm-button-ms {
   background-color: #28a745;
   color: white;
   margin-right: 10px;
 }
 
-.cancel-button {
+.cancel-button-ms {
   background-color: #dc3545;
   color: white;
 }
-
+.cancel-button-ms:hover {
+  background-color: rgb(175, 14, 14);
+}
+.comfirm-button-ms:hover {
+  background-color: green;
+}
 .alert-box.info {
   border-color: #28a745;
 }

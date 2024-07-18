@@ -4,6 +4,7 @@ using System.Data;
 using Dapper;
 using System.Threading.Tasks;
 using System.Data.Common;
+using MisaAsp.Repositories.Base;
 
 namespace MisaAsp.Repositories
 {

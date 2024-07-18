@@ -1,19 +1,20 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using MisaAsp.Attribute;
+using System.ComponentModel.DataAnnotations;
 
 
 namespace MisaAsp.Models.BaseModel
 {
     public class AuthResult
     {
-        [Required]
+        [RequiredVI]
         public int UserId { get; set; }
 
-        [Required]
-        [StringLength(256)]
+        [RequiredVI]
+        [StringLengthVI(256)]
         public string Token { get; set; }
 
-        [Required]
-        [StringLength(50)]
+        [RequiredVI]
+        [StringLengthVI(50)]
         public string Role { get; set; }
     }
 }

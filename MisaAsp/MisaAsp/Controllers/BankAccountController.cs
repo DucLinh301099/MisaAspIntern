@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MisaAsp.Controllers.Base;
 using MisaAsp.Models.Ulti;
 using MisaAsp.Models.ViewModel;
 using MisaAsp.Services;
-using System.Threading.Tasks;
 
 namespace MisaAsp.Controllers
 {
@@ -27,12 +27,6 @@ namespace MisaAsp.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateBankAccount([FromBody] BankAccountVM request)
         {
-            if (!ModelState.IsValid)
-            {
-                _response.HandleError();
-                return Ok(_response);
-            }
-
             var bankId = await _bankaccountService.CreateBankAccountAsync(request);
             
             if (bankId > 0)

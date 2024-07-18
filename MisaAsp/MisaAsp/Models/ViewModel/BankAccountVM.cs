@@ -1,21 +1,22 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using MisaAsp.Attribute;
+using System.ComponentModel.DataAnnotations;
 
 namespace MisaAsp.Models.ViewModel
 {
     public class BankAccountVM
     {
-        [Required]
+        [RequiredVI]
         public int Id { get; set; }
-        [Required]
-        [StringLength(50)]
+        [RequiredVI]
+        [StringLengthVI(50)]
         public string AccountNumber { get; set; }
-        [Required]
-        [StringLength(50)]
+        [RequiredVI]
+        [StringLengthVI(50)]
         public string BankName { get; set; }
-        [Required]
-        [StringLength(50)]
+        [RequiredVI]
+        [StringLengthVI(50)]
         public string Branch { get; set; }
-        [Required]
+        [RequiredVI]
         public int TypeOfBank { get; set; }
     }
 }

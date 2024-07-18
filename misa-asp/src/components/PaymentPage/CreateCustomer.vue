@@ -60,7 +60,7 @@
             type="text"
             id="address"
             v-model="address"
-            class="input-field"
+            class="input-field-b"
             required
           />
         </div>
@@ -118,7 +118,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 .create-customer {
   background-color: #fff;
 
@@ -149,7 +149,6 @@ export default {
   display: flex;
   flex-direction: column;
   flex: 1;
-  margin-right: 40px;
 }
 
 .input-container.full-width {
@@ -177,7 +176,7 @@ label {
   color: #333;
   width: 200px;
 }
-.input-field {
+.input-field-b {
   padding: 8px;
   border: 1px solid #babec5;
   border-radius: 2.5px;

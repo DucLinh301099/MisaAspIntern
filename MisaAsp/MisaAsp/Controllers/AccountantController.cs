@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MisaAsp.Services;
-
+using MisaAsp.Controllers.Base;
 using MisaAsp.Models.Ulti;
+using MisaAsp.Services;
 
 namespace MisaAsp.Controllers
 {

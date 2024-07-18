@@ -2,6 +2,7 @@
 using MisaAsp.Models.ViewModel;
 using System.Data;
 using Dapper;
+using MisaAsp.Repositories.Base;
 
 
 namespace MisaAsp.Repositories

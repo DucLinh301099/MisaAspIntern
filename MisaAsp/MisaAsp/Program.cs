@@ -1,9 +1,13 @@
 ﻿
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.IdentityModel.Tokens;
 using MisaAsp.Middleware;
+using MisaAsp.Models.BaseModel;
 using MisaAsp.Models.Ulti;
 using MisaAsp.Repositories;
+using MisaAsp.Repositories.Base;
 using MisaAsp.Services;
 using Npgsql;
 using System.Data;
@@ -16,6 +20,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHttpContextAccessor();
+builder.Services.Configure<ApiBehaviorOptions>(options => {
+     options.SuppressModelStateInvalidFilter = true;
+ });
 
 // Cấu hình Domain tới FE
 var corsOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>();
@@ -49,6 +56,8 @@ builder.Services.AddScoped<IBankAccountRepository, BankAccountRepository>();
 
 builder.Services.AddScoped<ResOutput>();
 #endregion
+
+builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
 
 //Thiết lập cơ chế xác thực và các tham số cần thiết để xác thực JWT.
 builder.Services.AddAuthentication(options =>
@@ -104,6 +113,7 @@ app.UseRouting();
 app.UseCors("CorsPolicy");
 app.UseMiddleware<TokenMiddleware>();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
+
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -111,5 +121,6 @@ app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllers();
 });
+
 
 app.Run();

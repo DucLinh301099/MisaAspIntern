@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using MisaAsp.Attribute;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MisaAsp.Models.BaseModel
@@ -10,29 +11,29 @@ namespace MisaAsp.Models.BaseModel
         [Column("id")]
         public int Id { get; set; }
 
-        [Required]
+        [RequiredVI]
         [Column("objectid")]
-        [StringLength(50)]
+        [StringLengthVI(50)]
         public string ObjectId { get; set; }
 
-        [Required]
+        [RequiredVI]
         [Column("objectname")]
-        [StringLength(100)]
+        [StringLengthVI(100)]
         public string ObjectName { get; set; }
 
-        [Required]
+        [RequiredVI]
         [Column("taxcode")]
-        [StringLength(20)]
+        [StringLengthVI(20)]
         public string TaxCode { get; set; }
 
-        [Required]
+        [RequiredVI]
         [Column("address")]
-        [StringLength(200)]
+        [StringLengthVI(200)]
         public string Address { get; set; }
 
-        [Required]
+        [RequiredVI]
         [Column("phonenumber")]
-        [StringLength(15)]
+        [StringLengthVI(15)]
         public string PhoneNumber { get; set; }
     }
 }

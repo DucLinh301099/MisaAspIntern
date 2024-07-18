@@ -1,25 +1,25 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using MisaAsp.Attribute;
 
 namespace MisaAsp.Models.ViewModel
 {
     public class CustomerVM
     {
-        [Required]
+        [RequiredVI]
         public int Id { get; set; }
-        [Required]
-        [StringLength(100)]
+        [RequiredVI]
+        [StringLengthVI(100)]
         public string ObjectId { get; set; }
-        [Required]
-        [StringLength(100)]
+        [RequiredVI]
+        [StringLengthVI(100)]
         public string ObjectName { get; set; }
-        [Required]
-        [StringLength(100)]
+        [RequiredVI]
+        [StringLengthVI(100)]
         public string TaxCode { get; set; }
-        [Required]
-        [StringLength(100)]
+        [RequiredVI]
+        [StringLengthVI(100)]
         public string Address { get; set; }
-        [Required]
-        [StringLength(100)]
+        [RequiredVI]
+        [StringLengthVI(100)]
         public string PhoneNumber { get; set; }
     }
 }

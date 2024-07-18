@@ -1,5 +1,6 @@
 ﻿using MisaAsp.Models.DTO;
 using MisaAsp.Models.ViewModel;
+using MisaAsp.Repositories.Base;
 using System.Data;
 
 namespace MisaAsp.Repositories

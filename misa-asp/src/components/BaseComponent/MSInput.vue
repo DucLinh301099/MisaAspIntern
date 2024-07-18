@@ -1,14 +1,12 @@
 <template>
-  <div class="input-wrapper">
-    <input
-      class="base-input"
-      :type="type"
-      :value="value"
-      @input="updateValue"
-      @focus="handleFocus"
-      @blur="handleBlur"
-    />
-  </div>
+  <input
+    :class="classCustom"
+    :type="type"
+    :value="value"
+    @input="updateValue"
+    @focus="handleFocus"
+    @blur="handleBlur"
+  />
 </template>
 
 <script>
@@ -27,6 +25,10 @@ export default {
       type: String,
       default: null,
     },
+    classCustom: {
+      type: String,
+      default: null,
+    },
   },
   methods: {
     updateValue(event) {
@@ -42,19 +44,4 @@ export default {
 };
 </script>
 
-<style scoped>
-.input-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.base-input {
-  width: 100%;
-  height: 30px; /* Bạn có thể thay đổi giá trị này nếu cần */
-  border: none;
-  padding: 0 8px;
-  box-sizing: border-box;
-  outline: none;
-}
-</style>
+<style></style>

@@ -1,35 +1,36 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using MisaAsp.Attribute;
+using System.ComponentModel.DataAnnotations;
 
 namespace MisaAsp.Models.ViewModel
 {
     public class UserRequestVM
     {
-        [Required]
+        [RequiredVI]
         public int Id { get; set; }
 
-        [Required]
-        [StringLength(100)]
+        [RequiredVI]
+        [StringLengthVI(100)]
         public string FirstName { get; set; }
 
-        [Required]
-        [StringLength(100)]
+        [RequiredVI]
+        [StringLengthVI(100)]
         public string LastName { get; set; }
 
-        [Required]
+        [RequiredVI]
         [EmailAddress]
-        [StringLength(100)]
+        [StringLengthVI(100)]
         public string Email { get; set; }
 
-        [Required]
+        [RequiredVI]
         [Phone]
-        [StringLength(100)]
+        [StringLengthVI(100)]
         public string PhoneNumber { get; set; }
 
         // New properties for RoleId and RoleName
-        [Required]
+        [RequiredVI]
         public int RoleId { get; set; }
 
-        [Required]
+        [RequiredVI]
         public string RoleName { get; set; }
     }
 }

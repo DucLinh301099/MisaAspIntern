@@ -7,61 +7,80 @@
           :message="alertMessage"
           :type="alertType"
           :visible="alertVisible"
-          :isClose="alertIsClose"
-          @close="alertVisible = false"
-          @cancel="alertVisible = false"
+          :isConfirm="alertIsConfirm"
+          :isShow="alertIsShow"
+          @confirm="handleConfirm"
         />
-        <h1><br /></h1>
+        <div class="create">
+          <p class="links">
+            <router-link class="router-link" to="/admin"
+              >Quay lại danh sách Users</router-link
+            >
+          </p>
+        </div>
       </div>
-      <div class="create">
-        <p class="links">
-          <router-link to="/admin">Quay lại danh sách Users</router-link>
-        </p>
-      </div>
+
       <form @submit.prevent="saveUser" class="form-container" v-if="editUser">
-        <h2 class="form-title">Chỉnh Sửa Thông Tin Người Dùng</h2>
-        <div class="form-group-inline">
-          <div class="form-group">
-            <input
-              type="text"
-              v-model="editUser.firstName"
-              placeholder="Họ và đệm"
-              required
-            />
+        <div class="form-input">
+          <h2 class="form-title">Chỉnh Sửa Thông Tin Người Dùng</h2>
+          <div class="form-group-inline">
+            <div class="form-group">
+              <label class="label">Họ và đệm</label>
+              <input
+                type="text"
+                v-model="editUser.firstName"
+                placeholder="Họ và đệm"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label class="label"
+                >Tên
+                <span class="required">*</span>
+              </label>
+              <input
+                type="text"
+                v-model="editUser.lastName"
+                placeholder="Tên"
+                required
+              />
+            </div>
           </div>
-          <div class="form-group">
-            <input
-              type="text"
-              v-model="editUser.lastName"
-              placeholder="Tên"
-              required
-            />
+          <div class="form-group-inline">
+            <div class="form-group">
+              <label class="label"
+                >Email
+                <span class="required">*</span>
+              </label>
+              <input
+                type="email"
+                v-model="editUser.email"
+                placeholder="Email"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label class="label"
+                >Số điện thoại
+                <span class="required">*</span>
+              </label>
+              <input
+                type="text"
+                v-model="editUser.phoneNumber"
+                placeholder="Số điện thoại"
+                required
+              />
+            </div>
           </div>
-        </div>
-        <div class="form-group">
-          <input
-            type="email"
-            v-model="editUser.email"
-            placeholder="Email"
-            required
-          />
-        </div>
-        <div class="form-group">
-          <input
-            type="text"
-            v-model="editUser.phoneNumber"
-            placeholder="Số điện thoại"
-            required
-          />
-        </div>
-        <div class="form-group-button">
-          <button type="submit" class="edit-button">Lưu</button>
-          <button type="button" @click="cancelEdit" class="cancel-button">
-            Hủy
-          </button>
+
+          <div class="form-group-button">
+            <button type="submit" class="edit-button">Lưu</button>
+            <button type="button" @click="cancelEdit" class="cancel-button">
+              Hủy
+            </button>
+          </div>
         </div>
       </form>
-      <div v-else class="loading-message">Đang tải dữ liệu người dùng...</div>
     </div>
   </div>
 </template>
@@ -70,14 +89,12 @@
 import { account } from "../../api/account";
 import SideBarComponent from "../AdminPage/SideBarComponent.vue";
 import MSAlert from "../BaseComponent/MSAlert.vue";
-import MSInput from "../BaseComponent/MSInput.vue";
 
 export default {
   name: "EditUserPage",
   components: {
     SideBarComponent,
     MSAlert,
-    MSInput,
   },
   props: ["id"],
   data() {
@@ -86,47 +103,52 @@ export default {
       alertMessage: "",
       alertType: "info",
       alertVisible: false,
-      alertIsClose: false,
+      alertIsConfirm: false,
+      confirmAction: null,
+      alertIsShow: true,
     };
   },
   async created() {
-    try {
-      const response = await account.getUserById(this.id);
-      this.editUser = response;
-    } catch (error) {
-      this.showAlert(
-        "Lỗi khi hiển thị thông tin: " +
-          (error.response ? error.response.data.message : error.message),
-        "error"
-      );
-    }
+    await this.loadUser();
   },
   methods: {
+    async loadUser() {
+      const response = await account.getUserById(this.id);
+      if (response) {
+        this.editUser = response;
+      } else {
+        this.showConfirm("Lỗi khi hiển thị thông tin người dùng", "error");
+      }
+    },
     async saveUser() {
       const response = await account.updateUser(this.editUser);
-
       if (response) {
-        this.showAlert("Người dùng cập nhật thành công!", "success");
-        setTimeout(() => {
-          this.$router.push("/admin");
-        }, 1500);
+        this.showConfirm("Người dùng cập nhật thành công!", () =>
+          this.$router.push("/admin")
+        );
       } else {
-        this.showAlert(
+        this.showConfirm(
           "Lỗi khi cập nhật người dùng: " + response.message,
           "error"
         );
       }
     },
-
     cancelEdit() {
       this.$router.push("/admin");
     },
-    showAlert(message, type) {
+
+    showConfirm(message, action) {
       this.alertMessage = message;
-      this.alertType = type;
+      this.confirmAction = action;
       this.alertVisible = true;
-      this.alertIsConfirm = false;
-      this.alertIsClose = true;
+      this.alertIsConfirm = true;
+      this.alertIsShow = false;
+    },
+    handleConfirm() {
+      if (this.confirmAction) {
+        this.confirmAction();
+      }
+      this.alertVisible = false;
     },
   },
 };
@@ -140,6 +162,17 @@ export default {
   height: 100vh;
   background-color: #f0f2f5;
   font-family: Arial, sans-serif;
+}
+.form-input {
+  background-color: #ffffff;
+  padding: 40px;
+  border-radius: 3px;
+  max-width: 600px;
+  margin: 0px auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.required {
+  color: #ca1f1f;
 }
 h2 {
   margin-bottom: 40px;
@@ -226,7 +259,7 @@ h2 {
 }
 
 .form-container {
-  background-color: #fff;
+  background-color: #f9f9f9;
   padding: 40px 20px 40px 20px;
   border-radius: 3px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -277,6 +310,7 @@ a {
   cursor: pointer;
   border: none;
   border-radius: 3px;
+  width: 120px;
 }
 
 .edit-button {
@@ -295,13 +329,12 @@ a {
 }
 
 .create {
-  margin-top: 20px;
   text-align: left; /* Align left */
 }
 
 .create .links {
   display: inline-block;
-  background-color: #007bff;
+  background-color: #28a745;
   color: white;
   font-size: 16px;
   font-weight: bold;
@@ -315,7 +348,7 @@ a {
 }
 
 .create .links:hover {
-  background-color: #0069d9;
+  background-color: #218838;
 }
 
 .loading-message {

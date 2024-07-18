@@ -90,7 +90,7 @@ export const base = {
           handleSuccess(response.data.data);
         }
       } else {
-        alert(response.data.message);
+        //alert(response.data.message);
         if (handleError && typeof handleError === 'function') {
           handleError(response.data.data);
         }
@@ -98,7 +98,7 @@ export const base = {
     }
     return response.data;
   } catch (error) {
-    alert('Có lỗi trong quá trình xử lý.');
+    //alert('Có lỗi trong quá trình xử lý.');
     if (handleException && typeof handleException === 'function') {
       handleException();
     }
@@ -134,7 +134,7 @@ export const base = {
           handleSuccess(response.data.data);
         }
       } else {
-        alert(response.data.message);
+       // alert(response.data.message);
         if (handleError && typeof handleError === 'function') {
           handleError(response.data.data);
         }
@@ -142,7 +142,7 @@ export const base = {
     }
     return response.data;
   } catch (error) {
-    alert('Có lỗi trong quá trình xử lý.');
+    //alert('Có lỗi trong quá trình xử lý.');
     if (handleException && typeof handleException === 'function') {
       handleException();
     }
@@ -185,7 +185,7 @@ export const base = {
           handleSuccess(response.data.data);
         }
       } else {
-        alert(response.data.message);
+        //alert(response.data.message);
         if (handleError && typeof handleError === 'function') {
           handleError(response.data.data);
         }
@@ -193,7 +193,7 @@ export const base = {
     }
     return response.data;
   } catch (error) {
-    alert('Có lỗi trong quá trình xử lý.');
+    //alert('Có lỗi trong quá trình xử lý.');
     if (handleException && typeof handleException === 'function') {
       handleException();
     }

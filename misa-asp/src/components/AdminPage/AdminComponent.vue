@@ -8,7 +8,7 @@
           :type="alertType"
           :visible="alertVisible"
           :isConfirm="alertIsConfirm"
-          :isClose="alertIsClose"
+          :isShow="alertIsShow"
           @close="alertVisible = false"
           @confirm="handleConfirm"
           @cancel="alertVisible = false"
@@ -32,8 +32,8 @@
           />
         </div>
         <div class="create-user">
-          <button class="create-button" @click="createUser">
-            <i class="fa fa-user-plus"></i> Tạo mới User
+          <button class="ad-create-button" @click="createUser">
+            <i class="fa fa-user-plus"></i> Tạo mới
           </button>
         </div>
       </div>
@@ -86,7 +86,7 @@ export default {
       alertVisible: false,
       alertIsConfirm: false,
       confirmAction: null,
-      alertIsClose: false,
+      alertIsShow: null,
     };
   },
   async created() {
@@ -143,14 +143,13 @@ export default {
       this.alertType = type;
       this.alertVisible = true;
       this.alertIsConfirm = false;
-      this.alertIsClose = true;
     },
     showConfirm(message, action) {
       this.alertMessage = message;
       this.confirmAction = action;
       this.alertVisible = true;
       this.alertIsConfirm = true;
-      this.alertIsClose = false;
+      this.alertIsShow = true;
     },
     handleConfirm() {
       if (this.confirmAction) {
@@ -223,6 +222,8 @@ export default {
   align-items: center;
   gap: 8px;
   margin-left: 10px;
+  margin-right: 2px;
+  width: 150px;
 }
 
 .logout-button:hover {
@@ -245,7 +246,7 @@ export default {
   outline: none;
 }
 
-.create-user .create-button {
+.create-user .ad-create-button {
   background-color: #007bff;
   color: white;
   border: none;
@@ -256,6 +257,8 @@ export default {
   font-size: 16px;
   display: flex;
   align-items: center;
+  width: 150px;
+  margin-right: 20px;
 }
 
 .create-user .create-button i {

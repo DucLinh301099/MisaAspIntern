@@ -20,7 +20,7 @@
             />
             <MSInput
               v-model="bankNameInput"
-              class="base-input second-input"
+              classCustom="second-input"
               :class="{ onFocus: isBankNameInputFocused }"
               :type="type"
               :value="payment.bankExpenseName"
@@ -38,7 +38,7 @@
             />
             <MSInput
               v-model="addressValue"
-              class="base-input second-input"
+              classCustom="second-input"
               :class="{ onFocus: isCustomerFocused }"
               :type="type"
               :value="payment.customerAddress"
@@ -58,7 +58,7 @@
             <MSInput
               v-if="!hideAccountReceive"
               v-model="accountReceiveValue"
-              class="base-input second-input"
+              classCustom="second-input"
               :class="{ onFocus: isAccountReceiveValueFocused }"
               :type="type"
               :value="payment.bankReceiveName"
@@ -79,7 +79,7 @@
                   v-model="inputValueCustomer"
                   :value="defaultBillContent"
                   :validator="inputValidator"
-                  class="base-input-1"
+                  classCustom="base-input"
                   @input="updateBillContent"
                   @focus="handleFocus('isInputValueFocused')"
                   @blur="handleBlur('isInputValueFocused')"
@@ -434,15 +434,6 @@ label {
   margin-bottom: 4px;
 }
 
-.base-input {
-  border: 1px solid #999;
-  padding: 8px;
-  box-sizing: border-box;
-  height: 35px;
-  margin-left: 15px;
-  width: 100%;
-}
-
 .second-input {
   border: 1px solid #999;
   border-radius: 2px;
@@ -450,6 +441,7 @@ label {
   box-sizing: border-box;
   height: 33px;
   flex-grow: 1;
+  margin-left: 15px;
   width: 50%;
   margin-top: 17px;
 }
@@ -510,6 +502,7 @@ label {
   overflow: hidden;
   flex-grow: 2;
   height: 31px;
+  width: 100%;
 }
 .base-input-1 {
   border: none;

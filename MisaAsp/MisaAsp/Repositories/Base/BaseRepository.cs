@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace MisaAsp.Repositories
+namespace MisaAsp.Repositories.Base
 {
     public interface IBaseRepository
     {
@@ -13,7 +13,7 @@ namespace MisaAsp.Repositories
         Task<T> ExecuteScalarAsync<T>(string sql, object parameters = null);
         Task<T> ExecuteProcScalarAsync<T>(string procedureName, object parameters);
         Task<T> QuerySingleOrDefaultAsync<T>(string sql, object parameters = null);
-        Task<T> QueryFirstOrDefaultAsync<T>(string sql, object parameters = null); 
+        Task<T> QueryFirstOrDefaultAsync<T>(string sql, object parameters = null);
     }
 
     public class BaseRepository : IBaseRepository

@@ -1,9 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using MisaAsp.Attribute;
+using System.ComponentModel.DataAnnotations;
 
 public class ForgotPasswordRequestVM
 {
-    [Required]
+    [RequiredVI]
     [EmailAddress]
-    [StringLength(100)]
+    [StringLengthVI(100)]
     public string Email { get; set; }
 }
