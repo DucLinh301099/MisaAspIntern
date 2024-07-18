@@ -26,11 +26,12 @@
           <div class="form-group-inline">
             <div class="form-group">
               <label class="label">Họ và đệm</label>
-              <input
+              <MSInput
                 type="text"
-                v-model="editUser.firstName"
+                :value = editUser.firstName         
+                @input="updateValue('firstName', $event.target.value)" 
                 placeholder="Họ và đệm"
-                required
+                
               />
             </div>
             <div class="form-group">
@@ -38,9 +39,10 @@
                 >Tên
                 <span class="required">*</span>
               </label>
-              <input
+              <MSInput
                 type="text"
-                v-model="editUser.lastName"
+                @input="updateValue('lastName', $event.target.value)"                
+                :value = editUser.lastName
                 placeholder="Tên"
                 required
               />
@@ -52,9 +54,10 @@
                 >Email
                 <span class="required">*</span>
               </label>
-              <input
+              <MSInput
                 type="email"
-                v-model="editUser.email"
+                @input="updateValue('email', $event.target.value)"          
+                :value = editUser.email
                 placeholder="Email"
                 required
               />
@@ -64,9 +67,10 @@
                 >Số điện thoại
                 <span class="required">*</span>
               </label>
-              <input
+              <MSInput
                 type="text"
-                v-model="editUser.phoneNumber"
+                @input="updateValue('phoneNumber', $event.target.value)"
+                :value = editUser.phoneNumber
                 placeholder="Số điện thoại"
                 required
               />
@@ -89,12 +93,14 @@
 import { account } from "../../api/account";
 import SideBarComponent from "../AdminPage/SideBarComponent.vue";
 import MSAlert from "../BaseComponent/MSAlert.vue";
+import MSInput from "../BaseComponent/MSInput.vue";
 
 export default {
   name: "EditUserPage",
   components: {
     SideBarComponent,
     MSAlert,
+    MSInput,
   },
   props: ["id"],
   data() {
@@ -149,6 +155,9 @@ export default {
         this.confirmAction();
       }
       this.alertVisible = false;
+    },
+    updateValue(field, value) {
+      this.editUser[field] = value;
     },
   },
 };

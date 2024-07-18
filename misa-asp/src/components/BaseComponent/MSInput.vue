@@ -32,7 +32,7 @@ export default {
   },
   methods: {
     updateValue(event) {
-      this.$emit("onInput", event.target.value);
+      this.$emit("update:value", event.target.value);
     },
     handleFocus(event) {
       this.$emit("focus", event);

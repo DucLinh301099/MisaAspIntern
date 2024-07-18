@@ -9,7 +9,7 @@
         <MSInput
           :value="ngayHachToan"
           classCustom="base-input"
-          @onInput="updateNgayHachToan"
+          @update:value="updateNgayHachToan"
           type="date"
           @focus="handleFocus('isNgayHachToanFocused')"
           @blur="handleBlur('isNgayHachToanFocused')"
@@ -22,7 +22,7 @@
         <MSInput
           classCustom="base-input"
           :value="ngayChungTu"
-          @onInput="updateNgayChungTu"
+          @update:value="updateNgayChungTu"
           type="date"
           @focus="handleFocus('isNgayChungTuFocused')"
           @blur="handleBlur('isNgayChungTuFocused')"
@@ -41,7 +41,7 @@
         <MSInput
           classCustom="base-input"
           :value="soChungTu"
-          @onInput="updateSoChungTu"
+          @update:value="updateSoChungTu"
           @focus="handleFocus('isSoChungTuFocused')"
           @blur="handleBlur('isSoChungTuFocused')"
         />
@@ -56,7 +56,7 @@
         <MSInput
           classCustom="base-input"
           :value="hanQuyetToan"
-          @onInput="updateHanQuyetToan"
+          @update:value="updateHanQuyetToan"
           type="date"
           placeholder="DD/MM/YYYY"
           @focus="handleFocus('isHanQuyetToanFocused')"

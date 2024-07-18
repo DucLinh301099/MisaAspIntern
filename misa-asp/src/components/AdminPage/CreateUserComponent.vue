@@ -26,14 +26,22 @@
           <div class="form-group-inline">
             <div class="form-group">
               <label class="label">Họ và đệm</label>
-              <input type="text" v-model="firstName" required />
+              <MSInput
+               type="text" 
+               :value="firstName"
+               @input="updateValue('firstName', $event.target.value)"  
+               required />
             </div>
             <div class="form-group">
               <label class="label"
                 >Tên
                 <span class="required">*</span>
               </label>
-              <input type="text" v-model="lastName" required />
+              <MSInput
+               type="text" 
+               :value="lastName"
+               @input="updateValue('lastName', $event.target.value)"  
+               required />
             </div>
           </div>
           <div class="form-group-inline">
@@ -42,14 +50,22 @@
                 >Email
                 <span class="required">*</span>
               </label>
-              <input type="text" v-model="email" required />
+              <MSInput 
+              type="text" 
+              :value="email"
+              @input="updateValue('email', $event.target.value)"  
+              required />
             </div>
             <div class="form-group">
               <label class="label"
                 >Số điện thoại
                 <span class="required">*</span>
               </label>
-              <input type="text" v-model="phoneNumber" required />
+              <MSInput 
+              type="text" 
+              :value="phoneNumber"
+              @input="updateValue('phoneNumber', $event.target.value)"  
+              required />
             </div>
           </div>
           <div class="form-group-inline">
@@ -58,7 +74,11 @@
                 >Mật khẩu
                 <span class="required">*</span>
               </label>
-              <input type="password" v-model="password" required />
+              <MSInput 
+              type="password" 
+              :value="password"
+              @input="updateValue('password', $event.target.value)"  
+              required />
             </div>
             <div class="form-group">
               <label class="label"
@@ -87,12 +107,14 @@
 import { account } from "../../api/account";
 import SideBarComponent from "../AdminPage/SideBarComponent.vue";
 import MSAlert from "../BaseComponent/MSAlert.vue";
+import MSInput from "../BaseComponent/MSInput.vue";
 
 export default {
   name: "CreateUserComponent",
   components: {
     SideBarComponent,
     MSAlert,
+    MSInput,
   },
   data() {
     return {
@@ -148,11 +170,14 @@ export default {
       }
       this.alertVisible = false;
     },
+    updateValue(field, value) {
+      this[field] = value;
+    },
   },
 };
 </script>
 
-<style>
+<style scoped>
 @import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css");
 
 .admin-page {

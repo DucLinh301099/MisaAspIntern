@@ -295,6 +295,9 @@ export default {
   transform: translateX(-40px); /* Shift to the left */
   max-height: 200px; /* Set maximum height for the dropdown */
   overflow-y: auto; /* Enable vertical scrolling */
+  width: auto; /* Adjust width to content */
+  white-space: nowrap; /* Prevent content from wrapping */
+  overflow-x: hidden; /* Prevent horizontal scroll bar */
 }
 
 .dropdown-table {

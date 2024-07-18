@@ -118,7 +118,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .create-customer {
   background-color: #fff;
 
@@ -149,6 +149,7 @@ export default {
   display: flex;
   flex-direction: column;
   flex: 1;
+  margin-right: 25px;
 }
 
 .input-container.full-width {

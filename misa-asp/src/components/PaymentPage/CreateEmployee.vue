@@ -67,7 +67,7 @@
   </div>
 </template>
 
-<script>
+<script >
 import { account } from "../../api/account"; // Import hàm tạo nhân viên từ file account.js
 
 export default {
