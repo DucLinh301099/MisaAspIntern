@@ -8,10 +8,11 @@
           <label for="object-id"
             >Mã khách hàng<span class="required">*</span>
           </label>
-          <input
+          <MSInput
             type="text"
             id="object-id"
-            v-model="objectId"
+            :value="objectId"
+            @input="updateValue('objectId', $event.target.value)"
             class="input-field-a"
             required
           />
@@ -20,10 +21,11 @@
           <label for="object-name"
             >Tên khách hàng<span class="required">*</span></label
           >
-          <input
+          <MSInput
             type="text"
             id="object-name"
-            v-model="objectName"
+            :value="objectName"
+            @input="updateValue('objectName', $event.target.value)"
             class="input-field-a"
             required
           />
@@ -34,20 +36,22 @@
           <label for="tax-code"
             >Mã số thuế<span class="required">*</span></label
           >
-          <input
+          <MSInput
             type="text"
+            :value="taxCode"
             id="tax-code"
-            v-model="taxCode"
+            @input="updateValue('taxCode', $event.target.value)"
             class="input-field-a"
             required
           />
         </div>
         <div class="input-container">
           <label for="phone">Điện thoại<span class="required">*</span></label>
-          <input
+          <MSInput
             type="text"
+            :value="phoneNumber"
             id="phone"
-            v-model="phoneNumber"
+            @input="updateValue('phoneNumber', $event.target.value)"
             class="input-field-a"
             required
           />
@@ -56,17 +60,18 @@
       <div class="form-row">
         <div class="input-container full-width">
           <label for="address">Địa chỉ<span class="required">*</span></label>
-          <input
+          <MSInput
             type="text"
+            :value="address"
             id="address"
-            v-model="address"
+            @input="updateValue('address', $event.target.value)"
             class="input-field-b"
             required
           />
         </div>
       </div>
       <div class="divide-customer"><!----></div>
-      <div v-if="generalError" class="error-message">{{ generalError }}</div>
+
       <div class="form-actions">
         <div class="btn-cancel-container">
           <button type="button" class="btn cancel-btn" @click="$emit('close')">
@@ -85,9 +90,13 @@
 
 <script>
 import { customer } from "../../api/customer";
+import MSInput from "../BaseComponent/MSInput.vue";
 
 export default {
   name: "CreateCustomer",
+  components: {
+    MSInput,
+  },
   data() {
     return {
       objectId: "",
@@ -95,24 +104,25 @@ export default {
       taxCode: "",
       address: "",
       phoneNumber: "",
-      generalError: "",
     };
   },
   methods: {
     async createCustomer() {
-      try {
-        const data = await customer.createCustomer(
-          this.objectId,
-          this.objectName,
-          this.taxCode,
-          this.address,
-          this.phoneNumber
-        );
-        alert("Tạo mới Customer thành công!");
+      const data = await customer.createCustomer(
+        this.objectId,
+        this.objectName,
+        this.taxCode,
+        this.address,
+        this.phoneNumber
+      );
+      if (data) {
         this.$router.push("/payment");
-      } catch (error) {
-        this.generalError = error.message;
+      } else {
+        alert("Tạo mới thất bại");
       }
+    },
+    updateValue(field, value) {
+      this[field] = value;
     },
   },
 };

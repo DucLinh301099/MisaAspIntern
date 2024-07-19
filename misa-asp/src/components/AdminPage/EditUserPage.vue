@@ -28,10 +28,9 @@
               <label class="label">Họ và đệm</label>
               <MSInput
                 type="text"
-                :value = editUser.firstName         
-                @input="updateValue('firstName', $event.target.value)" 
+                :value="editUser.firstName"
+                @input="updateValue('firstName', $event.target.value)"
                 placeholder="Họ và đệm"
-                
               />
             </div>
             <div class="form-group">
@@ -41,8 +40,8 @@
               </label>
               <MSInput
                 type="text"
-                @input="updateValue('lastName', $event.target.value)"                
-                :value = editUser.lastName
+                @input="updateValue('lastName', $event.target.value)"
+                :value="editUser.lastName"
                 placeholder="Tên"
                 required
               />
@@ -56,8 +55,8 @@
               </label>
               <MSInput
                 type="email"
-                @input="updateValue('email', $event.target.value)"          
-                :value = editUser.email
+                @input="updateValue('email', $event.target.value)"
+                :value="editUser.email"
                 placeholder="Email"
                 required
               />
@@ -70,7 +69,7 @@
               <MSInput
                 type="text"
                 @input="updateValue('phoneNumber', $event.target.value)"
-                :value = editUser.phoneNumber
+                :value="editUser.phoneNumber"
                 placeholder="Số điện thoại"
                 required
               />
@@ -273,12 +272,12 @@ h2 {
   border-radius: 3px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   width: auto;
-  padding: 20px 50px 50px 50px;
+  padding: 35px;
 }
 
 .form-group-inline {
   display: flex;
-  gap: 20px;
+  gap: 25px;
   padding-bottom: 0px;
 }
 
@@ -289,8 +288,8 @@ h2 {
 
 .form-group input {
   width: 100%;
-  padding: 10px;
-  font-size: 16px;
+  padding: 8.5px;
+  font-size: 14px;
   border: 1px solid #ddd;
   border-radius: 2.5px;
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -346,6 +345,8 @@ a {
   background-color: #28a745;
   color: white;
   font-size: 16px;
+  margin-top: 0;
+  margin-bottom: 0;
   font-weight: bold;
   text-align: center;
   vertical-align: middle;

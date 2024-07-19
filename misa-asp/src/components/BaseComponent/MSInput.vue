@@ -1,6 +1,5 @@
 <template>
   <input
-    :class="classCustom"
     :type="type"
     :value="value"
     @input="updateValue"
@@ -22,10 +21,6 @@ export default {
       default: "text",
     },
     label: {
-      type: String,
-      default: null,
-    },
-    classCustom: {
       type: String,
       default: null,
     },

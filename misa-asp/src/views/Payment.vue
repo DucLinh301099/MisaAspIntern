@@ -19,13 +19,9 @@
               :ComponentAdd="createBankAccountComponent"
             />
             <MSInput
-              v-model="bankNameInput"
-              classCustom="second-input"
-              :class="{ onFocus: isBankNameInputFocused }"
+              class="second-input"
               :type="type"
               :value="payment.bankExpenseName"
-              @focus="handleFocus('isBankNameInputFocused')"
-              @blur="handleBlur('isBankNameInputFocused')"
             />
           </div>
           <div class="account-input-wrapper">
@@ -37,13 +33,9 @@
               :ComponentAdd="createCustomerComponent"
             />
             <MSInput
-              v-model="addressValue"
-              classCustom="second-input"
-              :class="{ onFocus: isCustomerFocused }"
+              class="second-input"
               :type="type"
               :value="payment.customerAddress"
-              @focus="handleFocus('isCustomerFocused')"
-              @blur="handleBlur('isCustomerFocused')"
             />
           </div>
           <div class="account-input-wrapper">
@@ -57,32 +49,52 @@
             />
             <MSInput
               v-if="!hideAccountReceive"
-              v-model="accountReceiveValue"
-              classCustom="second-input"
-              :class="{ onFocus: isAccountReceiveValueFocused }"
+              class="second-input"
               :type="type"
               :value="payment.bankReceiveName"
-              @focus="handleFocus('isAccountReceiveValueFocused')"
-              @blur="handleBlur('isAccountReceiveValueFocused')"
             />
           </div>
-          <InformationInput v-if="!hideInformationInput" />
+          <div v-if="!hideInformationInput" class="information-input-wrapper">
+            <div class="input-container-info-1">
+              <label for="so-cmnd">Số CMND</label>
+              <MSInput
+                :value="payment.cmndNumber"
+                @input="updateValue('cmndNumber', $event.target.value)"
+                type="text"
+                class="base-input-info"
+              />
+            </div>
+            <div class="input-container-info-2">
+              <div class="input-field">
+                <label for="ngay-cap">Ngày cấp</label>
+                <MSInput
+                  :value="payment.licenseDate"
+                  @input="updateValue('licenseDate', $event.target.value)"
+                  type="date"
+                  class="base-input-info"
+                />
+              </div>
+              <div class="input-field">
+                <label for="noi-cap">Nơi cấp</label>
+                <MSInput
+                  type="text"
+                  :value="payment.licenseAddress"
+                  @input="updateValue('licenseAddress', $event.target.value)"
+                  class="base-input-info"
+                />
+              </div>
+            </div>
+          </div>
 
           <div class="bill-content-input-wrapper">
             <label for="bill-content-input">Nội dung thanh toán</label>
             <div class="input-container">
-              <div
-                class="input-with-button-1"
-                :class="{ onFocus: isInputValueFocused }"
-              >
+              <div class="input-with-button-1">
                 <MSInput
-                  v-model="inputValueCustomer"
                   :value="defaultBillContent"
                   :validator="inputValidator"
-                  classCustom="base-input"
+                  class="base-input"
                   @input="updateBillContent"
-                  @focus="handleFocus('isInputValueFocused')"
-                  @blur="handleBlur('isInputValueFocused')"
                 />
               </div>
             </div>
@@ -116,9 +128,8 @@
             ngayChungTu: payment.ngayChungTu,
             soChungTu: payment.soChungTu,
             hanQuyetToan: payment.hanQuyetToan,
-            hanQuyetToan: payment.hanQuyetToan,
           }"
-          @input="updateDateTimeData"
+          @update:value="updateDateTimeData"
         />
       </div>
       <div class="input-information-left">
@@ -152,7 +163,7 @@
 import HeaderPayment from "../components/PaymentPage/HeaderPayment.vue";
 import MSCombobox from "../components/ControlComponent/MSCombobox.vue";
 import MSInput from "../components/BaseComponent/MSInput.vue";
-import DateTimeInput from "../components/ControlComponent/DateTimeInput.vue";
+import DateTimeInput from "../components/PaymentPage/DateTimeInput.vue";
 import FooterPayment from "../components/PaymentPage/FooterPayment.vue";
 
 import MSGrid from "../components/ControlComponent/MSGrid.vue";
@@ -162,7 +173,6 @@ import CreateBankAccount from "../components/PaymentPage/CreateBankAccount.vue";
 import CreateCustomer from "../components/PaymentPage/CreateCustomer.vue";
 import CreateEmployee from "../components/PaymentPage/CreateEmployee.vue";
 
-import InformationInput from "../components/PaymentPage/InformationInput.vue";
 import paymentConfig from "../config/PaymentConfig";
 
 export default {
@@ -176,7 +186,7 @@ export default {
 
     MSGrid,
     AttachFile,
-    InformationInput,
+
     CreateBankAccount,
     CreateCustomer,
     CreateEmployee,
@@ -205,15 +215,14 @@ export default {
         ngayChungTu: null,
         soChungTu: null,
         hanQuyetToan: null,
+        cmndNumber: null,
+        licenseDate: null,
+        licenseAddress: null,
         paymentDetail: [],
       },
       createCustomerComponent: CreateCustomer,
       createBankAccountComponent: CreateBankAccount,
       createEmployeeComponent: CreateEmployee,
-      isBankNameInputFocused: false,
-      isCustomerFocused: false,
-      isAccountReceiveValueFocused: false,
-      isInputValueFocused: false,
     };
   },
   computed: {
@@ -280,29 +289,25 @@ export default {
       }
     },
     updateDateTimeData(updatedValue) {
-      this.payment = { ...this.payment, ...updatedValue };
+      this.payment = updatedValue;
     },
     updateBillContent(newValue) {
       this.inputValueCustomer = newValue.replace("Chi tiền cho ", "");
     },
-    handleFocus(field) {
-      this.resetFocusStates();
-      this[field] = true;
-    },
-    handleBlur(field) {
-      this[field] = false;
-    },
-    resetFocusStates() {
-      this.isBankNameInputFocused = false;
-      this.isCustomerFocused = false;
-      this.isAccountReceiveValueFocused = false;
-      this.isInputValueFocused = false;
+    updateDateTimeData(updatedValue) {
+      this.payment = { ...this.payment, ...updatedValue };
     },
   },
 };
 </script>
 
 <style scoped>
+.second-input:focus {
+  border-color: green;
+}
+.input-container .input-with-button-1:focus-within {
+  border-color: green;
+}
 .summary-component {
   display: flex;
   flex-direction: column;
@@ -320,12 +325,7 @@ export default {
   font-size: 36px;
   font-weight: bold;
 }
-.information-input-wrapper {
-  display: flex;
-  flex-direction: row;
-  gap: 16px;
-  margin-bottom: 16px;
-}
+
 .information-left {
   display: flex;
 }
@@ -335,47 +335,12 @@ export default {
 .customer-right {
   width: 45%;
 }
-.input-field-cmnd,
-.input-field {
-  display: flex;
-  flex-direction: column;
-}
-.input-field-date {
-  display: flex;
-  flex-direction: column;
-  margin-right: 15px;
-}
-.input-field-address {
-  display: flex;
-  flex-direction: column;
-}
+
 .input-container {
   display: flex;
   align-items: center;
 }
-.input-container-infor {
-  display: flex;
-  outline: none;
-  align-items: center;
-  border: 1px solid #999;
-  height: 34px;
-}
-.base-input {
-  outline: none;
-  padding: 8px;
-  box-sizing: border-box;
-  border: none;
-  height: 35px;
-  width: 100%;
-}
-.base-input-infor {
-  width: 100%;
-  height: 30px; /* Bạn có thể thay đổi giá trị này nếu cần */
-  border: none;
-  padding: 0 8px;
-  box-sizing: border-box;
-  outline: none;
-}
+
 .input-information-right {
   width: 50%;
   margin-right: 25px;
@@ -396,16 +361,9 @@ label {
 }
 .payment {
   padding-top: 60px;
+  font-family: AvertaStdCY, Helvetica, Arial, sans-serif;
 }
-.focused {
-  border-color: green;
-}
-.input-wrapper.base-input.second-input.onFocus {
-  border: 1px solid green;
-}
-.input-with-button-1.onFocus {
-  border-color: green;
-}
+
 .header-payment {
   position: fixed;
   top: 0;
@@ -468,18 +426,13 @@ label {
 .input-information-left {
   width: 30%;
 }
-.payment {
-  font-family: AvertaStdCY, Helvetica, Arial, sans-serif;
-}
+
 .bill-content-input-wrapper {
   display: flex;
   flex-direction: column;
   margin-bottom: 8px;
 }
-label {
-  margin-bottom: 8px;
-  font-weight: bold;
-}
+
 .input-container {
   display: flex;
   align-items: center;
@@ -518,22 +471,48 @@ label {
   outline: none;
   padding: 0 8px;
 }
-.add-button {
+
+.information-input-wrapper {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 40px;
-  height: 40px;
+  gap: 15px;
+  margin-bottom: 8px;
+}
+
+.input-field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.base-input-info {
+  width: 100%;
+  height: 32px;
+  border: 1px solid #999;
+  border-radius: 2px;
+  padding: 0 8px;
+  box-sizing: border-box;
+  outline: none;
+}
+.base-input-info:focus-within {
+  border-color: green;
+}
+.input-container-info-2 {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  width: 45%;
+}
+.input-container-info-1 {
+  flex: 1;
+  max-width: 45%;
+  display: flex;
+  flex-direction: column;
+}
+.base-input-info input[type="date"] {
+  width: 100%;
+  height: 100%;
   border: none;
-  background-color: white;
-  cursor: pointer;
-  font-size: 24px;
-  color: green;
-}
-.app-container {
-  padding-top: 80px;
-}
-.main-contain {
-  font-family: AvertaStdCY, Helvetica, Arial, sans-serif;
+  outline: none;
+  padding: 0 8px;
 }
 </style>

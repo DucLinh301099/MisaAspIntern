@@ -6,19 +6,21 @@
     <ul class="menu">
       <li>
         <router-link to="/admin"
-          ><i class="fa fa-tachometer"></i> Dashboard</router-link
+          ><i class="fa fa-tachometer"></i> Quản lý</router-link
         >
       </li>
       <li>
-        <router-link to="/"><i class="fa fa-users"></i> Users</router-link>
+        <router-link to="/"><i class="fa fa-users"></i> Người dùng</router-link>
       </li>
       <li>
         <router-link to="/payment"
-          ><i class="fa fa-credit-card"></i> Payment</router-link
+          ><i class="fa fa-bar-chart"></i> Kế toán</router-link
         >
       </li>
-      
-      <li>
+
+      <!-- Những trang này khi có thời gian sẽ phát triển thêm -->
+
+      <!-- <li>
         <router-link to="/"><i class="fa fa-bar-chart"></i> Charts</router-link>
       </li>
       <li>
@@ -32,7 +34,7 @@
       </li>
       <li>
         <router-link to="/"><i class="fa fa-file"></i> Pages</router-link>
-      </li>
+      </li> -->
     </ul>
   </div>
 </template>

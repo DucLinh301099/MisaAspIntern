@@ -22,7 +22,7 @@ namespace MisaAsp.Models.ViewModel
         public string PhoneNumber { get; set; }
 
         [RequiredVI]
-        [MinLength(6)]
+        [StringLengthVI(15)]
         public string Password { get; set; }
         public int RoleId { get; set; } // New property to select role during registration
 

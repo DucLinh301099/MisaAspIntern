@@ -6,7 +6,7 @@ namespace MisaAsp.Controllers.Base
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[ModelState]
+    [ModelState]
     public class BaseController : ControllerBase
     {
         protected readonly ResOutput _response;

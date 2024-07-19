@@ -6,18 +6,16 @@
     <div class="input-container">
       <div class="input-with-button" :class="{ focus: isInputFocused }">
         <MSInput
-          classCustom="base-input"
+          class="base-input"
           :type="type"
           :value="inputValue"
           @input="handleOnInput"
           @focus="handleFocus"
           @blur="handleBlur"
         />
-
         <button v-if="showButton" @click="openCreateModal" class="add-button">
           +
         </button>
-
         <multiselect
           :options="filteredOptions"
           :searchable="true"
@@ -26,12 +24,11 @@
           class="multiselect"
           @open="onExpandCombox"
           @close="showTable = false"
-          @focus="handleFocus"
-          @blur="handleBlur"
+          @focusin="handleFocus"
+          @focusout="handleBlur"
         />
       </div>
     </div>
-
     <transition name="dropdown">
       <div v-show="showTable" class="dropdown-table-wrapper">
         <table class="dropdown-table">
@@ -56,7 +53,6 @@
         </table>
       </div>
     </transition>
-
     <Modal :visible="isCreateModalVisible" @close="closeCreateModal">
       <component
         :is="ComponentAdd"
@@ -64,6 +60,14 @@
         @close="closeCreateModal"
       />
     </Modal>
+    <MSAlert
+      :message="alertMessage"
+      :type="alertType"
+      :visible="alertVisible"
+      :isConfirm="alertIsConfirm"
+      :isShow="alertIsShow"
+      @confirm="handleConfirm"
+    />
   </div>
 </template>
 
@@ -72,6 +76,7 @@ import MSInput from "../BaseComponent/MSInput.vue";
 import Multiselect from "vue-multiselect";
 import "vue-multiselect/dist/vue-multiselect.css";
 import Modal from "../BaseComponent/Modal.vue";
+import MSAlert from "../BaseComponent/MSAlert.vue";
 import { base } from "../../api/base";
 
 export default {
@@ -80,6 +85,7 @@ export default {
     MSInput,
     Multiselect,
     Modal,
+    MSAlert,
   },
   props: {
     selectedRow: {
@@ -124,6 +130,11 @@ export default {
       isInputFocused: false,
       isCreateModalVisible: false,
       optionsData: this.options != null ? this.options : [],
+      alertMessage: "",
+      alertVisible: false,
+      alertIsConfirm: false,
+      alertIsShow: false,
+      confirmAction: null,
     };
   },
   watch: {
@@ -145,11 +156,9 @@ export default {
       if (typeof this.inputValue !== "string" || this.inputValue === "") {
         return this.optionsData;
       }
-
       let displayField = this.config.columnConfig?.find(
         (col) => col.isDisplay
       )?.fieldName;
-
       return this.optionsData.filter((option) =>
         option[displayField]
           ?.toLowerCase()
@@ -200,7 +209,6 @@ export default {
       if (displaySecondValue) {
         this.secondInputValue = item[displaySecondValue];
       }
-
       this.$emit("update:selectedRow", item);
       this.showTable = false;
     },
@@ -210,7 +218,6 @@ export default {
     handleInputChange(value) {
       this.internalSelectedOption = value;
     },
-
     openCreateModal() {
       this.isCreateModalVisible = true;
     },
@@ -218,8 +225,23 @@ export default {
       this.isCreateModalVisible = false;
     },
     handleCreateSubmit(formData) {
-      this.$emit("createSubmit", formData);
-      this.closeCreateModal();
+      this.showConfirm("Tạo mới thành công!", () => {
+        this.$emit("createSubmit", formData);
+        this.closeCreateModal();
+      });
+    },
+    showConfirm(message, action) {
+      this.alertMessage = message;
+      this.confirmAction = action;
+      this.alertVisible = true;
+      this.alertIsConfirm = true;
+      this.alertIsShow = false;
+    },
+    handleConfirm() {
+      if (this.confirmAction) {
+        this.confirmAction();
+      }
+      this.alertVisible = false;
     },
     handleFocus() {
       this.isInputFocused = true;
@@ -237,6 +259,9 @@ export default {
   flex-direction: column;
   margin-bottom: 8px;
   width: 45%;
+}
+.input-with-button.focus {
+  border-color: green;
 }
 
 label {

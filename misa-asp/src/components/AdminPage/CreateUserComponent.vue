@@ -27,10 +27,11 @@
             <div class="form-group">
               <label class="label">Họ và đệm</label>
               <MSInput
-               type="text" 
-               :value="firstName"
-               @input="updateValue('firstName', $event.target.value)"  
-               required />
+                type="text"
+                :value="firstName"
+                @input="updateValue('firstName', $event.target.value)"
+                required
+              />
             </div>
             <div class="form-group">
               <label class="label"
@@ -38,10 +39,11 @@
                 <span class="required">*</span>
               </label>
               <MSInput
-               type="text" 
-               :value="lastName"
-               @input="updateValue('lastName', $event.target.value)"  
-               required />
+                type="text"
+                :value="lastName"
+                @input="updateValue('lastName', $event.target.value)"
+                required
+              />
             </div>
           </div>
           <div class="form-group-inline">
@@ -50,22 +52,24 @@
                 >Email
                 <span class="required">*</span>
               </label>
-              <MSInput 
-              type="text" 
-              :value="email"
-              @input="updateValue('email', $event.target.value)"  
-              required />
+              <MSInput
+                type="text"
+                :value="email"
+                @input="updateValue('email', $event.target.value)"
+                required
+              />
             </div>
             <div class="form-group">
               <label class="label"
                 >Số điện thoại
                 <span class="required">*</span>
               </label>
-              <MSInput 
-              type="text" 
-              :value="phoneNumber"
-              @input="updateValue('phoneNumber', $event.target.value)"  
-              required />
+              <MSInput
+                type="text"
+                :value="phoneNumber"
+                @input="updateValue('phoneNumber', $event.target.value)"
+                required
+              />
             </div>
           </div>
           <div class="form-group-inline">
@@ -74,11 +78,12 @@
                 >Mật khẩu
                 <span class="required">*</span>
               </label>
-              <MSInput 
-              type="password" 
-              :value="password"
-              @input="updateValue('password', $event.target.value)"  
-              required />
+              <MSInput
+                type="password"
+                :value="password"
+                @input="updateValue('password', $event.target.value)"
+                required
+              />
             </div>
             <div class="form-group">
               <label class="label"
@@ -189,6 +194,9 @@ export default {
 .required {
   color: red;
 }
+.create-input {
+  height: 30px;
+}
 .form-input {
   background-color: #ffffff;
   padding: 40px;
@@ -298,8 +306,8 @@ h2 {
 
 .form-group-inline {
   display: flex;
-  gap: 20px;
-  margin-bottom: 20px;
+  gap: 25px;
+  margin-bottom: 10px;
 }
 
 .form-group {
@@ -315,9 +323,9 @@ h2 {
 .form-group input,
 .form-group select {
   width: 100%;
-  padding: 10px;
-  font-size: 16px;
-  border: 1px solid #ddd;
+  padding: 8.5px;
+  font-size: 14px;
+  border: 1px solid #babec5;
   border-radius: 2.5px;
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
 }
@@ -392,6 +400,8 @@ h2 {
   background-color: #28a745;
   color: white;
   padding: 10px 20px;
+  margin-top: 0;
+  margin-bottom: 0;
   cursor: pointer;
   font-weight: bold;
   border-radius: 3px;

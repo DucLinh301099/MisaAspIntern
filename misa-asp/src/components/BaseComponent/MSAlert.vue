@@ -67,6 +67,7 @@ export default {
   transform: translateX(-50%);
   width: 300px;
   border-left: 5px solid;
+  border-left-color: #28a745;
   border-radius: 5px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   padding: 20px;

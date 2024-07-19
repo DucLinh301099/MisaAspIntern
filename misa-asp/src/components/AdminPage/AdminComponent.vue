@@ -13,7 +13,7 @@
           @confirm="handleConfirm"
           @cancel="alertVisible = false"
         />
-        <h1>Dashboard</h1>
+        <h1>Trang Quản Lý</h1>
         <div class="user-info">
           <img :src="userAvatar" alt="Avatar" class="avatar" />
           <span>{{ userName }}</span>
@@ -115,11 +115,12 @@ export default {
           try {
             await account.deleteUserById(id);
             this.users = this.users.filter((user) => user.id !== id);
-            this.showAlert("Xóa người dùng thành công", "info");
+            this.showAlert("Xóa người dùng thành công", async () =>
+              this.$router.push("/admin")
+            );
           } catch (error) {
-            this.showAlert(
-              "Xóa người dùng thất bại: " + error.message,
-              "error"
+            this.showAlert("Xóa người dùng thất bại: ", async () =>
+              this.$router.push("/admin")
             );
           }
         }
@@ -138,11 +139,12 @@ export default {
         }
       });
     },
-    showAlert(message, type) {
+    showAlert(message, action) {
       this.alertMessage = message;
-      this.alertType = type;
+      this.confirmAction = action;
       this.alertVisible = true;
-      this.alertIsConfirm = false;
+      this.alertIsConfirm = true;
+      this.alertIsShow = false;
     },
     showConfirm(message, action) {
       this.alertMessage = message;
@@ -259,6 +261,7 @@ export default {
   align-items: center;
   width: 150px;
   margin-right: 20px;
+  justify-content: center;
 }
 
 .create-user .create-button i {

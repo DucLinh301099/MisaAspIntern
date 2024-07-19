@@ -7,10 +7,11 @@
           <label for="account-number">
             Số tài khoản <span class="required">*</span>
           </label>
-          <input
+          <MSInput
             type="text"
-            id="account-number"
-            v-model="accountNumber"
+            id="account-Number"
+            :value="accountNumber"
+            @input="updateValue('accountNumber', $event.target.value)"
             class="input-field"
             required
           />
@@ -19,10 +20,11 @@
           <label for="bank-name">
             Tên ngân hàng <span class="required">*</span>
           </label>
-          <input
+          <MSInput
             type="text"
+            :value="bankName"
             id="bank-name"
-            v-model="bankName"
+            @input="updateValue('bankName', $event.target.value)"
             class="input-field"
             required
           />
@@ -34,10 +36,11 @@
           <label for="branch">
             Chi nhánh <span class="required">*</span>
           </label>
-          <input
+          <MSInput
             type="text"
+            :value="branch"
             id="branch"
-            v-model="branch"
+            @input="updateValue('branch', $event.target.value)"
             class="input-field"
             required
           />
@@ -54,7 +57,7 @@
       </div>
 
       <div class="divide"><!----></div>
-      <div v-if="generalError" class="error-message">{{ generalError }}</div>
+
       <div class="form-actions">
         <div class="btn-cancel-container">
           <button type="button" class="btn cancel-btn" @click="$emit('close')">
@@ -73,35 +76,41 @@
 
 <script>
 import { bankAccount } from "../../api/bank"; // Import hàm tạo tài khoản ngân hàng từ file account.js
+import MSInput from "../BaseComponent/MSInput.vue";
+import MSAlert from "../BaseComponent/MSAlert.vue";
 
 export default {
   name: "CreateBankAccount",
+  components: {
+    MSInput,
+  },
   data() {
     return {
       accountNumber: "",
       bankName: "",
       branch: "",
       typeOfBank: "",
-      generalError: "",
     };
   },
   methods: {
     async createBankAccount() {
-      try {
-        const data = await bankAccount.createBankAccount(
-          this.accountNumber,
-          this.bankName,
-          this.branch,
-          this.typeOfBank
-        );
-        alert("Tạo mới tài khoản ngân hàng thành công!");
-        this.$router.push("/payment"); // Điều hướng đến trang danh sách tài khoản ngân hàng sau khi tạo thành công
-      } catch (error) {
-        this.generalError = error.message;
+      const data = await bankAccount.createBankAccount(
+        this.accountNumber,
+        this.bankName,
+        this.branch,
+        this.typeOfBank
+      );
+      if (data) {
+        this.$router.push("/payment");
+      } else {
+        alert("Tạo mới thất bại");
       }
     },
     save() {
       alert("Thông tin tài khoản ngân hàng đã được lưu!");
+    },
+    updateValue(field, value) {
+      this[field] = value;
     },
   },
 };

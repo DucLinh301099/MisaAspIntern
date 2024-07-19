@@ -8,10 +8,11 @@
           <label for="employee-code"
             >Mã nhân viên<span class="required">*</span></label
           >
-          <input
+          <MSInput
             type="text"
             id="employee-code"
-            v-model="employeeCode"
+            :value="employeeCode"
+            @input="updateValue('employeeCode', $event.target.value)"
             class="input-field"
             required
           />
@@ -20,10 +21,11 @@
           <label for="employee-name"
             >Tên nhân viên<span class="required">*</span></label
           >
-          <input
+          <MSInput
             type="text"
             id="employee-name"
-            v-model="employeeName"
+            :value="employeeName"
+            @input="updateValue('employeeName', $event.target.value)"
             class="input-field"
             required
           />
@@ -32,25 +34,27 @@
       <div class="form-row">
         <div class="input-container">
           <label for="mobile-phone">Điện thoại</label>
-          <input
+          <MSInput
             type="text"
             id="mobile-phone"
-            v-model="mobilePhone"
+            :value="mobilePhone"
+            @input="updateValue('mobilePhone', $event.target.value)"
             class="input-field"
           />
         </div>
         <div class="input-container">
           <label for="department">Đơn vị</label>
-          <input
+          <MSInput
             type="text"
             id="department"
-            v-model="department"
+            :value="department"
+            @input="updateValue('department', $event.target.value)"
             class="input-field"
           />
         </div>
       </div>
       <div class="divide"><!----></div>
-      <div v-if="generalError" class="error-message">{{ generalError }}</div>
+
       <div class="form-actions">
         <div class="btn-cancel-container">
           <button type="button" class="btn cancel-btn" @click="$emit('close')">
@@ -67,35 +71,39 @@
   </div>
 </template>
 
-<script >
+<script>
 import { account } from "../../api/account"; // Import hàm tạo nhân viên từ file account.js
+import MSInput from "../BaseComponent/MSInput.vue";
 
 export default {
   name: "CreateEmployee",
+  components: {
+    MSInput,
+  },
   data() {
     return {
       employeeCode: "",
       employeeName: "",
       mobilePhone: "",
       department: "",
-      generalError: "",
     };
   },
   methods: {
     async createEmployee() {
-      try {
-        const data = await account.createEmployee(
-          this.employeeCode,
-          this.employeeName,
-          this.mobilePhone,
-          this.department
-        );
-
-        alert("Tạo mới nhân viên thành công!");
+      const data = await account.createEmployee(
+        this.employeeCode,
+        this.employeeName,
+        this.mobilePhone,
+        this.department
+      );
+      if (data) {
         this.$router.push("/payment");
-      } catch (error) {
-        this.generalError = error.message;
+      } else {
+        alert("Tạo mới thất bại");
       }
+    },
+    updateValue(field, value) {
+      this[field] = value;
     },
   },
 };

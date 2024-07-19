@@ -2,30 +2,23 @@
   <div class="datetime-component-wrapper">
     <div class="form-group">
       <label for="ngay-hach-toan">Ngày hạch toán</label>
-      <div
-        class="input-with-button"
-        :class="{ focused: isNgayHachToanFocused }"
-      >
+      <div class="input-with-button-1">
         <MSInput
           :value="ngayHachToan"
-          classCustom="base-input"
-          @update:value="updateNgayHachToan"
+          class="base-input"
+          @input="updateValue('ngayHachToan', $event.target.value)"
           type="date"
-          @focus="handleFocus('isNgayHachToanFocused')"
-          @blur="handleBlur('isNgayHachToanFocused')"
         />
       </div>
     </div>
     <div class="form-group">
       <label for="ngay-chung-tu">Ngày chứng từ</label>
-      <div class="input-with-button" :class="{ focused: isNgayChungTuFocused }">
+      <div class="input-with-button-1">
         <MSInput
-          classCustom="base-input"
+          class="base-input"
           :value="ngayChungTu"
-          @update:value="updateNgayChungTu"
+          @input="updateValue('ngayChungTu', $event.target.value)"
           type="date"
-          @focus="handleFocus('isNgayChungTuFocused')"
-          @blur="handleBlur('isNgayChungTuFocused')"
         />
       </div>
     </div>
@@ -39,28 +32,22 @@
         }"
       >
         <MSInput
-          classCustom="base-input"
+          class="base-input"
           :value="soChungTu"
-          @update:value="updateSoChungTu"
-          @focus="handleFocus('isSoChungTuFocused')"
-          @blur="handleBlur('isSoChungTuFocused')"
+          @input="updateValue('soChungTu', $event.target.value)"
+          @focus="handleFocus()"
+          @blur="handleBlur()"
         />
       </div>
     </div>
     <div class="form-group" v-if="voucherType === '3.Tạm ứng cho nhân viên'">
       <label for="han-quyet-toan">Hạn quyết toán</label>
-      <div
-        class="input-with-button"
-        :class="{ focused: isHanQuyetToanFocused }"
-      >
+      <div class="input-with-button">
         <MSInput
-          classCustom="base-input"
+          class="base-input"
           :value="hanQuyetToan"
-          @update:value="updateHanQuyetToan"
+          @input="updateValue('hanQuyetToan', $event.target.value)"
           type="date"
-          placeholder="DD/MM/YYYY"
-          @focus="handleFocus('isHanQuyetToanFocused')"
-          @blur="handleBlur('isHanQuyetToanFocused')"
         />
       </div>
     </div>
@@ -87,46 +74,43 @@ export default {
   },
   data() {
     return {
-      ngayHachToan: this.value.ngayHachToan || "",
-      ngayChungTu: this.value.ngayChungTu || "",
-      soChungTu: this.value.soChungTu || "",
-      hanQuyetToan: this.value.hanQuyetToan || "",
-      isNgayHachToanFocused: false,
-      isNgayChungTuFocused: false,
+      ngayHachToan: this.value.ngayHachToan,
+      ngayChungTu: this.value.ngayChungTu,
+      soChungTu: this.value.soChungTu,
+      hanQuyetToan: this.value.hanQuyetToan,
+
       isSoChungTuFocused: false,
-      isHanQuyetToanFocused: false,
     };
   },
-
-  methods: {
-    handleFocus(field) {
-      this.resetFocusStates();
-      this[field] = true;
+  watch: {
+    value: {
+      handler(newVal) {
+        this.ngayHachToan = newVal.ngayHachToan;
+        this.ngayChungTu = newVal.ngayChungTu;
+        this.soChungTu = newVal.soChungTu;
+        this.hanQuyetToan = newVal.hanQuyetToan;
+      },
+      deep: true,
+      immediate: true,
     },
-    handleBlur(field) {
-      this[field] = false;
+  },
+  methods: {
+    handleFocus() {
+      this.resetFocusStates();
+      this.isSoChungTuFocused = true;
+    },
+    handleBlur() {
+      this.isSoChungTuFocused = false;
     },
     resetFocusStates() {
-      this.isNgayHachToanFocused = false;
-      this.isNgayChungTuFocused = false;
       this.isSoChungTuFocused = false;
-      this.isHanQuyetToanFocused = false;
     },
-    updateSoChungTu(value) {
-      this.soChungTu = value;
-      this.$emit("input", { ...this.value, soChungTu: value });
-    },
-    updateNgayHachToan(value) {
-      this.ngayHachToan = value;
-      this.$emit("input", { ...this.value, ngayHachToan: value });
-    },
-    updateNgayChungTu(value) {
-      this.ngayChungTu = value;
-      this.$emit("input", { ...this.value, ngayChungTu: value });
-    },
-    updateHanQuyetToan(value) {
-      this.hanQuyetToan = value;
-      this.$emit("input", { ...this.value, hanQuyetToan: value });
+    updateValue(field, value) {
+      this[field] = value;
+      this.$emit("update:value", {
+        ...this.value,
+        [field]: value,
+      });
     },
   },
 };
@@ -152,6 +136,21 @@ export default {
   margin-right: auto;
   height: 30px;
   width: 70%;
+}
+.input-with-button-1 {
+  border: 1px solid #999;
+  border-radius: 2px;
+  overflow: hidden;
+  flex-grow: 2;
+  margin-right: auto;
+  height: 30px;
+  width: 70%;
+}
+.input-with-button-1:focus-within {
+  border-color: green;
+}
+.input-with-button:focus {
+  border-color: green;
 }
 .form-group {
   display: flex;
