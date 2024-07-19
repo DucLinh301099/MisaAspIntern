@@ -1,4 +1,5 @@
 ﻿using MisaAsp.Attribute;
+using MisaAsp.Attribute.ModelAttribute;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
@@ -7,8 +8,10 @@ namespace MisaAsp.Models.ViewModel
     public class LoginRequestVM
     {
         [RequiredVI]
-        [StringLengthVI(15)]
+        [StringLengthVI(50)]
         [DisplayName("Số điện thoại hoặc email")]
+        [PhoneVI]
+        [EmailVI]
         public string EmailOrPhoneNumber { get; set; }
 
         [RequiredVI]

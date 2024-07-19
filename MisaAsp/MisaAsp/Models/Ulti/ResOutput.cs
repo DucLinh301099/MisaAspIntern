@@ -29,5 +29,6 @@ namespace MisaAsp.Models.Ulti
     {
         public string FieldName { get; set; }
         public string ErrorCode { get; set; }
+        public string ErrorText { get; set; }
     }
 }

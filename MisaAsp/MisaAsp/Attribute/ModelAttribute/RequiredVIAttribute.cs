@@ -1,14 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MisaAsp.Attribute
+namespace MisaAsp.Attribute.ModelAttribute
 {
     public class RequiredVIAttribute : RequiredAttribute
     {
         public RequiredVIAttribute() : base()
         {
-            ErrorMessage = $"Required_Trường {{0}} không được để trống.";
+            ErrorMessage = "Required_Trường {0} là bắt buộc.";
         }
-
-        public string ErrorCode => "Required";
     }
 }

@@ -1,6 +1,7 @@
 ﻿using MisaAsp.Attribute;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using MisaAsp.Attribute.ModelAttribute;
 
 namespace MisaAsp.Models.BaseModel
 {

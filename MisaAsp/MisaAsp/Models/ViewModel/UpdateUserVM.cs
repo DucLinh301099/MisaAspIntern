@@ -1,4 +1,4 @@
-﻿using MisaAsp.Attribute;
+﻿using MisaAsp.Attribute.ModelAttribute;
 using System.ComponentModel.DataAnnotations;
 
 namespace MisaAsp.Models.ViewModel
@@ -16,7 +16,7 @@ namespace MisaAsp.Models.ViewModel
         public string LastName { get; set; }
 
         [RequiredVI]
-        [EmailAddress]
+        [EmailVI]
         [StringLengthVI(100)]
         public string Email { get; set; }
 

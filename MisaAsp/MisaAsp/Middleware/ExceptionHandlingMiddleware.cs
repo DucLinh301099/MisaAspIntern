@@ -1,4 +1,5 @@
-﻿using MisaAsp.Models.Ulti;
+﻿using MisaAsp.Common;
+using MisaAsp.Models.Ulti;
 using Newtonsoft.Json;
 using System.Net;
 
@@ -21,6 +22,10 @@ namespace MisaAsp.Middleware
             {
                 await _next(context);
             }
+            catch (InvalidValueException ex)
+            {
+                await HandleInvalidExceptionAsync(context, ex);
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, ex.Message);
@@ -35,6 +40,23 @@ namespace MisaAsp.Middleware
 
             var res = new ResOutput();
             res.HandleError("Đã xảy ra lỗi trong quá trình xử lý yêu cầu", exception.Message);
+
+            var result = JsonConvert.SerializeObject(res);
+            return context.Response.WriteAsync(result);
+        }
+
+        private static Task HandleInvalidExceptionAsync(HttpContext context, InvalidValueException exception)
+        {
+            context.Response.ContentType = "application/json";
+            context.Response.StatusCode = (int)HttpStatusCode.OK;
+
+            var res = new ResOutput();
+            res.Code = new ColumnError
+            {
+                FieldName = exception.FieldName,
+                ErrorCode = exception.ErrorCode,
+                ErrorText = exception.ErrorText
+            };
 
             var result = JsonConvert.SerializeObject(res);
             return context.Response.WriteAsync(result);

@@ -1,7 +1,6 @@
 ﻿
 using MisaAsp.Attribute;
-using System.ComponentModel.DataAnnotations;
-
+using MisaAsp.Attribute.ModelAttribute;
 namespace MisaAsp.Models.BaseModel
 {
     public class RoleAccount

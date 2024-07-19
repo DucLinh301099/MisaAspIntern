@@ -1,4 +1,4 @@
-﻿using MisaAsp.Attribute;
+﻿using MisaAsp.Attribute.ModelAttribute;
 using System.ComponentModel.DataAnnotations;
 
 namespace MisaAsp.Models.ViewModel
@@ -13,18 +13,19 @@ namespace MisaAsp.Models.ViewModel
         [StringLengthVI(100)]
         public string LastName { get; set; }
 
-        [RequiredVI(ErrorMessage = "Email không được để trống")]
-        [EmailAddress]
+        [RequiredVI]
+        [EmailVI]
         public string Email { get; set; }
 
         [RequiredVI]
-        [Phone]
+        [PhoneVI]
         public string PhoneNumber { get; set; }
 
         [RequiredVI]
-        [StringLengthVI(15)]
+        [StringLengthVI(50)]
+        [PasswordVI]
         public string Password { get; set; }
-        public int RoleId { get; set; } // New property to select role during registration
+        public int RoleId { get; set; } 
 
     }
 }

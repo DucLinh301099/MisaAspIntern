@@ -171,7 +171,7 @@ namespace MisaAsp.Controllers
         public async Task<IActionResult> UpdateUser(UpdateUserVM user)
         {
             var result = await _accountService.UpdateUserAsync(user);
-            if (result != null)
+            if (result)
             {
                 _response.HandleSuccess("Cập nhật người dùng thành công",user);
             }
@@ -193,7 +193,7 @@ namespace MisaAsp.Controllers
         public async Task<IActionResult> DeleteUser(int id)
         {
             var deleted = await _accountService.DeleteUserAsync(id);
-            if (deleted != null)
+            if (deleted)
             {
                 _response.HandleSuccess("Xóa người dùng thành công");
             }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.IdentityModel.Tokens;
+using MisaAsp.Common;
 using MisaAsp.Models.BaseModel;
 using MisaAsp.Models.ViewModel;
 using MisaAsp.Repositories;
@@ -89,12 +90,12 @@ namespace MisaAsp.Services
             {
                 if (!await IsEmailUniqueAsync(request.Email))
                 {
-                    throw new Exception("Email đã sử dụng");
+                    throw new InvalidValueException("Email","EmailUsed", "Email đã được sử dụng");
                 }
 
                 if (!await IsPhoneUniqueAsync(request.PhoneNumber))
                 {
-                    throw new Exception("Số điện thoại đã được sử dụng");
+                    throw new InvalidValueException("PhoneNumber", "PhoneUsed", "Số điện thoại đã được sử dụng");
                 }
 
                 request.Password = GetMd5Hash(request.Password);

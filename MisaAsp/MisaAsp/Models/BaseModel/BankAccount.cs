@@ -1,4 +1,5 @@
-﻿using MisaAsp.Attribute;
+﻿
+using MisaAsp.Attribute.ModelAttribute;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 

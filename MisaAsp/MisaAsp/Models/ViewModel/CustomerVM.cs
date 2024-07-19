@@ -1,4 +1,5 @@
 ﻿using MisaAsp.Attribute;
+using MisaAsp.Attribute.ModelAttribute;
 
 namespace MisaAsp.Models.ViewModel
 {
