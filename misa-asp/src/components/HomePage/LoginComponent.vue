@@ -23,17 +23,20 @@
       </div>
       <form @submit.prevent="login">
         <div class="form-group">
-          <input
+          <MSInput
             type="text"
-            v-model="emailOrPhoneNumber"
+            :value="emailOrPhoneNumber"
+            @input="updateValue('emailOrPhoneNumber', $event.target.value)"
             placeholder="Số điện thoại/Email"
             required
           />
         </div>
         <div class="form-group">
-          <input
+          <MSInput
             type="password"
-            v-model="password"
+            :value="password"
+            @input="updateValue('password', $event.target.value)"
+
             placeholder="Mật khẩu"
             required
           />
@@ -52,10 +55,15 @@
 </template>
 
 <script>
+import { onUpdated } from "vue";
 import { account } from "../../api/account";
+import MSInput from "../BaseComponent/MSInput.vue";
 
 export default {
   name: "LoginComponent",
+  components:{
+    MSInput,
+  },
   data() {
     return {
       emailOrPhoneNumber: "",
@@ -65,6 +73,9 @@ export default {
   methods: {
     async login() {
       await account.login(this.emailOrPhoneNumber, this.password);
+    },
+    updateValue(field, value) {
+      this[field] = value;
     },
   },
 };
@@ -131,6 +142,7 @@ h2 {
   border: 1px solid #ccc;
   border-radius: 3px;
   outline: none;
+  box-sizing: border-box;
 }
 
 .form-group input[type="text"],

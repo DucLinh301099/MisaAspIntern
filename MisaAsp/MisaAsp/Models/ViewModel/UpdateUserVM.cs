@@ -5,7 +5,7 @@ namespace MisaAsp.Models.ViewModel
 {
     public class UpdateUserVM
     {
-        [RequiredVI]
+        
         public int Id { get; set; }
         [RequiredVI]
         [StringLengthVI(100)]
@@ -21,7 +21,7 @@ namespace MisaAsp.Models.ViewModel
         public string Email { get; set; }
 
         [RequiredVI]
-        [Phone]
+        [PhoneVI]
         [StringLengthVI(100)]
         public string PhoneNumber { get; set; }
     }

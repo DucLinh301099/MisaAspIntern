@@ -10,8 +10,8 @@ namespace MisaAsp.Models.ViewModel
         [RequiredVI]
         [StringLengthVI(50)]
         [DisplayName("Số điện thoại hoặc email")]
-        [PhoneVI]
-        [EmailVI]
+        [EmailOrPhoneVI]
+
         public string EmailOrPhoneNumber { get; set; }
 
         [RequiredVI]

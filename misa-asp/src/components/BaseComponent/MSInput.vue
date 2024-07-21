@@ -9,7 +9,7 @@
   <!-- đoạn này sẽ thay thế bằng tooltip để hiển thị lỗi -->
   <!-- <span v-if="error" class="error">{{ error }}</span> -->
 </template>
-
+g
 <script>
 export default {
   name: "MSInput",

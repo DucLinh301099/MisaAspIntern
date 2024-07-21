@@ -171,7 +171,7 @@ namespace MisaAsp.Controllers
         public async Task<IActionResult> UpdateUser(UpdateUserVM user)
         {
             var result = await _accountService.UpdateUserAsync(user);
-            if (result)
+            if (result!=null)
             {
                 _response.HandleSuccess("Cập nhật người dùng thành công",user);
             }

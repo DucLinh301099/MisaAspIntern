@@ -151,19 +151,15 @@ export const account = {
    * @param {*} user 
    * @returns 
    */
-  async updateUser(user) {
-      try {      
-        const getUser = await this.getUserById(user.id);
-        if (getUser) {              
-          const response = await base.putAuthenApi(Api.updateUser.url,user);            
-          return response.data;
-        } else {
-          throw new Error('User not found');
-        }
-      } catch (error) {
-      
-        throw error;
-      }
+  async updateUser(firstName, lastName, email, phoneNumber) {
+     let params={
+      FirstName: firstName,
+      LastName: lastName,
+      Email: email,
+      PhoneNumber: phoneNumber
+     };
+    const response = await base.putAuthenApi(Api.updateUser.url,params);            
+    return response.data;
     },
   /**
    * Hàm xóa user theo id

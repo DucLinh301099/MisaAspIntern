@@ -20,7 +20,7 @@
         </div>
       </div>
 
-      <form @submit.prevent="saveUser" class="form-container" v-if="editUser">
+      <form @submit.prevent="updateUser" class="form-container" v-if="editUser">
         <div class="form-input">
           <h2 class="form-title">Chỉnh Sửa Thông Tin Người Dùng</h2>
           <div class="form-group-inline">
@@ -104,6 +104,10 @@ export default {
   props: ["id"],
   data() {
     return {
+      firstName: "",
+      lastName: "",
+      email: "",
+      phoneNumber: "",
       editUser: null,
       alertMessage: "",
       alertType: "info",
@@ -125,19 +129,26 @@ export default {
         this.showConfirm("Lỗi khi hiển thị thông tin người dùng", "error");
       }
     },
-    async saveUser() {
-      const response = await account.updateUser(this.editUser);
-      if (response) {
-        this.showConfirm("Người dùng cập nhật thành công!", () =>
-          this.$router.push("/admin")
+    async updateUser() {
+      const response = await account.updateUser(
+         this.editUser.firstName,
+         this.editUser.lastName,
+         this.editUser.email,
+         this.editUser.phoneNumber
         );
-      } else {
+        if (response && response.success) { 
+          this.showConfirm("Người dùng cập nhật thành công!", () =>
+             this.$router.push("/admin")
+          );
+            } else {
         this.showConfirm(
-          "Lỗi khi cập nhật người dùng: " + response.message,
-          "error"
-        );
-      }
-    },
+          "Lỗi khi cập nhật người dùng: ",() =>
+         this.$router.push(`/edit-user/${this.editUser.id}`)
+       );
+    }
+
+   },
+
     cancelEdit() {
       this.$router.push("/admin");
     },
