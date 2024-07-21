@@ -10,18 +10,16 @@
           />
         </router-link>
       </div>
-      <div class="main-title mt-3">
-        <div class="row">
-          <div class="col-6-1">
+      <div class="main-title ">     
+          <div >
             <span class="bold">Đăng nhập</span>
           </div>
-          <div class="col-6-2">
+          <div >
             <img
               src="https://asp.misa.vn/App/Content/images/Logo2.png"
               class="float-right"
             />
-          </div>
-        </div>
+          </div>     
       </div>
       <form @submit.prevent="login">
         <div class="form-group">
@@ -71,7 +69,17 @@ export default {
   },
 };
 </script>
-<style>
+<style scoped>
+.main-title{
+  display:flex;
+  margin-bottom: 15px;
+  justify-content: space-between;
+}
+.bold{
+  font-weight: bold;
+  font-size: 20px;
+  font-family: AvertaStdCY_Semibold, Helvetica, Arial, sans-serif;
+}
 .login-page {
   display: flex;
   justify-content: center;

@@ -6,6 +6,8 @@
     @focus="handleFocus"
     @blur="handleBlur"
   />
+  <!-- đoạn này sẽ thay thế bằng tooltip để hiển thị lỗi -->
+  <!-- <span v-if="error" class="error">{{ error }}</span> -->
 </template>
 
 <script>
@@ -24,6 +26,15 @@ export default {
       type: String,
       default: null,
     },
+    errors: {
+      type: Array,
+      default: () => [],
+    },
+  },
+  computed: {
+    error() {
+      return this.errors.length > 0 ? this.errors[0].ErrorText : null;
+    },
   },
   methods: {
     updateValue(event) {
@@ -39,4 +50,9 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped>
+.error {
+  color: red;
+  font-size: 12px;
+}
+</style>

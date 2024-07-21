@@ -10,22 +10,20 @@
           />
         </router-link>
       </div>
-      <div class="main-title mt-3">
-        <div class="row">
-          <div class="col-6-1">
+      <div class="main-title "> 
+          <div >
             <span class="bold">Đăng Ký</span>
           </div>
-          <div class="col-6-2">
+          <div >
             <img
               src="https://asp.misa.vn/App/Content/images/Logo2.png"
               class="float-right"
             />
-          </div>
-        </div>
+          </div>      
       </div>
       <form @submit.prevent="register">
         <div class="form-group-inline">
-          <div class="form-group">
+          <div class="form-group-r">
             <input
               type="text"
               v-model="firstName"
@@ -33,14 +31,14 @@
               required
             />
           </div>
-          <div class="form-group">
+          <div class="form-group-r">
             <input type="text" v-model="lastName" placeholder="Tên" required />
           </div>
         </div>
-        <div class="form-group">
+        <div class="form-group-r">
           <input type="text" v-model="email" placeholder="Email" required />
         </div>
-        <div class="form-group">
+        <div class="form-group-r">
           <input
             type="text"
             v-model="phoneNumber"
@@ -48,7 +46,7 @@
             required
           />
         </div>
-        <div class="form-group">
+        <div class="form-group-r">
           <input
             type="password"
             v-model="password"
@@ -56,7 +54,7 @@
             required
           />
         </div>
-        <div class="form-group">
+        <div class="form-group-r">
           <select v-model="roleId" required>
             <option value="" disabled>Chọn quyền</option>
             <option value="1">Admin</option>
@@ -117,7 +115,7 @@ export default {
   },
 };
 </script>
-<style>
+<style scoped>
 .register-page {
   display: flex;
   justify-content: center;
@@ -161,34 +159,18 @@ export default {
   font-size: 16px;
 }
 .bold {
-  font-weight: 550;
+  font-weight: bold;
+  font-size: 20px;
 }
 .main-title {
   font-family: AvertaStdCY_Semibold, Helvetica, Arial, sans-serif;
-  font-size: 20px !important;
+  justify-content: space-between;
+  display:flex;
+  margin-bottom: 10px;
 }
-.mt-3,
-.my-3 {
-  margin-top: 1rem !important;
-}
-.row {
-  display: -ms-flexbox;
-  display: flex;
-  -ms-flex-wrap: wrap;
-  flex-wrap: wrap;
-  padding-bottom: 15px;
-}
-.col-6-1 {
-  -ms-flex: 0 0 50%;
-  flex: 0 0 50%;
-  max-width: 50%;
-  text-align: left;
-}
-.col-6-2 {
-  -ms-flex: 0 0 50%;
-  flex: 0 0 50%;
-  max-width: 50%;
-}
+
+
+
 .float-right {
   float: right !important;
 }
@@ -197,16 +179,25 @@ img {
   border-style: none;
 }
 
-.form-group {
-  margin-bottom: 15px;
-  position: relative;
+.form-group-r {
+  margin-bottom: 20px;
+  display: flex;
+  gap: 10px;
 }
-.form-group-inline {
+.form-group-r input,
+.form-group-r select{
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  outline: none;
+}
+.form-group-inline {  
   display: flex;
   justify-content: space-between;
-  padding-bottom: 20px;
+  padding-bottom: 5px;
 }
-.form-group-inline .form-group {
+.form-group-inline {
   flex: 0 0 48%;
   margin-bottom: 0;
 }

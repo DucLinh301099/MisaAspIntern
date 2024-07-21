@@ -284,6 +284,9 @@ h2 {
 .form-group {
   margin-bottom: 15px;
   padding-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
 .form-group input {
