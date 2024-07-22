@@ -39,7 +39,7 @@ export const base = {
         
         //alert(response.data.message);
         if (handleError && typeof handleError === 'function') {
-          handleError(response.data.data);
+          handleError(response.data);
         }
       }
     }

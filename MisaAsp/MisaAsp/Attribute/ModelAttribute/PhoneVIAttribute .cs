@@ -3,6 +3,9 @@ using System.Text.RegularExpressions;
 
 namespace MisaAsp.Attribute.ModelAttribute
 {
+    /// <summary>
+    ///  attribute kiểm tra format của sđt
+    /// </summary>
     public class PhoneVIAttribute : ValidationAttribute
     {
         public PhoneVIAttribute() : base()
@@ -28,6 +31,7 @@ namespace MisaAsp.Attribute.ModelAttribute
 
         private bool IsValidPhoneNumber(string phoneNumber)
         {
+            // regex yêu cầu sđt ít nhất 9 và nhiều nhất 13 chữ số
             var regex = new Regex(@"^\d{9,13}$");
             return regex.IsMatch(phoneNumber);
         }

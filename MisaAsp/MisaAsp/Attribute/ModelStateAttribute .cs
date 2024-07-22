@@ -7,13 +7,15 @@ using System.Linq;
 
 namespace MisaAsp.Attribute
 {
-    // Attribute để kiểm tra trạng thái của model trước khi thực hiện hành động
+    /// <summary>
+    /// Attribute để kiểm tra trạng thái của model trước khi thực hiện hành động
+    /// </summary>
     public class ModelStateAttribute : ActionFilterAttribute
     {
         // Override phương thức OnActionExecuting để kiểm tra trạng thái của model
         public override void OnActionExecuting(ActionExecutingContext currentContext)
         {
-            // Nếu ModelState không hợp lệ
+           
             if (!currentContext.ModelState.IsValid)
             {
                 // Tạo danh sách các lỗi

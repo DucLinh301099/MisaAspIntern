@@ -28,6 +28,7 @@
               <label class="label">Họ và đệm</label>
               <MSInput
                 type="text"
+                class="edit-user-input"
                 :value="editUser.firstName"
                 @input="updateValue('firstName', $event.target.value)"
                 placeholder="Họ và đệm"
@@ -40,6 +41,7 @@
               </label>
               <MSInput
                 type="text"
+                class="edit-user-input"
                 @input="updateValue('lastName', $event.target.value)"
                 :value="editUser.lastName"
                 placeholder="Tên"
@@ -55,6 +57,7 @@
               </label>
               <MSInput
                 type="email"
+                class="edit-user-input"
                 @input="updateValue('email', $event.target.value)"
                 :value="editUser.email"
                 placeholder="Email"
@@ -68,6 +71,7 @@
               </label>
               <MSInput
                 type="text"
+                class="edit-user-input"
                 @input="updateValue('phoneNumber', $event.target.value)"
                 :value="editUser.phoneNumber"
                 placeholder="Số điện thoại"
@@ -183,6 +187,18 @@ export default {
 }
 h2 {
   margin-bottom: 40px;
+}
+.edit-user-input {
+  flex: 1;
+  padding: 7px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  box-sizing: border-box;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  outline: none;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 .sidebar {
   width: 200px;

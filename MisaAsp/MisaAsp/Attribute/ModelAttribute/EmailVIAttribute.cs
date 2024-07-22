@@ -3,6 +3,9 @@ using System.Text.RegularExpressions;
 
 namespace MisaAsp.Attribute.ModelAttribute
 {
+    /// <summary>
+    /// attribute kiểm tra format của email
+    /// </summary>
     public class EmailVIAttribute : ValidationAttribute
     {
         public EmailVIAttribute() : base()
@@ -28,6 +31,7 @@ namespace MisaAsp.Attribute.ModelAttribute
 
         private bool IsValidEmail(string email)
         {
+            // regex yêu cầu email phải có ký tự @ và có "." 
             var regex = new Regex(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
             return regex.IsMatch(email);
         }

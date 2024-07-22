@@ -3,6 +3,9 @@ using System.Text.RegularExpressions;
 
 namespace MisaAsp.Attribute.ModelAttribute
 {
+    /// <summary>
+    /// Attribute kiểm tra format nhập liệu  của cả email và sđt
+    /// </summary>
     public class EmailOrPhoneVIAttribute : ValidationAttribute
     {
         // Constructor thiết lập thông báo lỗi mặc định

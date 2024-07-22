@@ -2,6 +2,9 @@
 
 namespace MisaAsp.Attribute.ModelAttribute
 {
+    /// <summary>
+    ///  attribute kiểm tra format của input không vượt quá ký tự cho phép
+    /// </summary>
     public class StringLengthVIAttribute : StringLengthAttribute
     {
         public StringLengthVIAttribute(int length) : base(length)

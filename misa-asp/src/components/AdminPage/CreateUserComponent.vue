@@ -28,6 +28,7 @@
               <label class="label">Họ và đệm</label>
               <MSInput
                 type="text"
+                class="create-user-input"
                 :value="firstName"
                 @input="updateValue('firstName', $event.target.value)"
                 required
@@ -40,6 +41,7 @@
               </label>
               <MSInput
                 type="text"
+                class="create-user-input"
                 :value="lastName"
                 @input="updateValue('lastName', $event.target.value)"
                 required
@@ -54,6 +56,7 @@
               </label>
               <MSInput
                 type="text"
+                class="create-user-input"
                 :value="email"
                 @input="updateValue('email', $event.target.value)"
                 required
@@ -66,6 +69,7 @@
               </label>
               <MSInput
                 type="text"
+                class="create-user-input"
                 :value="phoneNumber"
                 @input="updateValue('phoneNumber', $event.target.value)"
                 required
@@ -80,6 +84,7 @@
               </label>
               <MSInput
                 type="password"
+                class="create-user-input"
                 :value="password"
                 @input="updateValue('password', $event.target.value)"
                 required
@@ -204,6 +209,18 @@ export default {
   margin: 0px auto;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
+.create-user-input {
+  flex: 1;
+  padding: 7px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  box-sizing: border-box;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  outline: none;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
 h2 {
   font-weight: bold;
   padding-bottom: 20px;
@@ -315,7 +332,7 @@ h2 {
 
 .form-group label {
   display: block;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
   font-weight: bold;
 }
 

@@ -3,6 +3,9 @@ using System.Text.RegularExpressions;
 
 namespace MisaAsp.Attribute.ModelAttribute
 {
+    /// <summary>
+    ///  attribute kiểm tra format của password
+    /// </summary>
     public class PasswordVIAttribute : ValidationAttribute
     {
         public PasswordVIAttribute() : base()

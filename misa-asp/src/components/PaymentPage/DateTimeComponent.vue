@@ -2,54 +2,42 @@
   <div class="datetime-component-wrapper">
     <div class="form-group">
       <label for="ngay-hach-toan">Ngày hạch toán</label>
-      <div class="input-with-button-1">
-        <MSInput
-          :value="ngayHachToan"
-          class="base-input"
-          @input="updateValue('ngayHachToan', $event.target.value)"
-          type="date"
-        />
-      </div>
+
+      <MSInput
+        :value="ngayHachToan"
+        class="date-input"
+        @input="updateValue('ngayHachToan', $event.target.value)"
+        type="date"
+      />
     </div>
     <div class="form-group">
       <label for="ngay-chung-tu">Ngày chứng từ</label>
-      <div class="input-with-button-1">
-        <MSInput
-          class="base-input"
-          :value="ngayChungTu"
-          @input="updateValue('ngayChungTu', $event.target.value)"
-          type="date"
-        />
-      </div>
+
+      <MSInput
+        class="date-input"
+        :value="ngayChungTu"
+        @input="updateValue('ngayChungTu', $event.target.value)"
+        type="date"
+      />
     </div>
     <div class="form-group">
       <label for="so-chung-tu">Số chứng từ</label>
-      <div
-        class="input-with-button"
-        :class="{
-          infocused: isSoChungTuFocused && !soChungTu,
-          focused: soChungTu && isSoChungTuFocused,
-        }"
-      >
-        <MSInput
-          class="base-input"
-          :value="soChungTu"
-          @input="updateValue('soChungTu', $event.target.value)"
-          @focus="handleFocus()"
-          @blur="handleBlur()"
-        />
-      </div>
+
+      <MSInput
+        class="date-input"
+        :value="soChungTu"
+        @input="updateValue('soChungTu', $event.target.value)"
+      />
     </div>
     <div class="form-group" v-if="voucherType === '3.Tạm ứng cho nhân viên'">
       <label for="han-quyet-toan">Hạn quyết toán</label>
-      <div class="input-with-button">
-        <MSInput
-          class="base-input"
-          :value="hanQuyetToan"
-          @input="updateValue('hanQuyetToan', $event.target.value)"
-          type="date"
-        />
-      </div>
+
+      <MSInput
+        class="date-input"
+        :value="hanQuyetToan"
+        @input="updateValue('hanQuyetToan', $event.target.value)"
+        type="date"
+      />
     </div>
   </div>
 </template>
@@ -58,7 +46,7 @@
 import MSInput from "../BaseComponent/MSInput.vue";
 
 export default {
-  name: "DateTimeInput",
+  name: "DateTimeComponent",
   components: {
     MSInput,
   },
@@ -78,8 +66,6 @@ export default {
       ngayChungTu: this.value.ngayChungTu,
       soChungTu: this.value.soChungTu,
       hanQuyetToan: this.value.hanQuyetToan,
-
-      isSoChungTuFocused: false,
     };
   },
   watch: {
@@ -95,16 +81,6 @@ export default {
     },
   },
   methods: {
-    handleFocus() {
-      this.resetFocusStates();
-      this.isSoChungTuFocused = true;
-    },
-    handleBlur() {
-      this.isSoChungTuFocused = false;
-    },
-    resetFocusStates() {
-      this.isSoChungTuFocused = false;
-    },
     updateValue(field, value) {
       this[field] = value;
       this.$emit("update:value", {
@@ -146,27 +122,28 @@ export default {
   height: 30px;
   width: 70%;
 }
-.input-with-button-1:focus-within {
-  border-color: green;
-}
-.input-with-button:focus {
-  border-color: green;
-}
+
 .form-group {
   display: flex;
   flex-direction: column;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
-.base-input {
-  width: 100%;
-  height: 30px;
-  border: none;
+.date-input {
   padding: 0 8px;
   box-sizing: border-box;
   outline: none;
+  border: 1px solid #999;
+  border-radius: 2px;
+  overflow: hidden;
+  flex-grow: 2;
+  margin-right: auto;
+  height: 31px;
+  width: 70%;
+  display: flex;
+  align-items: center;
 }
 label {
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   font-weight: bold;
 }
 

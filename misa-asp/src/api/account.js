@@ -29,7 +29,7 @@ export const account = {
       if (responseData && responseData.message) {
         errorMessage = responseData.message;
       }
-      if (errorCallback) errorCallback(errorMessage);
+      if (errorCallback) errorCallback(responseData);
     }
   );
   return response;

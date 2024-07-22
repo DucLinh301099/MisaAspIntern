@@ -89,14 +89,12 @@
           <div class="bill-content-input-wrapper">
             <label for="bill-content-input">Nội dung thanh toán</label>
             <div class="input-container">
-              <div class="input-with-button-1">
-                <MSInput
-                  :value="defaultBillContent"
-                  :validator="inputValidator"
-                  class="base-input"
-                  @input="updateBillContent"
-                />
-              </div>
+              <MSInput
+                :value="defaultBillContent"
+                :validator="inputValidator"
+                class="base-input-content"
+                @input="updateBillContent"
+              />
             </div>
           </div>
           <div class="account-input-wrapper">
@@ -121,7 +119,7 @@
         </div>
       </div>
       <div class="input-information-center">
-        <DateTimeInput
+        <DateTimeComponent
           :voucherType="voucherType"
           :value="{
             ngayHachToan: payment.ngayHachToan,
@@ -163,7 +161,7 @@
 import HeaderPayment from "../components/PaymentPage/HeaderPayment.vue";
 import MSCombobox from "../components/ControlComponent/MSCombobox.vue";
 import MSInput from "../components/BaseComponent/MSInput.vue";
-import DateTimeInput from "../components/PaymentPage/DateTimeInput.vue";
+import DateTimeComponent from "../components/PaymentPage/DateTimeComponent.vue";
 import FooterPayment from "../components/PaymentPage/FooterPayment.vue";
 
 import MSGrid from "../components/ControlComponent/MSGrid.vue";
@@ -181,7 +179,7 @@ export default {
     HeaderPayment,
     MSCombobox,
     MSInput,
-    DateTimeInput,
+    DateTimeComponent,
     FooterPayment,
 
     MSGrid,
@@ -397,11 +395,13 @@ label {
   border-radius: 2px;
   padding: 8px;
   box-sizing: border-box;
-  height: 33px;
+  height: 32px;
   flex-grow: 1;
   margin-left: 15px;
   width: 50%;
-  margin-top: 17px;
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
 }
 
 label {
@@ -447,16 +447,6 @@ label {
   font-weight: bold;
 }
 
-.input-with-button-1 {
-  display: flex;
-  align-items: center;
-  border: 1px solid #999;
-  border-radius: 2px;
-  overflow: hidden;
-  flex-grow: 2;
-  height: 31px;
-  width: 100%;
-}
 .base-input-1 {
   border: none;
   padding: 8px;
@@ -491,6 +481,8 @@ label {
   padding: 0 8px;
   box-sizing: border-box;
   outline: none;
+  display: flex;
+  align-items: center;
 }
 .base-input-info:focus-within {
   border-color: green;
@@ -514,5 +506,13 @@ label {
   border: none;
   outline: none;
   padding: 0 8px;
+}
+.base-input-content {
+  width: 100%;
+  border: 1px solid #999;
+  display: flex;
+  align-items: center;
+  height: 30px;
+  padding-left: 10px;
 }
 </style>

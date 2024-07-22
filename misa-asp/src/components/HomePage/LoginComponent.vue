@@ -29,27 +29,40 @@
           />
         </div>
       </div>
-      <form @submit.prevent="login">
+      <BaseForm
+        submitButtonText="Đăng nhập"
+        :customHandleLogic="login"
+        :afterCallSuccess="afterCallSuccess"
+        :refs="refs"
+      >
         <div class="form-group">
           <MSInput
+            ref="EmailOrPhoneNumber"
             type="text"
+            class="login-input"
             :value="emailOrPhoneNumber"
+            data-field="emailOrPhoneNumber"
             @input="updateValue('emailOrPhoneNumber', $event.target.value)"
+            :errors="emailOrPhoneNumberErrors"
             placeholder="Số điện thoại/Email"
             required
           />
         </div>
         <div class="form-group">
           <MSInput
+            ref="Password"
             type="password"
             :value="password"
+            class="login-input"
+            data-field="password"
             @input="updateValue('password', $event.target.value)"
+            :errors="passwordErrors"
             placeholder="Mật khẩu"
             required
           />
         </div>
         <button type="submit" class="login-button">Đăng nhập</button>
-      </form>
+      </BaseForm>
       <div class="extra-links">
         <p>
           Bạn chưa có tài khoản?
@@ -65,45 +78,47 @@
 import { account } from "../../api/account";
 import MSInput from "../BaseComponent/MSInput.vue";
 import MSAlert from "../BaseComponent/MSAlert.vue";
+import BaseForm from "../BaseComponent/BaseForm.vue";
 
 export default {
   name: "LoginComponent",
   components: {
     MSInput,
     MSAlert,
+    BaseForm,
   },
   data() {
     return {
       emailOrPhoneNumber: "",
       password: "",
+      emailOrPhoneNumberErrors: [],
+      passwordErrors: [],
       alertMessage: "",
       alertVisible: false,
       alertIsConfirm: false,
       confirmAction: null,
       alertIsShow: true,
+      refs: [],
     };
+  },
+  mounted() {
+    this.refs = this.$refs;
   },
   methods: {
     async login() {
-      await account.login(
-        this.emailOrPhoneNumber,
-        this.password,
-        (responseData) => {
-          this.showConfirm("Đăng nhập thành công!", () => {
-            if (responseData.role === "Admin") {
-              this.$router.push("/admin");
-            } else {
-              this.$router.push("/userAccount");
-            }
-          });
-        },
-        (errorMessage) => {
-          this.showConfirm(`Đăng nhập thất bại - ${errorMessage}`, () =>
-            this.$router.push("/login")
-          );
-        }
-      );
+      return await account.login(this.emailOrPhoneNumber, this.password);
     },
+
+    afterCallSuccess(responseData) {
+      this.showConfirm("Đăng nhập thành công!", () => {
+        if (responseData.role === "Admin") {
+          this.$router.push("/admin");
+        } else {
+          this.$router.push("/userAccount");
+        }
+      });
+    },
+
     showConfirm(message, action) {
       this.alertMessage = message;
       this.confirmAction = action;
@@ -144,12 +159,13 @@ export default {
 
 .login-container {
   background-color: #fff;
-  padding: 20px 40px 40px 40px;
-  border-radius: 8px;
+  padding: 40px;
+  border-radius: 4px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   text-align: center;
   width: 400px;
 }
+
 .error-message {
   display: none;
   color: #f45d48;
@@ -160,7 +176,7 @@ export default {
   display: flex;
   justify-content: space-around;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
 }
 
 .main-logo1 {
@@ -179,13 +195,16 @@ h2 {
   gap: 10px;
 }
 
-.form-group input {
+.login-input {
   flex: 1;
-  padding: 10px;
+  padding: 8.5px;
   border: 1px solid #ccc;
   border-radius: 3px;
-  outline: none;
   box-sizing: border-box;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  outline: none;
 }
 
 .form-group input[type="text"],

@@ -9,6 +9,7 @@
           class="base-input"
           :type="type"
           :value="inputValue"
+          :noBorder="true"
           @input="handleOnInput"
           @focus="handleFocus"
           @blur="handleBlur"
@@ -301,6 +302,8 @@ label {
   padding: 0 8px;
   box-sizing: border-box;
   outline: none;
+  display: flex;
+  align-items: center;
 }
 
 .add-button {

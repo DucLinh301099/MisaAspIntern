@@ -185,7 +185,7 @@ export default {
   background-color: #ffffff;
   padding: 15px 20px;
   color: #333;
-  border-radius: 5px;
+  border-radius: 3px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
   display: flex;
@@ -321,6 +321,7 @@ export default {
 .user-table button:first-of-type {
   background-color: #ffc107;
   color: white;
+  width: 70px;
 }
 
 .user-table button:first-of-type:hover {
@@ -330,6 +331,7 @@ export default {
 .user-table button:last-of-type {
   background-color: #dc3545;
   color: white;
+  width: 70px;
 }
 
 .user-table button:last-of-type:hover {

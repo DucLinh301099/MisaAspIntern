@@ -34,6 +34,7 @@
           <div class="form-group-r">
             <MSInput
               type="text"
+              class="register-input"
               :value="firstName"
               @input="updateValue('firstName', $event.target.value)"
               placeholder="Họ và đệm"
@@ -43,6 +44,7 @@
           <div class="form-group-r">
             <MSInput
               type="text"
+              class="register-input"
               :value="lastName"
               @input="updateValue('lastName', $event.target.value)"
               placeholder="Tên"
@@ -53,6 +55,7 @@
         <div class="form-group-r">
           <MSInput
             type="text"
+            class="register-input"
             :value="email"
             @input="updateValue('email', $event.target.value)"
             placeholder="Email"
@@ -62,6 +65,7 @@
         <div class="form-group-r">
           <MSInput
             type="text"
+            class="register-input"
             :value="phoneNumber"
             @input="updateValue('phoneNumber', $event.target.value)"
             placeholder="Số điện thoại"
@@ -71,6 +75,7 @@
         <div class="form-group-r">
           <MSInput
             type="password"
+            class="register-input"
             :value="password"
             @input="updateValue('password', $event.target.value)"
             placeholder="Mật khẩu"
@@ -182,10 +187,11 @@ export default {
 .register-container {
   background-color: #fff;
   padding: 20px 40px 40px 40px;
-  border-radius: 8px;
+  border-radius: 4px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   text-align: center;
   width: 400px;
+  font-family: AvertaStdCY_Semibold, Helvetica, Arial, sans-serif;
 }
 .error-message {
   display: none;
@@ -223,7 +229,16 @@ export default {
   display: flex;
   margin-bottom: 10px;
 }
-
+.register-input {
+  flex: 1;
+  padding: 8.5px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  box-sizing: border-box;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
 .float-right {
   float: right !important;
 }
@@ -231,7 +246,10 @@ img {
   vertical-align: middle;
   border-style: none;
 }
-
+.form-group-r input:focus-within,
+.form-group-r select:focus-within {
+  border-color: green;
+}
 .form-group-r {
   margin-bottom: 20px;
   display: flex;
