@@ -1,6 +1,14 @@
 <template>
   <div class="login-page">
     <div class="login-container">
+      <MSAlert
+        :message="alertMessage"
+        :type="alertType"
+        :visible="alertVisible"
+        :isConfirm="alertIsConfirm"
+        :isShow="alertIsShow"
+        @confirm="handleConfirm"
+      />
       <div class="logo-section-login">
         <router-link to="/">
           <img
@@ -10,16 +18,16 @@
           />
         </router-link>
       </div>
-      <div class="main-title ">     
-          <div >
-            <span class="bold">Đăng nhập</span>
-          </div>
-          <div >
-            <img
-              src="https://asp.misa.vn/App/Content/images/Logo2.png"
-              class="float-right"
-            />
-          </div>     
+      <div class="main-title">
+        <div>
+          <span class="bold">Đăng nhập</span>
+        </div>
+        <div>
+          <img
+            src="https://asp.misa.vn/App/Content/images/Logo2.png"
+            class="float-right"
+          />
+        </div>
       </div>
       <form @submit.prevent="login">
         <div class="form-group">
@@ -36,7 +44,6 @@
             type="password"
             :value="password"
             @input="updateValue('password', $event.target.value)"
-
             placeholder="Mật khẩu"
             required
           />
@@ -55,24 +62,60 @@
 </template>
 
 <script>
-import { onUpdated } from "vue";
 import { account } from "../../api/account";
 import MSInput from "../BaseComponent/MSInput.vue";
+import MSAlert from "../BaseComponent/MSAlert.vue";
 
 export default {
   name: "LoginComponent",
-  components:{
+  components: {
     MSInput,
+    MSAlert,
   },
   data() {
     return {
       emailOrPhoneNumber: "",
       password: "",
+      alertMessage: "",
+      alertVisible: false,
+      alertIsConfirm: false,
+      confirmAction: null,
+      alertIsShow: true,
     };
   },
   methods: {
     async login() {
-      await account.login(this.emailOrPhoneNumber, this.password);
+      await account.login(
+        this.emailOrPhoneNumber,
+        this.password,
+        (responseData) => {
+          this.showConfirm("Đăng nhập thành công!", () => {
+            if (responseData.role === "Admin") {
+              this.$router.push("/admin");
+            } else {
+              this.$router.push("/userAccount");
+            }
+          });
+        },
+        (errorMessage) => {
+          this.showConfirm(`Đăng nhập thất bại - ${errorMessage}`, () =>
+            this.$router.push("/login")
+          );
+        }
+      );
+    },
+    showConfirm(message, action) {
+      this.alertMessage = message;
+      this.confirmAction = action;
+      this.alertVisible = true;
+      this.alertIsConfirm = true;
+      this.alertIsShow = false;
+    },
+    handleConfirm() {
+      if (this.confirmAction) {
+        this.confirmAction();
+      }
+      this.alertVisible = false;
     },
     updateValue(field, value) {
       this[field] = value;
@@ -81,14 +124,14 @@ export default {
 };
 </script>
 <style scoped>
-.main-title{
-  display:flex;
+.main-title {
+  display: flex;
   margin-bottom: 15px;
   justify-content: space-between;
 }
-.bold{
-  font-weight: bold;
-  font-size: 20px;
+.bold {
+  font-weight: 700;
+  font-size: 20px !important;
   font-family: AvertaStdCY_Semibold, Helvetica, Arial, sans-serif;
 }
 .login-page {
@@ -164,6 +207,7 @@ h2 {
 
 .extra-links {
   margin-top: 20px;
+  font-family: AvertaStdCY_Semibold, Helvetica, Arial, sans-serif;
 }
 
 .extra-links p {

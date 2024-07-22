@@ -104,13 +104,8 @@ export default {
   props: ["id"],
   data() {
     return {
-      firstName: "",
-      lastName: "",
-      email: "",
-      phoneNumber: "",
       editUser: null,
       alertMessage: "",
-      alertType: "info",
       alertVisible: false,
       alertIsConfirm: false,
       confirmAction: null,
@@ -126,28 +121,21 @@ export default {
       if (response) {
         this.editUser = response;
       } else {
-        this.showConfirm("Lỗi khi hiển thị thông tin người dùng", "error");
+        this.showConfirm("Lỗi khi hiển thị thông tin người dùng");
       }
     },
     async updateUser() {
-      const response = await account.updateUser(
-         this.editUser.firstName,
-         this.editUser.lastName,
-         this.editUser.email,
-         this.editUser.phoneNumber
+      const response = await account.updateUser(this.editUser);
+      if (response) {
+        this.showConfirm("Người dùng cập nhật thành công!", () =>
+          this.$router.push("/admin")
         );
-        if (response && response.success) { 
-          this.showConfirm("Người dùng cập nhật thành công!", () =>
-             this.$router.push("/admin")
-          );
-            } else {
-        this.showConfirm(
-          "Lỗi khi cập nhật người dùng: ",() =>
-         this.$router.push(`/edit-user/${this.editUser.id}`)
-       );
-    }
-
-   },
+      } else {
+        this.showConfirm("Lỗi khi cập nhật người dùng: ", () =>
+          this.$router.push(`/edit-user/${this.editUser.id}`)
+        );
+      }
+    },
 
     cancelEdit() {
       this.$router.push("/admin");

@@ -11,34 +11,30 @@ export const account = {
    * @param {*} password 
    * @returns 
    */
-  async login(emailOrPhoneNumber, password) {
-    let params = {
-      EmailOrPhoneNumber: emailOrPhoneNumber,
-      Password: password,
-    };
-    const response = await base.postApi(
-      Api.login.url,
-      params,
-      (responseData) => {
-        localStorage.setItem('role', responseData.role);
-        localStorage.setItem('lastName', responseData.lastName);
-
-        if (responseData.role === 'Admin') {
-          router.push('/admin');
-        } else {
-          router.push('/userAccount');
-        }
-      },
-      (responseData) => {
-        let errorMessage = 'Tài khoản hoặc mật khẩu sai. Vui lòng thử lại.';
-        if (responseData && responseData.message) {
-          errorMessage = responseData.message;
-        }
-        alert(errorMessage);
+  async login(emailOrPhoneNumber, password, successCallback, errorCallback) {
+  let params = {
+    EmailOrPhoneNumber: emailOrPhoneNumber,
+    Password: password,
+  };
+  const response = await base.postApi(
+    Api.login.url,
+    params,
+    (responseData) => {
+      localStorage.setItem('role', responseData.role);
+      localStorage.setItem('lastName', responseData.lastName);
+      if (successCallback) successCallback(responseData);
+    },
+    (responseData) => {
+      let errorMessage = 'Tài khoản hoặc mật khẩu sai. Vui lòng thử lại.';
+      if (responseData && responseData.message) {
+        errorMessage = responseData.message;
       }
-    );
-    return response;
-  },
+      if (errorCallback) errorCallback(errorMessage);
+    }
+  );
+  return response;
+},
+
 
   /**
    * Hàm đăng ký tạo mới tài khoản
@@ -151,15 +147,19 @@ export const account = {
    * @param {*} user 
    * @returns 
    */
-  async updateUser(firstName, lastName, email, phoneNumber) {
-     let params={
-      FirstName: firstName,
-      LastName: lastName,
-      Email: email,
-      PhoneNumber: phoneNumber
-     };
-    const response = await base.putAuthenApi(Api.updateUser.url,params);            
-    return response.data;
+  async updateUser(user) {
+      try {      
+        const getUser = await this.getUserById(user.id);
+        if (getUser) {              
+          const response = await base.putAuthenApi(Api.updateUser.url,user);            
+          return response.data;
+        } else {
+          throw new Error('Không tìm thấy người dùng này');
+        }
+      } catch (error) {
+
+        throw error;
+      }
     },
   /**
    * Hàm xóa user theo id

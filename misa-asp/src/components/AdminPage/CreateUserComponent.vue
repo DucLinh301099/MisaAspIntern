@@ -153,9 +153,8 @@ export default {
           this.$router.push("/admin")
         );
       } else {
-        this.showConfirm(
-          "Lỗi khi cập nhật người dùng: " + response.message,
-          "error"
+        this.showConfirm("Lỗi khi cập nhật người dùng: ", () =>
+          this.$router.push("/create-user")
         );
       }
     },

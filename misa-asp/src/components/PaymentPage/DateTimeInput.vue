@@ -166,7 +166,7 @@ export default {
   outline: none;
 }
 label {
-  margin-bottom: 2px;
+  margin-bottom: 10px;
   font-weight: bold;
 }
 

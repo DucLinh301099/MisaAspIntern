@@ -1,6 +1,14 @@
 <template>
   <div class="register-page">
     <div class="register-container">
+      <MSAlert
+        :message="alertMessage"
+        :type="alertType"
+        :visible="alertVisible"
+        :isConfirm="alertIsConfirm"
+        :isShow="alertIsShow"
+        @confirm="handleConfirm"
+      />
       <div class="logo-section-register">
         <router-link to="/">
           <img
@@ -10,46 +18,61 @@
           />
         </router-link>
       </div>
-      <div class="main-title "> 
-          <div >
-            <span class="bold">Đăng Ký</span>
-          </div>
-          <div >
-            <img
-              src="https://asp.misa.vn/App/Content/images/Logo2.png"
-              class="float-right"
-            />
-          </div>      
+      <div class="main-title">
+        <div>
+          <span class="bold">Đăng Ký</span>
+        </div>
+        <div>
+          <img
+            src="https://asp.misa.vn/App/Content/images/Logo2.png"
+            class="float-right"
+          />
+        </div>
       </div>
       <form @submit.prevent="register">
         <div class="form-group-inline">
           <div class="form-group-r">
-            <input
+            <MSInput
               type="text"
-              v-model="firstName"
+              :value="firstName"
+              @input="updateValue('firstName', $event.target.value)"
               placeholder="Họ và đệm"
               required
             />
           </div>
           <div class="form-group-r">
-            <input type="text" v-model="lastName" placeholder="Tên" required />
+            <MSInput
+              type="text"
+              :value="lastName"
+              @input="updateValue('lastName', $event.target.value)"
+              placeholder="Tên"
+              required
+            />
           </div>
         </div>
         <div class="form-group-r">
-          <input type="text" v-model="email" placeholder="Email" required />
+          <MSInput
+            type="text"
+            :value="email"
+            @input="updateValue('email', $event.target.value)"
+            placeholder="Email"
+            required
+          />
         </div>
         <div class="form-group-r">
-          <input
+          <MSInput
             type="text"
-            v-model="phoneNumber"
+            :value="phoneNumber"
+            @input="updateValue('phoneNumber', $event.target.value)"
             placeholder="Số điện thoại"
             required
           />
         </div>
         <div class="form-group-r">
-          <input
+          <MSInput
             type="password"
-            v-model="password"
+            :value="password"
+            @input="updateValue('password', $event.target.value)"
             placeholder="Mật khẩu"
             required
           />
@@ -82,9 +105,15 @@
 
 <script>
 import { account } from "../../api/account";
+import MSInput from "../BaseComponent/MSInput.vue";
+import MSAlert from "../BaseComponent/MSAlert.vue";
 
 export default {
   name: "RegisterComponent",
+  components: {
+    MSInput,
+    MSAlert,
+  },
   data() {
     return {
       firstName: "",
@@ -93,24 +122,50 @@ export default {
       phoneNumber: "",
       password: "",
       roleId: "",
+      alertMessage: "",
+      alertVisible: false,
+      alertIsConfirm: false,
+      confirmAction: null,
+      alertIsShow: true,
     };
   },
   methods: {
     async register() {
-      try {
-        await account.register(
-          this.firstName,
-          this.lastName,
-          this.email,
-          this.phoneNumber,
-          this.password,
-          this.roleId
-        );
-        alert("Người dùng đã được đăng ký!");
-        this.$router.push("/login");
-      } catch (error) {
-        alert("Người dùng tạo mới thất bại!", "error");
+      const response = await account.register(
+        this.firstName,
+        this.lastName,
+        this.email,
+        this.phoneNumber,
+        this.password,
+        this.roleId
+      );
+
+      if (response) {
+        this.showConfirm("Người dùng đã được đăng ký!", () => {
+          this.$router.push("/login");
+        });
+      } else {
+        this.showConfirm("Đăng ký thất bại - vui lòng thử lại", () => {
+          this.$router.push("/register");
+        });
       }
+    },
+
+    showConfirm(message, action) {
+      this.alertMessage = message;
+      this.confirmAction = action;
+      this.alertVisible = true;
+      this.alertIsConfirm = true;
+      this.alertIsShow = false;
+    },
+    handleConfirm() {
+      if (this.confirmAction) {
+        this.confirmAction();
+      }
+      this.alertVisible = false;
+    },
+    updateValue(field, value) {
+      this[field] = value;
     },
   },
 };
@@ -165,11 +220,9 @@ export default {
 .main-title {
   font-family: AvertaStdCY_Semibold, Helvetica, Arial, sans-serif;
   justify-content: space-between;
-  display:flex;
+  display: flex;
   margin-bottom: 10px;
 }
-
-
 
 .float-right {
   float: right !important;
@@ -185,14 +238,14 @@ img {
   gap: 10px;
 }
 .form-group-r input,
-.form-group-r select{
+.form-group-r select {
   flex: 1;
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 3px;
   outline: none;
 }
-.form-group-inline {  
+.form-group-inline {
   display: flex;
   justify-content: space-between;
   padding-bottom: 5px;
