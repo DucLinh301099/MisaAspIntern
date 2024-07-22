@@ -61,7 +61,6 @@
             required
           />
         </div>
-        <button type="submit" class="login-button">Đăng nhập</button>
       </BaseForm>
       <div class="extra-links">
         <p>

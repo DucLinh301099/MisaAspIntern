@@ -1,7 +1,7 @@
 <template>
   <form @submit.prevent="handleSubmit">
     <slot ref="slotRef"></slot>
-    <button type="submit">{{ submitButtonText }}</button>
+    <button class="submit-button" type="submit">{{ submitButtonText }}</button>
   </form>
 </template>
 
@@ -72,11 +72,20 @@ form {
   flex-direction: column;
   gap: 1rem;
 }
-
+.submit-button {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  background-color: #4caf50;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+}
 button {
   align-self: flex-start;
   padding: 0.5rem 1rem;
-  background-color: #007bff;
+  
   color: white;
   border: none;
   border-radius: 4px;
@@ -84,6 +93,6 @@ button {
 }
 
 button:hover {
-  background-color: #0056b3;
+  background-color: #258c28;
 }
 </style>

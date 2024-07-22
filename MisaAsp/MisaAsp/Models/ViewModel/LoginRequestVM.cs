@@ -16,6 +16,8 @@ namespace MisaAsp.Models.ViewModel
 
         [RequiredVI]
         [StringLengthVI(15)]
+        [DisplayName("Mật khẩu")]
+        [PasswordVI]
         public string Password { get; set; }
     }
 }
