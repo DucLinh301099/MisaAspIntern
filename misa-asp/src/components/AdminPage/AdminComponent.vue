@@ -67,7 +67,7 @@
 <script>
 import { account } from "../../api/account";
 import SideBarComponent from "../AdminPage/SideBarComponent.vue";
-import MSAlert from "../BaseComponent/MSAlert.vue";
+import MSAlert from "../Base/MSAlert.vue";
 export default {
   name: "AdminComponent",
   components: {

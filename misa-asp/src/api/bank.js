@@ -20,8 +20,8 @@ export const bankAccount = {
       Branch: branch,
       TypeOfBank: typeOfBank,
     };
-    const reponse = await base.postAuthenApi(Api.bank.url, params);
-    return reponse.data;
+    const responseData = await base.postAuthenApi(Api.bank.url, params);
+    return responseData;
     
   }
 };

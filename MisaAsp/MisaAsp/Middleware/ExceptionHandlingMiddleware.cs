@@ -1,4 +1,5 @@
-﻿using MisaAsp.Common;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using MisaAsp.Common;
 using MisaAsp.Models.Ulti;
 using Newtonsoft.Json;
 using System.Net;
@@ -51,15 +52,18 @@ namespace MisaAsp.Middleware
             context.Response.StatusCode = (int)HttpStatusCode.OK;
 
             var res = new ResOutput();
-            res.Code = new ColumnError
+            res.code = new List<ColumnError>
             {
+                new ColumnError
+                {
                 FieldName = exception.FieldName,
                 ErrorCode = exception.ErrorCode,
                 ErrorText = exception.ErrorText
+                }
             };
 
             var result = JsonConvert.SerializeObject(res);
-            return context.Response.WriteAsync(result);
+            return context.Response.WriteAsync(result);;
         }
     }
 }

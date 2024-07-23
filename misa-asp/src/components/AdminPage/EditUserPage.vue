@@ -20,7 +20,11 @@
         </div>
       </div>
 
-      <form @submit.prevent="updateUser" class="form-container" v-if="editUser">
+      <form
+        @submit.prevent="handleSubmit"
+        class="form-container"
+        v-if="editUser"
+      >
         <div class="form-input">
           <h2 class="form-title">Chỉnh Sửa Thông Tin Người Dùng</h2>
           <div class="form-group-inline">
@@ -29,6 +33,9 @@
               <MSInput
                 type="text"
                 class="edit-user-input"
+                ref="FirstName"
+                data-field="firstName"
+                :errors="firstNameErrors"
                 :value="editUser.firstName"
                 @input="updateValue('firstName', $event.target.value)"
                 placeholder="Họ và đệm"
@@ -42,10 +49,12 @@
               <MSInput
                 type="text"
                 class="edit-user-input"
+                ref="LastName"
+                data-field="lastName"
+                :errors="lastNameErrors"
                 @input="updateValue('lastName', $event.target.value)"
                 :value="editUser.lastName"
                 placeholder="Tên"
-                required
               />
             </div>
           </div>
@@ -58,10 +67,12 @@
               <MSInput
                 type="email"
                 class="edit-user-input"
+                ref="Email"
+                data-field="email"
+                :errors="emailErrors"
                 @input="updateValue('email', $event.target.value)"
                 :value="editUser.email"
                 placeholder="Email"
-                required
               />
             </div>
             <div class="form-group">
@@ -72,10 +83,12 @@
               <MSInput
                 type="text"
                 class="edit-user-input"
+                ref="PhoneNumber"
+                data-field="phoneNumber"
+                :errors="phoneNumberErrors"
                 @input="updateValue('phoneNumber', $event.target.value)"
                 :value="editUser.phoneNumber"
                 placeholder="Số điện thoại"
-                required
               />
             </div>
           </div>
@@ -95,11 +108,13 @@
 <script>
 import { account } from "../../api/account";
 import SideBarComponent from "../AdminPage/SideBarComponent.vue";
-import MSAlert from "../BaseComponent/MSAlert.vue";
-import MSInput from "../BaseComponent/MSInput.vue";
+import MSAlert from "../Base/MSAlert.vue";
+import MSInput from "../Base/MSInput.vue";
+import BaseHandleSubmit from "../Base/BaseHandleSubmit.vue";
 
 export default {
   name: "EditUserPage",
+  extends: BaseHandleSubmit,
   components: {
     SideBarComponent,
     MSAlert,
@@ -108,6 +123,10 @@ export default {
   props: ["id"],
   data() {
     return {
+      firstNameErrors: [],
+      lastNameErrors: [],
+      phoneNumberErrors: [],
+      emailErrors: [],
       editUser: null,
       alertMessage: "",
       alertVisible: false,
@@ -128,17 +147,25 @@ export default {
         this.showConfirm("Lỗi khi hiển thị thông tin người dùng");
       }
     },
-    async updateUser() {
-      const response = await account.updateUser(this.editUser);
-      if (response) {
-        this.showConfirm("Người dùng cập nhật thành công!", () =>
-          this.$router.push("/admin")
-        );
-      } else {
-        this.showConfirm("Lỗi khi cập nhật người dùng: ", () =>
-          this.$router.push(`/edit-user/${this.editUser.id}`)
-        );
-      }
+    async customHandleLogic() {
+      return await account.updateUser(this.editUser);
+    },
+    afterCallSuccess(responseData) {
+      this.showConfirm("Sửa thông tin người dùng !", () => {
+        if (responseData) {
+          this.$router.push("/admin");
+        }
+      });
+    },
+    afterCallErrorCustom(responseData) {
+      this.showConfirm(
+        "Sửa thông tin thất bại thất bại - Thông tin nhập liệu không hợp lệ",
+        () => {
+          if (!responseData.isSuccess) {
+            this.$router.push("/edit-user/:id");
+          }
+        }
+      );
     },
 
     cancelEdit() {
@@ -160,6 +187,23 @@ export default {
     },
     updateValue(field, value) {
       this.editUser[field] = value;
+      switch (field) {
+        case "firstName":
+          this.firstNameErrors = [];
+          break;
+        case "lastName":
+          this.lastNameErrors = [];
+          break;
+        case "email":
+          this.emailErrors = [];
+          break;
+        case "phoneNumber":
+          this.phoneNumberErrors = [];
+          break;
+
+        default:
+          break;
+      }
     },
   },
 };

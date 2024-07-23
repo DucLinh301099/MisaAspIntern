@@ -43,7 +43,7 @@
 </template>
 
 <script>
-import MSInput from "../BaseComponent/MSInput.vue";
+import MSInput from "../Base/MSInput.vue";
 
 export default {
   name: "DateTimeComponent",

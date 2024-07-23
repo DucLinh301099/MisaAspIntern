@@ -73,15 +73,17 @@
 </template>
 
 <script>
-import MSInput from "../BaseComponent/MSInput.vue";
+import MSInput from "../Base/MSInput.vue";
 import Multiselect from "vue-multiselect";
 import "vue-multiselect/dist/vue-multiselect.css";
-import Modal from "../BaseComponent/Modal.vue";
-import MSAlert from "../BaseComponent/MSAlert.vue";
+import Modal from "../Base/Modal.vue";
+import MSAlert from "../Base/MSAlert.vue";
 import { base } from "../../api/base";
+import BaseHandleSubmit from "../Base/BaseHandleSubmit.vue";
 
 export default {
   name: "MSCombobox",
+  extends: BaseHandleSubmit,
   components: {
     MSInput,
     Multiselect,
@@ -225,11 +227,11 @@ export default {
     closeCreateModal() {
       this.isCreateModalVisible = false;
     },
-    handleCreateSubmit(formData) {
-      this.showConfirm("Tạo mới thành công!", () => {
+    handleCreateSubmit() {
+      if (responData) {
         this.$emit("createSubmit", formData);
         this.closeCreateModal();
-      });
+      }
     },
     showConfirm(message, action) {
       this.alertMessage = message;
@@ -254,7 +256,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .combobox-account-input-wrapper {
   display: flex;
   flex-direction: column;
@@ -322,7 +324,7 @@ label {
 }
 
 .multiselect {
-  width: 40px;
+  width: 39px;
   border: none;
   border-left: 1px solid #999;
   margin-left: auto;

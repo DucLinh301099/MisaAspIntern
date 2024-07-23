@@ -56,8 +56,8 @@ export const account = {
       Password: password,
       RoleId: roleId
     };
-    const reponse = await base.postApi(Api.register.url, params);
-    return reponse.data;
+    const responseData = await base.postApi(Api.register.url, params);
+    return responseData;
   },
    
   /**
@@ -106,8 +106,8 @@ export const account = {
       Password: password,
       RoleId: roleId
     };
-    const reponse = await base.postApi(Api.register.url, params);
-    return reponse.data;
+    const responseData = await base.postApi(Api.register.url, params);
+    return responseData;
   },
 
   /**
@@ -151,8 +151,8 @@ export const account = {
       try {      
         const getUser = await this.getUserById(user.id);
         if (getUser) {              
-          const response = await base.putAuthenApi(Api.updateUser.url,user);            
-          return response.data;
+          const responseData = await base.putAuthenApi(Api.updateUser.url,user);            
+          return responseData;
         } else {
           throw new Error('Không tìm thấy người dùng này');
         }

@@ -29,23 +29,17 @@
           />
         </div>
       </div>
-      <BaseForm
-        submitButtonText="Đăng nhập"
-        :customHandleLogic="login"
-        :afterCallSuccess="afterCallSuccess"
-        :refs="refs"
-      >
+      <form @submit.prevent="handleSubmit">
         <div class="form-group">
           <MSInput
-            ref="EmailOrPhoneNumber"
             type="text"
             class="login-input"
             :value="emailOrPhoneNumber"
+            ref="EmailOrPhoneNumber"
             data-field="emailOrPhoneNumber"
-            @input="updateValue('emailOrPhoneNumber', $event.target.value)"
             :errors="emailOrPhoneNumberErrors"
+            @input="updateValue('emailOrPhoneNumber', $event.target.value)"
             placeholder="Số điện thoại/Email"
-            required
           />
         </div>
         <div class="form-group">
@@ -58,10 +52,10 @@
             @input="updateValue('password', $event.target.value)"
             :errors="passwordErrors"
             placeholder="Mật khẩu"
-            required
           />
         </div>
-      </BaseForm>
+        <button class="login-button" type="submit">Đăng nhập</button>
+      </form>
       <div class="extra-links">
         <p>
           Bạn chưa có tài khoản?
@@ -75,16 +69,16 @@
 
 <script>
 import { account } from "../../api/account";
-import MSInput from "../BaseComponent/MSInput.vue";
-import MSAlert from "../BaseComponent/MSAlert.vue";
-import BaseForm from "../BaseComponent/BaseForm.vue";
+import MSInput from "../Base/MSInput.vue";
+import MSAlert from "../Base/MSAlert.vue";
+import BaseHandleSubmit from "../Base/BaseHandleSubmit.vue";
 
 export default {
+  extends: BaseHandleSubmit,
   name: "LoginComponent",
   components: {
     MSInput,
     MSAlert,
-    BaseForm,
   },
   data() {
     return {
@@ -100,24 +94,38 @@ export default {
       refs: [],
     };
   },
-  mounted() {
-    this.refs = this.$refs;
-  },
   methods: {
-    async login() {
+    /**
+     * Các function này được kế thừa từ BaseHandleSubmit
+     */
+    async customHandleLogic() {
       return await account.login(this.emailOrPhoneNumber, this.password);
     },
 
     afterCallSuccess(responseData) {
       this.showConfirm("Đăng nhập thành công!", () => {
-        if (responseData.role === "Admin") {
+        if (responseData.data.role === "Admin") {
           this.$router.push("/admin");
         } else {
           this.$router.push("/userAccount");
         }
       });
     },
-
+    afterCallErrorCustom(responseData) {
+      this.showConfirm(
+        "Đăng nhập thất bại - Thông tin đăng nhập không hợp lệ",
+        () => {
+          if (!responseData.isSuccess) {
+            this.$router.push("/login");
+          }
+        }
+      );
+    },
+    /**
+     * function xử lý các alert thông báo
+     * @param message
+     * @param action
+     */
     showConfirm(message, action) {
       this.alertMessage = message;
       this.confirmAction = action;
@@ -133,6 +141,16 @@ export default {
     },
     updateValue(field, value) {
       this[field] = value;
+      switch (field) {
+        case "emailOrPhoneNumber":
+          this.emailOrPhoneNumberErrors = [];
+          break;
+        case "password":
+          this.passwordErrors = [];
+          break;
+        default:
+          break;
+      }
     },
   },
 };
@@ -236,7 +254,9 @@ a {
   color: #1e90ff;
   text-decoration: none;
 }
-
+button:hover {
+  background-color: #258c28;
+}
 .extra-links a:hover {
   text-decoration: underline;
 }

@@ -29,57 +29,67 @@
           />
         </div>
       </div>
-      <form @submit.prevent="register">
+      <form @submit.prevent="handleSubmit">
         <div class="form-group-inline">
           <div class="form-group-r">
             <MSInput
               type="text"
+              ref="FirstName"
               class="register-input"
               :value="firstName"
+              data-field="firstName"
+              :errors="firstNameErrors"
               @input="updateValue('firstName', $event.target.value)"
               placeholder="Họ và đệm"
-              required
             />
           </div>
           <div class="form-group-r">
             <MSInput
               type="text"
+              ref="LastName"
               class="register-input"
               :value="lastName"
+              data-field="lastName"
+              :errors="lastNameErrors"
               @input="updateValue('lastName', $event.target.value)"
               placeholder="Tên"
-              required
             />
           </div>
         </div>
         <div class="form-group-r">
           <MSInput
             type="text"
+            ref="Email"
             class="register-input"
             :value="email"
+            data-field="email"
+            :errors="emailErrors"
             @input="updateValue('email', $event.target.value)"
             placeholder="Email"
-            required
           />
         </div>
         <div class="form-group-r">
           <MSInput
             type="text"
+            ref="PhoneNumber"
             class="register-input"
             :value="phoneNumber"
+            data-field="phoneNumber"
+            :errors="phoneNumberErrors"
             @input="updateValue('phoneNumber', $event.target.value)"
             placeholder="Số điện thoại"
-            required
           />
         </div>
         <div class="form-group-r">
           <MSInput
             type="password"
+            ref="Password"
             class="register-input"
             :value="password"
+            data-field="password"
+            :errors="passwordErrors"
             @input="updateValue('password', $event.target.value)"
             placeholder="Mật khẩu"
-            required
           />
         </div>
         <div class="form-group-r">
@@ -110,11 +120,13 @@
 
 <script>
 import { account } from "../../api/account";
-import MSInput from "../BaseComponent/MSInput.vue";
-import MSAlert from "../BaseComponent/MSAlert.vue";
+import MSInput from "../Base/MSInput.vue";
+import MSAlert from "../Base/MSAlert.vue";
+import BaseHandleSubmit from "../Base/BaseHandleSubmit.vue";
 
 export default {
   name: "RegisterComponent",
+  extends: BaseHandleSubmit,
   components: {
     MSInput,
     MSAlert,
@@ -127,6 +139,11 @@ export default {
       phoneNumber: "",
       password: "",
       roleId: "",
+      firstNameErrors: [],
+      lastNameErrors: [],
+      phoneNumberErrors: [],
+      emailErrors: [],
+      passwordErrors: [],
       alertMessage: "",
       alertVisible: false,
       alertIsConfirm: false,
@@ -135,8 +152,8 @@ export default {
     };
   },
   methods: {
-    async register() {
-      const response = await account.register(
+    async customHandleLogic() {
+      return await account.register(
         this.firstName,
         this.lastName,
         this.email,
@@ -144,16 +161,23 @@ export default {
         this.password,
         this.roleId
       );
-
-      if (response) {
-        this.showConfirm("Người dùng đã được đăng ký!", () => {
+    },
+    afterCallSuccess(responseData) {
+      this.showConfirm("Đăng ký thành công tài khoản mới!", () => {
+        if (responseData) {
           this.$router.push("/login");
-        });
-      } else {
-        this.showConfirm("Đăng ký thất bại - vui lòng thử lại", () => {
-          this.$router.push("/register");
-        });
-      }
+        }
+      });
+    },
+    afterCallErrorCustom(responseData) {
+      this.showConfirm(
+        "Đăng ký thất bại - Thông tin đăng ký không hợp lệ",
+        () => {
+          if (!responseData.isSuccess) {
+            this.$router.push("/register");
+          }
+        }
+      );
     },
 
     showConfirm(message, action) {
@@ -171,6 +195,25 @@ export default {
     },
     updateValue(field, value) {
       this[field] = value;
+      switch (field) {
+        case "firstName":
+          this.firstNameErrors = [];
+          break;
+        case "lastName":
+          this.lastNameErrors = [];
+          break;
+        case "email":
+          this.emailErrors = [];
+          break;
+        case "phoneNumber":
+          this.phoneNumberErrors = [];
+          break;
+        case "password":
+          this.passwordErrors = [];
+          break;
+        default:
+          break;
+      }
     },
   },
 };
@@ -231,7 +274,7 @@ export default {
 }
 .register-input {
   flex: 1;
-  padding: 8.5px;
+  padding: 6px;
   border: 1px solid #ccc;
   border-radius: 3px;
   box-sizing: border-box;

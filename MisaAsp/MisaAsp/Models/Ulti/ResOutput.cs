@@ -4,24 +4,24 @@ namespace MisaAsp.Models.Ulti
 {
     public class ResOutput
     {
-        public string Message { get; set; }
-        public object Data { get; set; }
-        public object Code { get; set; }
-        public bool IsSuccess { get; set; }
+        public string message { get; set; }
+        public object data { get; set; }
+        public object code { get; set; }
+        public bool isSuccess { get; set; }
         public ResOutput() { }
         public void HandleSuccess(string message, object data = null)
         {
-            Message = message;
-            Data = data;
-            IsSuccess = true;
+            this.message = message;
+            this.data = data;
+            isSuccess = true;
         }
 
         public void HandleError(string message = "Thất bại", object data = null, object code = null)
         {
-            Message = message;
-            Data = data;
-            IsSuccess = false;
-            Code = code;
+            this.message = message;
+            this.data = data;
+            isSuccess = false;
+            this.code = code;
         }
     }
 

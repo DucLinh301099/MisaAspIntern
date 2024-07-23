@@ -25,6 +25,8 @@ namespace MisaAsp.Models.ViewModel
         [StringLengthVI(50)]
         [PasswordVI]
         public string Password { get; set; }
+
+        [RequiredVI]
         public int RoleId { get; set; } 
 
     }

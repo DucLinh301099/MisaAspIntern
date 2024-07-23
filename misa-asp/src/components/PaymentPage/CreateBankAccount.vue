@@ -1,7 +1,7 @@
 <template>
   <div class="create-bank-account">
     <h2 class="form-title">Thêm Tài khoản ngân hàng</h2>
-    <form @submit.prevent="createBankAccount">
+    <form @submit.prevent="handleSubmit">
       <div class="form-row">
         <div class="input-container">
           <label for="account-number">
@@ -11,6 +11,9 @@
             type="text"
             id="account-Number"
             :value="accountNumber"
+            ref="AccountNumber"
+            data-field="accountNumber"
+            :errors="accountNumberErrors"
             @input="updateValue('accountNumber', $event.target.value)"
             class="input-field"
             required
@@ -24,6 +27,9 @@
             type="text"
             :value="bankName"
             id="bank-name"
+            ref="BankName"
+            data-field="bankName"
+            :errors="bankNameErrors"
             @input="updateValue('bankName', $event.target.value)"
             class="input-field"
             required
@@ -40,6 +46,9 @@
             type="text"
             :value="branch"
             id="branch"
+            ref="Branch"
+            data-field="branch"
+            :errors="branchErrors"
             @input="updateValue('branch', $event.target.value)"
             class="input-field"
             required
@@ -75,12 +84,13 @@
 </template>
 
 <script>
-import { bankAccount } from "../../api/bank"; // Import hàm tạo tài khoản ngân hàng từ file account.js
-import MSInput from "../BaseComponent/MSInput.vue";
-import MSAlert from "../BaseComponent/MSAlert.vue";
+import { bankAccount } from "../../api/bank";
+import MSInput from "../Base/MSInput.vue";
+import BaseHandleSubmit from "../Base/BaseHandleSubmit.vue";
 
 export default {
   name: "CreateBankAccount",
+  extends: BaseHandleSubmit,
   components: {
     MSInput,
   },
@@ -90,27 +100,47 @@ export default {
       bankName: "",
       branch: "",
       typeOfBank: "",
+
+      branchErrors: [],
+      bankNameErrors: [],
+      accountNumberErrors: [],
     };
   },
   methods: {
-    async createBankAccount() {
-      const data = await bankAccount.createBankAccount(
+    async customHandleLogic() {
+      return await bankAccount.createBankAccount(
         this.accountNumber,
         this.bankName,
         this.branch,
         this.typeOfBank
       );
-      if (data) {
+    },
+    afterCallSuccess(responseData) {
+      if (responseData) {
         this.$router.push("/payment");
-      } else {
-        alert("Tạo mới thất bại");
       }
     },
-    save() {
-      alert("Thông tin tài khoản ngân hàng đã được lưu!");
+    afterCallErrorCustom(responseData) {
+      if (!responseData.isSuccess) {
+        this.$router.push("/payment");
+      }
     },
+
     updateValue(field, value) {
       this[field] = value;
+      switch (field) {
+        case "accountNumber":
+          this.accountNumberErrors = [];
+          break;
+        case "bankName":
+          this.bankNameErrors = [];
+          break;
+        case "branch":
+          this.branchErrors = [];
+          break;
+        default:
+          break;
+      }
     },
   },
 };
@@ -165,7 +195,7 @@ label {
 }
 
 .input-field {
-  padding: 8px;
+  padding: 3.7px;
   border: 1px solid #babec5;
   border-radius: 2.5px;
   outline: none;

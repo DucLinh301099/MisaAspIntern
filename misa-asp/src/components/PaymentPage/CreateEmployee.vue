@@ -72,8 +72,8 @@
 </template>
 
 <script>
-import { account } from "../../api/account"; // Import hàm tạo nhân viên từ file account.js
-import MSInput from "../BaseComponent/MSInput.vue";
+import { account } from "../../api/account";
+import MSInput from "../Base/MSInput.vue";
 
 export default {
   name: "CreateEmployee",
@@ -158,7 +158,7 @@ label {
 }
 
 .input-field {
-  padding: 8px;
+  padding: 3.7px;
   border: 1px solid #babec5;
   border-radius: 2.5px;
   font-size: 14px;

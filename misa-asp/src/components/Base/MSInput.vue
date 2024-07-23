@@ -1,5 +1,8 @@
 <template>
-  <div class="ms-input" :class="{ focused: isFocused, 'no-border': noBorder, 'has-error': error }">
+  <div
+    class="ms-input"
+    :class="{ focused: isFocused, 'no-border': noBorder, 'has-error': error }"
+  >
     <input
       :type="type"
       :value="value"
@@ -7,6 +10,7 @@
       @focus="handleFocus"
       @blur="handleBlur"
       :placeholder="placeholder"
+      :class="{ 'input-error': error }"
     />
     <span v-if="error" class="error-icon">!</span>
     <span v-if="error" class="error-tooltip">{{ error }}</span>
@@ -78,9 +82,10 @@ export default {
 .ms-input input {
   outline: none;
   width: 100%;
-  border: none;
+  border: 1px solid transparent;
   height: 20px;
   font-size: 14px;
+  transition: border-color 0.3s;
 }
 
 .ms-input.focused {
@@ -91,6 +96,10 @@ export default {
   border: none;
 }
 
+.ms-input.has-error {
+  border: 1px solid #f85050;
+}
+
 .error-icon {
   display: flex;
   align-items: center;
@@ -99,8 +108,8 @@ export default {
   right: 10px;
   width: 20px;
   height: 20px;
-  border: 2px solid red;
-  color: red;
+  border: 2px solid #f85050;
+  color: #f85050;
   border-radius: 50%;
   font-size: 14px;
   line-height: 18px;
@@ -111,7 +120,7 @@ export default {
 .error-tooltip {
   display: block;
   position: absolute;
-  background-color: rgba(255, 0, 0, 0.8);
+  background-color: #f85050;
   color: white;
   font-size: 12px;
   padding: 5px;
@@ -120,5 +129,7 @@ export default {
   left: 0;
   white-space: nowrap;
   z-index: 1000;
+  font-family: AvertaStdCY_Semibold, Helvetica, Arial, sans-serif;
+  margin-top: 3px;
 }
 </style>

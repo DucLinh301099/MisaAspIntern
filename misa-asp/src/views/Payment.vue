@@ -160,7 +160,7 @@
 <script>
 import HeaderPayment from "../components/PaymentPage/HeaderPayment.vue";
 import MSCombobox from "../components/ControlComponent/MSCombobox.vue";
-import MSInput from "../components/BaseComponent/MSInput.vue";
+import MSInput from "../components/Base/MSInput.vue";
 import DateTimeComponent from "../components/PaymentPage/DateTimeComponent.vue";
 import FooterPayment from "../components/PaymentPage/FooterPayment.vue";
 
@@ -339,12 +339,6 @@ export default {
   align-items: center;
 }
 
-.input-information-right {
-  width: 50%;
-  margin-right: 25px;
-  margin-left: 18px;
-  margin-top: 4px;
-}
 .input-group {
   display: flex;
   gap: 16px;
@@ -358,7 +352,7 @@ label {
   margin-bottom: 50px;
 }
 .payment {
-  padding-top: 60px;
+  padding-top: 40px;
   font-family: AvertaStdCY, Helvetica, Arial, sans-serif;
 }
 
@@ -410,7 +404,7 @@ label {
 }
 .input-information {
   display: flex;
-  font-size: 15px;
+  font-size: 14px;
   margin-top: 20px;
   margin-bottom: 15px;
 }

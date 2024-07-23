@@ -20,7 +20,7 @@
         </div>
       </div>
 
-      <form @submit.prevent="createUser" class="form-container">
+      <form @submit.prevent="handleSubmit" class="form-container">
         <div class="form-input">
           <h2 class="form-title">Tạo mới người dùng</h2>
           <div class="form-group-inline">
@@ -29,6 +29,9 @@
               <MSInput
                 type="text"
                 class="create-user-input"
+                ref="FirstName"
+                data-field="firstName"
+                :errors="firstNameErrors"
                 :value="firstName"
                 @input="updateValue('firstName', $event.target.value)"
                 required
@@ -42,6 +45,9 @@
               <MSInput
                 type="text"
                 class="create-user-input"
+                ref="LastName"
+                data-field="lastName"
+                :errors="lastNameErrors"
                 :value="lastName"
                 @input="updateValue('lastName', $event.target.value)"
                 required
@@ -57,6 +63,9 @@
               <MSInput
                 type="text"
                 class="create-user-input"
+                ref="Email"
+                data-field="email"
+                :errors="emailErrors"
                 :value="email"
                 @input="updateValue('email', $event.target.value)"
                 required
@@ -71,8 +80,10 @@
                 type="text"
                 class="create-user-input"
                 :value="phoneNumber"
+                ref="PhoneNumber"
+                data-field="phoneNumber"
+                :errors="phoneNumberErrors"
                 @input="updateValue('phoneNumber', $event.target.value)"
-                required
               />
             </div>
           </div>
@@ -86,8 +97,10 @@
                 type="password"
                 class="create-user-input"
                 :value="password"
+                ref="Password"
+                data-field="password"
+                :errors="passwordErrors"
                 @input="updateValue('password', $event.target.value)"
-                required
               />
             </div>
             <div class="form-group">
@@ -116,11 +129,13 @@
 <script>
 import { account } from "../../api/account";
 import SideBarComponent from "../AdminPage/SideBarComponent.vue";
-import MSAlert from "../BaseComponent/MSAlert.vue";
-import MSInput from "../BaseComponent/MSInput.vue";
+import MSAlert from "../Base/MSAlert.vue";
+import MSInput from "../Base/MSInput.vue";
+import BaseHandleSubmit from "../Base/BaseHandleSubmit.vue";
 
 export default {
   name: "CreateUserComponent",
+  extends: BaseHandleSubmit,
   components: {
     SideBarComponent,
     MSAlert,
@@ -135,6 +150,12 @@ export default {
       password: "",
       roleId: "",
 
+      firstNameErrors: [],
+      lastNameErrors: [],
+      phoneNumberErrors: [],
+      emailErrors: [],
+      passwordErrors: [],
+
       alertMessage: "",
       alertType: "info",
       alertVisible: false,
@@ -144,8 +165,8 @@ export default {
     };
   },
   methods: {
-    async createUser() {
-      const response = await account.register(
+    async customHandleLogic() {
+      return await account.createUser(
         this.firstName,
         this.lastName,
         this.email,
@@ -153,16 +174,25 @@ export default {
         this.password,
         this.roleId
       );
-      if (response) {
-        this.showConfirm("Người dùng tạo mới thành công!", () =>
-          this.$router.push("/admin")
-        );
-      } else {
-        this.showConfirm("Lỗi khi cập nhật người dùng: ", () =>
-          this.$router.push("/create-user")
-        );
-      }
     },
+    afterCallSuccess(responseData) {
+      this.showConfirm("Tạo mới thành công tài khoản mới!", () => {
+        if (responseData) {
+          this.$router.push("/admin");
+        }
+      });
+    },
+    afterCallErrorCustom(responseData) {
+      this.showConfirm(
+        "Tạo mới thất bại thất bại - Thông tin đăng ký không hợp lệ",
+        () => {
+          if (!responseData.isSuccess) {
+            this.$router.push("/create-user");
+          }
+        }
+      );
+    },
+
     cancelCreate() {
       this.$router.push("/admin");
     },
@@ -181,6 +211,25 @@ export default {
     },
     updateValue(field, value) {
       this[field] = value;
+      switch (field) {
+        case "firstName":
+          this.firstNameErrors = [];
+          break;
+        case "lastName":
+          this.lastNameErrors = [];
+          break;
+        case "email":
+          this.emailErrors = [];
+          break;
+        case "phoneNumber":
+          this.phoneNumberErrors = [];
+          break;
+        case "password":
+          this.passwordErrors = [];
+          break;
+        default:
+          break;
+      }
     },
   },
 };
@@ -361,6 +410,7 @@ h2 {
   background-repeat: no-repeat;
   background-position: right 10px center;
   background-size: 10px;
+  height: 38px;
 }
 .create-button,
 .cancel-button {

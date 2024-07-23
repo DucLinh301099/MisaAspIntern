@@ -90,7 +90,7 @@
 
 <script>
 import { customer } from "../../api/customer";
-import MSInput from "../BaseComponent/MSInput.vue";
+import MSInput from "../Base/MSInput.vue";
 
 export default {
   name: "CreateCustomer",
@@ -179,7 +179,7 @@ label {
 }
 
 .input-field-a {
-  padding: 8px;
+  padding: 3.7px;
   border: 1px solid #babec5;
   border-radius: 2.5px;
   font-size: 14px;
@@ -188,7 +188,7 @@ label {
   width: 200px;
 }
 .input-field-b {
-  padding: 8px;
+  padding: 3.7px;
   border: 1px solid #babec5;
   border-radius: 2.5px;
   font-size: 14px;

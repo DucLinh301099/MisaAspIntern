@@ -40,7 +40,7 @@
 
 <script>
 import { account } from "../../api/account";
-import MSAlert from "../BaseComponent/MSAlert.vue";
+import MSAlert from "../Base/MSAlert.vue";
 
 export default {
   name: "ForgotPasswordComponent",
