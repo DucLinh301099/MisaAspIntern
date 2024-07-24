@@ -138,6 +138,7 @@ export default {
       alertIsConfirm: false,
       alertIsShow: false,
       confirmAction: null,
+      formData: {},
     };
   },
   watch: {
@@ -227,12 +228,19 @@ export default {
     closeCreateModal() {
       this.isCreateModalVisible = false;
     },
-    handleCreateSubmit() {
-      if (responData) {
+    
+    /**
+     * sẽ xử lý lại chỗ này, hiện tại vẫn đang lỗi
+     * responseData - undefined
+     */
+    handleCreateSubmit({ formData, responseData }) {
+      if (responseData && responseData.isSuccess) {
         this.$emit("createSubmit", formData);
         this.closeCreateModal();
       }
     },
+
+      
     showConfirm(message, action) {
       this.alertMessage = message;
       this.confirmAction = action;

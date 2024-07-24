@@ -9,7 +9,7 @@
           </label>
           <MSInput
             type="text"
-            id="account-Number"
+            
             :value="accountNumber"
             ref="AccountNumber"
             data-field="accountNumber"
@@ -26,7 +26,7 @@
           <MSInput
             type="text"
             :value="bankName"
-            id="bank-name"
+            
             ref="BankName"
             data-field="bankName"
             :errors="bankNameErrors"
@@ -45,7 +45,7 @@
           <MSInput
             type="text"
             :value="branch"
-            id="branch"
+          
             ref="Branch"
             data-field="branch"
             :errors="branchErrors"
@@ -115,17 +115,7 @@ export default {
         this.typeOfBank
       );
     },
-    afterCallSuccess(responseData) {
-      if (responseData) {
-        this.$router.push("/payment");
-      }
-    },
-    afterCallErrorCustom(responseData) {
-      if (!responseData.isSuccess) {
-        this.$router.push("/payment");
-      }
-    },
-
+   
     updateValue(field, value) {
       this[field] = value;
       switch (field) {

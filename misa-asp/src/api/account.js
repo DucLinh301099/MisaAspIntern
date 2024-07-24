@@ -83,8 +83,8 @@ export const account = {
       Department: department,
       MobilePhone: mobilePhone,
     };
-    const reponse = await base.postAuthenApi(Api.createEmployee.url, params);
-    return reponse.data;
+    const responseData = await base.postAuthenApi(Api.createEmployee.url, params);
+    return responseData;
   },
 
   /**

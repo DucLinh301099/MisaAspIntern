@@ -2,7 +2,7 @@
 <template>
   <div class="create-employee">
     <h2 class="form-title">Thông tin nhân viên</h2>
-    <form @submit.prevent="createEmployee">
+    <form @submit.prevent="handleSubmit">
       <div class="form-row">
         <div class="input-container">
           <label for="employee-code"
@@ -10,7 +10,9 @@
           >
           <MSInput
             type="text"
-            id="employee-code"
+            ref="EmployeeCode"
+            data-field="employeeCode"
+            :errors="employeeCodeErrors"
             :value="employeeCode"
             @input="updateValue('employeeCode', $event.target.value)"
             class="input-field"
@@ -23,7 +25,9 @@
           >
           <MSInput
             type="text"
-            id="employee-name"
+            ref="EmployeeName"
+            data-field="employeeName"
+            :errors="employeeNameErrors"
             :value="employeeName"
             @input="updateValue('employeeName', $event.target.value)"
             class="input-field"
@@ -36,7 +40,9 @@
           <label for="mobile-phone">Điện thoại</label>
           <MSInput
             type="text"
-            id="mobile-phone"
+            ref="MobilePhone"
+            data-field="mobilePhone"
+            :errors="mobilePhoneErrors"
             :value="mobilePhone"
             @input="updateValue('mobilePhone', $event.target.value)"
             class="input-field"
@@ -46,7 +52,9 @@
           <label for="department">Đơn vị</label>
           <MSInput
             type="text"
-            id="department"
+            ref="Department"
+            data-field="department"
+            :errors="departmentErrors"
             :value="department"
             @input="updateValue('department', $event.target.value)"
             class="input-field"
@@ -74,9 +82,11 @@
 <script>
 import { account } from "../../api/account";
 import MSInput from "../Base/MSInput.vue";
+import BasehandleSubmit from "../Base/BaseHandleSubmit.vue";
 
 export default {
   name: "CreateEmployee",
+  extends: BasehandleSubmit,
   components: {
     MSInput,
   },
@@ -86,24 +96,42 @@ export default {
       employeeName: "",
       mobilePhone: "",
       department: "",
+
+      employeeCodeErrors:[],
+      employeeNameErrors:[],
+      mobilePhoneErrors:[],
+      departmentErrors:[],
+
     };
   },
   methods: {
-    async createEmployee() {
-      const data = await account.createEmployee(
+    async customHandleLogic() {
+       return await account.createEmployee(
         this.employeeCode,
         this.employeeName,
         this.mobilePhone,
         this.department
       );
-      if (data) {
-        this.$router.push("/payment");
-      } else {
-        alert("Tạo mới thất bại");
-      }
+
     },
     updateValue(field, value) {
       this[field] = value;
+      switch (field) {
+        case "employeeCode":
+          this.employeeCodeErrors = [];
+          break;
+        case "employeeName":
+          this.employeeNameErrors = [];
+          break;
+        case "mobilePhone":
+          this.mobilePhoneErrors = [];
+          break;
+        case "department":
+          this.departmentErrors = [];
+          break;
+        default:
+          break;
+      }
     },
   },
 };

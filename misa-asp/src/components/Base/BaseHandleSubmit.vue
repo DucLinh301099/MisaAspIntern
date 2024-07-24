@@ -12,6 +12,7 @@ export default {
 
       if (responseData.isSuccess) {
         await this.afterCallSuccess(responseData);
+        await this.handleCreateSubmit(this.formData, responseData);
       } else {
         await this.afterCallError(responseData);
         await this.afterCallErrorCustom(responseData);
@@ -46,6 +47,14 @@ export default {
     },
     // gọi lại hàm này trong tk con và xử lý lỗi theo yêu cầu
     async afterCallErrorCustom() {},
+    /**
+     * Hàm xử lý việc submit form của modal sau khi có phản hồi thành công
+     * @param formData 
+     * @param responseData 
+     */
+     handleCreateSubmit(formData, responseData) {
+      this.$emit("createSubmit", { formData, responseData });
+    },
   },
 };
 </script>

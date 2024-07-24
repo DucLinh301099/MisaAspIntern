@@ -20,8 +20,8 @@ export const customer = {
       Address: address,
       PhoneNumber: phoneNumber
     };
-    const reponse = await base.postAuthenApi(Api.customer.url, params);
-    return reponse.data;
+    const responseData = await base.postAuthenApi(Api.customer.url, params);
+    return responseData;
     
   }
 };

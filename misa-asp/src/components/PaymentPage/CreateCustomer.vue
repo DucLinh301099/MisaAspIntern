@@ -2,7 +2,7 @@
 <template>
   <div class="create-customer">
     <h2 class="form-title">Thông tin nhà cung cấp</h2>
-    <form @submit.prevent="createCustomer">
+    <form @submit.prevent="handleSubmit">
       <div class="form-row">
         <div class="input-container">
           <label for="object-id"
@@ -10,7 +10,9 @@
           </label>
           <MSInput
             type="text"
-            id="object-id"
+            ref="ObjectId"
+            data-field="objectId"
+            :errors="objectIdErrors" 
             :value="objectId"
             @input="updateValue('objectId', $event.target.value)"
             class="input-field-a"
@@ -23,7 +25,9 @@
           >
           <MSInput
             type="text"
-            id="object-name"
+            ref="ObjectName"
+            data-field="objectName"
+            :errors="objectNameErrors" 
             :value="objectName"
             @input="updateValue('objectName', $event.target.value)"
             class="input-field-a"
@@ -39,7 +43,9 @@
           <MSInput
             type="text"
             :value="taxCode"
-            id="tax-code"
+            ref="TaxCode"
+            data-field="taxCode"
+            :errors="taxCodeErrors" 
             @input="updateValue('taxCode', $event.target.value)"
             class="input-field-a"
             required
@@ -50,7 +56,10 @@
           <MSInput
             type="text"
             :value="phoneNumber"
-            id="phone"
+            
+            ref="PhoneNumber"
+            data-field="phoneNumber"
+            :errors="phoneNumberErrors"           
             @input="updateValue('phoneNumber', $event.target.value)"
             class="input-field-a"
             required
@@ -63,7 +72,10 @@
           <MSInput
             type="text"
             :value="address"
-            id="address"
+            ref="Address"
+            data-field="address"
+            :errors="addressErrors"
+            
             @input="updateValue('address', $event.target.value)"
             class="input-field-b"
             required
@@ -91,9 +103,11 @@
 <script>
 import { customer } from "../../api/customer";
 import MSInput from "../Base/MSInput.vue";
+import BaseHandleSubmit from "../Base/BaseHandleSubmit.vue";
 
 export default {
   name: "CreateCustomer",
+  extends: BaseHandleSubmit,
   components: {
     MSInput,
   },
@@ -104,25 +118,47 @@ export default {
       taxCode: "",
       address: "",
       phoneNumber: "",
+ 
+      objectIdErrors : [],
+      objectNameErrors : [],
+      taxCodeErrors :[],
+      addressErrors :[],
+      phoneNumberErrors :[],
+
     };
   },
   methods: {
-    async createCustomer() {
-      const data = await customer.createCustomer(
+    async customHandleLogic() {
+      return await customer.createCustomer(
         this.objectId,
         this.objectName,
         this.taxCode,
         this.address,
         this.phoneNumber
       );
-      if (data) {
-        this.$router.push("/payment");
-      } else {
-        alert("Tạo mới thất bại");
-      }
     },
+
     updateValue(field, value) {
       this[field] = value;
+      switch (field) {
+        case "objectId":
+          this.objectIdErrors = [];
+          break;
+        case "objectName":
+          this.objectNameErrors = [];
+          break;
+        case "taxCode":
+          this.taxCodeErrors = [];
+          break;
+        case "address":
+          this.addressErrors = [];
+          break;
+        case "phoneNumber":
+          this.phoneNumberErrors = [];
+          break;
+        default:
+          break;
+      }
     },
   },
 };
