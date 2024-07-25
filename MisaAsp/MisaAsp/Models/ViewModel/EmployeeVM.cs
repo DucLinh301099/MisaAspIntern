@@ -11,12 +11,15 @@ namespace MisaAsp.Models.ViewModel
         public string EmployeeCode { get; set; }
         [RequiredVI]
         [StringLengthVI(100)]
+        [TextFieldVI]
         public string EmployeeName { get; set; }
         [RequiredVI]
         [StringLengthVI(100)]
+        [TextFieldVI]
         public string Department { get; set; }
         [RequiredVI]
         [StringLengthVI(100)]
+        [PhoneVI]
         public string MobilePhone { get; set; }
     }
 }

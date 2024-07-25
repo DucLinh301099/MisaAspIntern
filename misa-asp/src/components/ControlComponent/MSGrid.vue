@@ -206,6 +206,7 @@ export default {
   border-collapse: collapse;
   margin-bottom: 16px;
   margin-top: 8px;
+  font-size: 15px;
 }
 
 .accounting-table th {

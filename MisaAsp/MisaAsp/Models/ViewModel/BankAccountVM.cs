@@ -9,12 +9,15 @@ namespace MisaAsp.Models.ViewModel
         public int Id { get; set; }
         [RequiredVI]
         [StringLengthVI(50)]
+        [BankAccountVI]
         public string AccountNumber { get; set; }
         [RequiredVI]
         [StringLengthVI(50)]
+        [TextFieldVI]
         public string BankName { get; set; }
         [RequiredVI]
         [StringLengthVI(50)]
+        [TextFieldVI]
         public string Branch { get; set; }
         [RequiredVI]
         public int TypeOfBank { get; set; }

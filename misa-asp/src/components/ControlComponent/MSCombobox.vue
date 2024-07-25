@@ -57,8 +57,9 @@
     <Modal :visible="isCreateModalVisible" @close="closeCreateModal">
       <component
         :is="ComponentAdd"
-        @submit="handleCreateSubmit"
+        @submit="handleSubmitModal"
         @close="closeCreateModal"
+        @afterCallSuccess="handleSubmitModal"
       />
     </Modal>
     <MSAlert
@@ -228,19 +229,16 @@ export default {
     closeCreateModal() {
       this.isCreateModalVisible = false;
     },
-    
-    /**
-     * sẽ xử lý lại chỗ này, hiện tại vẫn đang lỗi
-     * responseData - undefined
-     */
-    handleCreateSubmit({ formData, responseData }) {
+
+    handleSubmitModal(responseData) {
       if (responseData && responseData.isSuccess) {
-        this.$emit("createSubmit", formData);
-        this.closeCreateModal();
+        this.showConfirm("Tạo mới thành công tài khoản mới!", () => {
+          this.$emit("createSubmit", responseData);
+          this.closeCreateModal();
+        });
       }
     },
 
-      
     showConfirm(message, action) {
       this.alertMessage = message;
       this.confirmAction = action;

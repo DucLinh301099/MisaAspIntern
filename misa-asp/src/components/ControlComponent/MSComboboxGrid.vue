@@ -8,10 +8,10 @@
           valid: inputValue && isInputFocused,
         }"
       >
-        <input
-          v-model="inputValue"
+        <MSInput
           :value="inputValue"
           :type="type"
+          :noBorder="true"
           @input="updateInputValue"
           @focus="handleFocus"
           @blur="handleBlur"
@@ -74,11 +74,13 @@
 import Multiselect from "vue-multiselect";
 import "vue-multiselect/dist/vue-multiselect.css";
 import { base } from "../../api/base";
+import MSInput from "../Base/MSInput.vue";
 
 export default {
   name: "MSComboboxGrid",
   components: {
     Multiselect,
+    MSInput,
   },
   props: {
     selectedRow: {
@@ -148,10 +150,13 @@ export default {
       await this.fetchData();
       this.showTable = true;
     },
+    updateInputValue(event) {
+      this.inputValue = event.target.value;
+    },
     handleFocus() {
       this.isInputFocused = true;
       this.isMultiselectVisible = true;
-      this.optionSelected = false; // Reset khi input nhận được focus
+      this.optionSelected = false;
     },
     handleBlur() {
       this.isInputFocused = false;
