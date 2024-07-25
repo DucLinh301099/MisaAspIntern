@@ -253,6 +253,12 @@ export default {
         record.objectName = selectedOption.objectName;
         record.description = `Chi tiền cho ${selectedOption.objectName}`;
       }
+      if (column.fieldName === "debitAccount") {
+        record.debitAccountNumber = selectedOption.debitAccountNumber;
+      }
+      if (column.fieldName === "creditAccount") {
+        record.creditAccountNumber = selectedOption.creditAccountNumber;
+      }
     },
     changeValueInput(record, column) {
       if (column.fieldName === "amount") {

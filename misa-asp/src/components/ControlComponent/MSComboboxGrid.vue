@@ -87,6 +87,10 @@ export default {
       type: Object,
       default: null,
     },
+    value: {
+      type: Object,
+      default: null,
+    },
     config: {
       type: Object,
       required: true,

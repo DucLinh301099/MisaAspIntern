@@ -21,8 +21,9 @@
           >
             <div v-if="column.dataType === 'dropdown'">
               <MSComboboxGrid
-                v-model="row[column.fieldName]"
+                :value="row[column.fieldName]"
                 :config="column.dropDownConfig"
+                @input="changeValueInput(rowIndex, column)"
                 @update:selectedRow="updateRowField(rowIndex, column, $event)"
               />
             </div>
@@ -54,11 +55,13 @@
 
 <script>
 import MSComboboxGrid from "../ControlComponent/MSComboboxGrid.vue";
+import MSInput from "../Base/MSInput.vue";
 
 export default {
   name: "MSGrid",
   components: {
     MSComboboxGrid,
+    MSInput,
   },
   props: {
     submitTotal: Function,
@@ -116,6 +119,7 @@ export default {
     clearRows() {
       this.modelValue = [];
     },
+
     updateRowField(rowIndex, column, selectedOption) {
       let record = this.modelValue[rowIndex],
         fieldName = column.fieldName;
@@ -124,6 +128,7 @@ export default {
         this.$emit("selectedCombox", record, column, selectedOption);
       }
     },
+
     handleFocus(rowIndex, fieldName) {
       this.focusedCell = { rowIndex, fieldName };
     },

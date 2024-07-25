@@ -85,18 +85,18 @@ let paymentConfig = {
       endpoint: null,
       method: null,
       options: [
-        { accountNumber: "1111", accountName: "Tiền Việt Nam" },
-        { accountNumber: "1112", accountName: "Ngoại Tệ" },
-        { accountNumber: "121", accountName: "Chứng khoán" },
-        { accountNumber: "1281", accountName: "Tiền gửi có kỳ hạn" },
-        { accountNumber: "141", accountName: "tạm ứng" },
-        { accountNumber: "153", accountName: "Công cụ, dung cụ" },
-        { accountNumber: "154", accountName: "Chi phí sản xuất" },
+        { debitAccountNumber: "1111", accountName: "Tiền Việt Nam" },
+        { debitAccountNumber: "1112", accountName: "Ngoại Tệ" },
+        { debitAccountNumber: "121", accountName: "Chứng khoán" },
+        { debitAccountNumber: "1281", accountName: "Tiền gửi có kỳ hạn" },
+        { debitAccountNumber: "141", accountName: "tạm ứng" },
+        { debitAccountNumber: "153", accountName: "Công cụ, dung cụ" },
+        { debitAccountNumber: "154", accountName: "Chi phí sản xuất" },
       ],
       columnConfig: [
         {
           columnName: "Số tài khoản",
-          fieldName: "accountNumber",
+          fieldName: "debitAccountNumber",
           isDisplayGrid: true,
           isValue: true,
         },
@@ -105,19 +105,20 @@ let paymentConfig = {
     },
     creditAccount: {
       options: [
-        { accountNumber: "1121", accountName: "Tiền Việt Nam" },
-        { accountNumber: "1122", accountName: "Ngoại Tệ" },
+        { creditAccountNumber: "1121", accountName: "Tiền Việt Nam" },
+        { creditAccountNumber: "1122", accountName: "Ngoại Tệ" },
       ],
       columnConfig: [
         {
           columnName: "Số tài khoản",
-          fieldName: "accountNumber",
+          fieldName: "creditAccountNumber",
           isDisplayGrid: true,
           isValue: true,
         },
         { columnName: "Tên tài khoản", fieldName: "accountName" },
       ],
     },
+    model: RowModel
   },
 };
 
