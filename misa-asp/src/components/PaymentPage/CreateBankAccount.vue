@@ -184,7 +184,7 @@ label {
 }
 
 .input-field {
-  padding: 3.7px;
+  padding: 1px;
   border: 1px solid #babec5;
   border-radius: 2.5px;
   outline: none;

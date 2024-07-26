@@ -83,9 +83,10 @@ export default {
   outline: none;
   width: 100%;
   border: 1px solid transparent;
-  height: 20px;
+  height: 24.8px;
   font-size: 14px;
   transition: border-color 0.3s;
+  padding-left: 10px;
 }
 
 .ms-input.focused {

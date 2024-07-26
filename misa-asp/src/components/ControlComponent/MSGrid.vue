@@ -2,7 +2,7 @@
   <div class="accounting-component">
     <label for="accounting" class="accounting">{{ label }}</label>
     <table class="accounting-table">
-      <thead>
+      <thead class="thead">
         <tr>
           <th>#</th>
           <th v-for="(column, index) in columnConfig" :key="index">
@@ -12,7 +12,11 @@
         </tr>
       </thead>
       <tbody class="table-grid">
-        <tr v-for="(row, rowIndex) in modelValue" :key="rowIndex">
+        <tr
+          class="table-tbody"
+          v-for="(row, rowIndex) in modelValue"
+          :key="rowIndex"
+        >
           <td>{{ rowIndex + 1 }}</td>
           <td
             class="td-grid"
@@ -174,11 +178,16 @@ export default {
   padding-left: 20px;
   padding-right: 20px;
 }
+.table-tbody {
+  background-color: #e5f3ff;
+}
 
 .td-grid {
   height: 40px;
 }
-
+.thead {
+  background-color: #f4f5f8;
+}
 .right-align-input.focus {
   border-color: green;
 }
@@ -218,6 +227,7 @@ export default {
   border: 1px solid #ccc;
   padding: 8px;
   text-align: left;
+  font-size: 14;
 }
 
 .accounting-table td {
@@ -227,7 +237,6 @@ export default {
 }
 
 .accounting-table th {
-  background-color: #f5f5f5;
   font-weight: bold;
 }
 
@@ -237,8 +246,8 @@ export default {
   border: 1px solid #ccc;
   padding: 4px;
   box-sizing: border-box;
-  height: 30px;
-  border-radius: 2px;
+  height: 28px;
+  border-radius: 3px;
   outline: none;
 }
 
@@ -261,14 +270,13 @@ export default {
 }
 
 button {
-  padding: 8px 16px;
+  padding: 6px 10px;
   border: none;
   border-radius: 2.5px;
   cursor: pointer;
-  background-color: #fff;
+  background-color: #e5f3ff;
 }
-
 button:hover {
-  background-color: #ddd;
+  background-color: #f4f5f8;
 }
 </style>

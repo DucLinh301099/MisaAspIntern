@@ -1,10 +1,11 @@
 <template>
   <section class="payment">
     <HeaderPayment
-      :voucherType="voucherType"
-      :paymentMethod="paymentMethod"
-      @update:voucherType="voucherType = $event"
-      @update:paymentMethod="paymentMethod = $event"
+      :voucherType="payment.voucherType"
+      :paymentMethod="payment.paymentMethod"
+      :soChungTu="payment.soChungTu"
+      @update:voucherType="updateValue('voucherType', $event)"
+      @update:paymentMethod="updateValue('paymentMethod', $event)"
       class="header-payment"
     />
     <div class="input-information">
@@ -22,6 +23,7 @@
               class="second-input"
               :type="type"
               :value="payment.bankExpenseName"
+              @input="updateValue('bankExpenseName', $event.target.value)"
             />
           </div>
           <div class="account-input-wrapper">
@@ -36,6 +38,7 @@
               class="second-input"
               :type="type"
               :value="payment.customerAddress"
+              @input="updateValue('customerAddress', $event.target.value)"
             />
           </div>
           <div class="account-input-wrapper">
@@ -52,6 +55,7 @@
               class="second-input"
               :type="type"
               :value="payment.bankReceiveName"
+              @input="updateValue('bankReceiveName', $event.target.value)"
             />
           </div>
           <div v-if="!hideInformationInput" class="information-input-wrapper">
@@ -91,7 +95,6 @@
             <div class="input-container">
               <MSInput
                 :value="defaultBillContent"
-                :validator="inputValidator"
                 class="base-input-content"
                 @input="updateBillContent"
               />
@@ -103,7 +106,7 @@
               label="Nhân viên"
               @update:selectedRow="updateSelectedRow('employee', $event)"
               :config="paymentConfigCombo.comboxConfig.employee"
-              :value="payment.employeeCode"
+              :value="payment.employeeName"
               :ComponentAdd="createEmployeeComponent"
             />
           </div>
@@ -120,7 +123,7 @@
       </div>
       <div class="input-information-center">
         <DateTimeComponent
-          :voucherType="voucherType"
+          :voucherType="payment.voucherType"
           :value="{
             ngayHachToan: payment.ngayHachToan,
             ngayChungTu: payment.ngayChungTu,
@@ -189,61 +192,79 @@ export default {
     CreateCustomer,
     CreateEmployee,
   },
+  props: {
+    // payment: {
+    //   type: Array,
+    //   default: null,
+    // },
+  },
+
   data() {
     return {
-      voucherType: "1.Trả tiền nhà cung cấp",
-      paymentMethod: "Ủy nhiệm chi",
       errorMessage: "",
       inputValue: "",
-      inputValueCustomer: "",
+      inputBillContent: "",
       addressValue: "",
       totalAmount: 0,
       bankNameInput: "",
       accountReceiveValue: "",
       paymentConfigCombo: paymentConfig,
       payment: {
+        voucherType: "5. Chi khác",
+        paymentMethod: "Ủy nhiệm chi",
         accountExpenseNumber: null,
         accountReceiveNumber: null,
         bankExpenseName: null,
         bankReceiveName: null,
         customerName: null,
         customerAddress: null,
-        employeeCode: null,
+        employeeName: null,
         ngayHachToan: null,
         ngayChungTu: null,
-        soChungTu: null,
+        soChungTu: "UNC001",
         hanQuyetToan: null,
         cmndNumber: null,
         licenseDate: null,
         licenseAddress: null,
         paymentDetail: [],
       },
+      soChungTuMapping: {
+        "Ủy nhiệm chi": "UNC001",
+        "Séc chuyển khoản": "SCK001",
+        "Séc tiền mặt": "STM001",
+      },
       createCustomerComponent: CreateCustomer,
       createBankAccountComponent: CreateBankAccount,
       createEmployeeComponent: CreateEmployee,
     };
   },
+
   computed: {
     hideInformationInput() {
       return (
-        this.paymentMethod === "Ủy nhiệm chi" ||
-        this.paymentMethod === "Séc chuyển khoản"
+        this.payment.paymentMethod === "Ủy nhiệm chi" ||
+        this.payment.paymentMethod === "Séc chuyển khoản"
       );
     },
     hideAccountReceive() {
-      return this.paymentMethod === "Séc tiền mặt";
+      return this.payment.paymentMethod === "Séc tiền mặt";
     },
     hideCreateEmployeeInput() {
       return (
-        this.voucherType === "2.Trả các khoản vay" ||
-        this.voucherType === "3.Tạm ứng cho nhân viên"
+        this.payment.voucherType === "2. Trả các khoản vay" ||
+        this.payment.voucherType === "3. Tạm ứng cho nhân viên"
       );
     },
     defaultBillContent() {
-      return `Chi tiền cho ${this.inputValueCustomer}`;
+      return `Chi tiền cho ${this.inputBillContent}`;
     },
     formattedTotalAmount() {
       return this.totalAmount;
+    },
+  },
+  watch: {
+    "payment.paymentMethod"(newMethod) {
+      this.payment.soChungTu = this.soChungTuMapping[newMethod] || "";
     },
   },
   methods: {
@@ -251,7 +272,6 @@ export default {
       if (column.fieldName === "customer") {
         record.objectId = selectedOption.objectId;
         record.objectName = selectedOption.objectName;
-        record.description = `Chi tiền cho ${selectedOption.objectName}`;
       }
       if (column.fieldName === "debitAccount") {
         record.debitAccountNumber = selectedOption.debitAccountNumber;
@@ -268,6 +288,10 @@ export default {
     updateTotalAmount(record) {
       this.totalAmount = record.amount;
     },
+    updateValue(field, value) {
+      this.payment[field] = value;
+    },
+
     updateSelectedRow(type, item) {
       switch (type) {
         case "bankExpense":
@@ -279,8 +303,9 @@ export default {
           this.payment.customerName = item.objectName;
           this.payment.customerAddress = item.address;
           this.payment.inputValueCustomer = item.objectName;
-          this.inputValueCustomer = item.objectName;
+          this.inputBillContent = item.objectName;
           this.addressValue = item.address;
+          this.updateGridDescription(item.objectName);
           break;
         case "bankReceive":
           this.accountReceiveValue = item.bankName;
@@ -288,7 +313,7 @@ export default {
           this.payment.bankReceiveName = item.bankName;
           break;
         case "employee":
-          this.payment.employeeCode = item.employeeCode;
+          this.payment.employeeName = item.employeeName;
           break;
       }
     },
@@ -296,10 +321,15 @@ export default {
       this.payment = updatedValue;
     },
     updateBillContent(newValue) {
-      this.inputValueCustomer = newValue.replace("Chi tiền cho ", "");
+      this.inputBillContent = newValue.replace("Chi tiền cho ", "");
     },
     updateDateTimeData(updatedValue) {
       this.payment = { ...this.payment, ...updatedValue };
+    },
+    updateGridDescription(customerName) {
+      this.payment.paymentDetail.forEach((record) => {
+        record.description = `Chi tiền cho ${customerName}`;
+      });
     },
   },
 };
@@ -321,7 +351,7 @@ export default {
 
 .total-label {
   font-size: 16px;
-  font-weight: bold;
+
   margin-bottom: 8px;
 }
 
@@ -343,6 +373,7 @@ export default {
 .input-container {
   display: flex;
   align-items: center;
+  background-color: #fff;
 }
 
 .input-group {
@@ -393,9 +424,9 @@ label {
 .second-input {
   border: 1px solid #999;
   border-radius: 2px;
-  padding: 8px;
+
   box-sizing: border-box;
-  height: 32px;
+  height: 30px;
   flex-grow: 1;
   margin-left: 15px;
   width: 50%;
@@ -411,8 +442,9 @@ label {
 .input-information {
   display: flex;
   font-size: 14px;
-  margin-top: 20px;
+  padding-top: 20px;
   margin-bottom: 15px;
+  background-color: #f4f5f8;
 }
 .input-information-right {
   width: 50%;
@@ -475,7 +507,7 @@ label {
 }
 .base-input-info {
   width: 100%;
-  height: 32px;
+  height: 30px;
   border: 1px solid #999;
   border-radius: 2px;
   padding: 0 8px;
@@ -483,6 +515,7 @@ label {
   outline: none;
   display: flex;
   align-items: center;
+  background-color: #fff;
 }
 .base-input-info:focus-within {
   border-color: green;
@@ -512,7 +545,6 @@ label {
   border: 1px solid #999;
   display: flex;
   align-items: center;
-  height: 30px;
-  padding-left: 10px;
+  height: 28px;
 }
 </style>

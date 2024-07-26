@@ -97,22 +97,20 @@ export default {
       mobilePhone: "",
       department: "",
 
-      employeeCodeErrors:[],
-      employeeNameErrors:[],
-      mobilePhoneErrors:[],
-      departmentErrors:[],
-
+      employeeCodeErrors: [],
+      employeeNameErrors: [],
+      mobilePhoneErrors: [],
+      departmentErrors: [],
     };
   },
   methods: {
     async customHandleLogic() {
-       return await account.createEmployee(
+      return await account.createEmployee(
         this.employeeCode,
         this.employeeName,
         this.mobilePhone,
         this.department
       );
-
     },
     updateValue(field, value) {
       this[field] = value;
@@ -186,7 +184,7 @@ label {
 }
 
 .input-field {
-  padding: 3.7px;
+  padding: 1px;
   border: 1px solid #babec5;
   border-radius: 2.5px;
   font-size: 14px;
@@ -239,7 +237,9 @@ label {
 .submit-btn:hover {
   background-color: #218838;
 }
-
+button:hover {
+  background-color: #f4f5f8;
+}
 .error-message {
   color: red;
   margin-bottom: 20px;

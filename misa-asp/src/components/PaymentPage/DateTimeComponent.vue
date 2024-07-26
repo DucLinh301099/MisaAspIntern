@@ -2,17 +2,16 @@
   <div class="datetime-component-wrapper">
     <div class="form-group">
       <label for="ngay-hach-toan">Ngày hạch toán</label>
-
       <MSInput
         :value="ngayHachToan"
         class="date-input"
         @input="updateValue('ngayHachToan', $event.target.value)"
         type="date"
+        placeholder="DD/MM/YY"
       />
     </div>
     <div class="form-group">
       <label for="ngay-chung-tu">Ngày chứng từ</label>
-
       <MSInput
         class="date-input"
         :value="ngayChungTu"
@@ -22,7 +21,6 @@
     </div>
     <div class="form-group">
       <label for="so-chung-tu">Số chứng từ</label>
-
       <MSInput
         class="date-input"
         :value="soChungTu"
@@ -31,7 +29,6 @@
     </div>
     <div class="form-group" v-if="voucherType === '3.Tạm ứng cho nhân viên'">
       <label for="han-quyet-toan">Hạn quyết toán</label>
-
       <MSInput
         class="date-input"
         :value="hanQuyetToan"
@@ -61,20 +58,22 @@ export default {
     },
   },
   data() {
+    const today = new Date().toISOString().split("T")[0]; // luôn hiển thị ngày hôm nay
     return {
-      ngayHachToan: this.value.ngayHachToan,
-      ngayChungTu: this.value.ngayChungTu,
+      ngayHachToan: this.value.ngayHachToan || today,
+      ngayChungTu: this.value.ngayChungTu || today,
       soChungTu: this.value.soChungTu,
-      hanQuyetToan: this.value.hanQuyetToan,
+      hanQuyetToan: this.value.hanQuyetToan || today,
     };
   },
   watch: {
     value: {
       handler(newVal) {
-        this.ngayHachToan = newVal.ngayHachToan;
-        this.ngayChungTu = newVal.ngayChungTu;
+        const today = new Date().toISOString().split("T")[0];
+        this.ngayHachToan = newVal.ngayHachToan || today;
+        this.ngayChungTu = newVal.ngayChungTu || today;
         this.soChungTu = newVal.soChungTu;
-        this.hanQuyetToan = newVal.hanQuyetToan;
+        this.hanQuyetToan = newVal.hanQuyetToan || today;
       },
       deep: true,
       immediate: true,
@@ -103,6 +102,7 @@ export default {
   border-bottom: none;
   border-right: none;
   padding-left: 25px;
+  padding-top: 5px;
 }
 .input-with-button {
   border: 1px solid #999;
@@ -126,10 +126,9 @@ export default {
 .form-group {
   display: flex;
   flex-direction: column;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 .date-input {
-  padding: 0 8px;
   box-sizing: border-box;
   outline: none;
   border: 1px solid #999;
@@ -137,13 +136,14 @@ export default {
   overflow: hidden;
   flex-grow: 2;
   margin-right: auto;
-  height: 31px;
+  height: 29px;
   width: 70%;
   display: flex;
   align-items: center;
+  background-color: #fff;
 }
 label {
-  margin-bottom: 12px;
+  margin-bottom: 8px;
   font-weight: bold;
 }
 

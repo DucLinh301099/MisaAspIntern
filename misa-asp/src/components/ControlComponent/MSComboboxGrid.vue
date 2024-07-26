@@ -136,7 +136,6 @@ export default {
           Array.isArray(response.data) // Giả định API trả về danh sách các objects
         ) {
           this.optionsData = response.data;
-          console.log("optionsData:", this.optionsData);
         } else if (
           response.data &&
           response.data.data && // Giả định API trả về danh sách arrays
@@ -190,7 +189,7 @@ export default {
 
       this.showTable = false;
       this.isMultiselectVisible = false;
-      this.optionSelected = true; // Đánh dấu tùy chọn đã được chọn
+      this.optionSelected = true;
     },
   },
 };
@@ -213,10 +212,10 @@ export default {
   display: flex;
   align-items: center;
   border: 1px solid #ccc;
-  border-radius: 2px;
+  border-radius: 3px;
   overflow: hidden;
   flex-grow: 2;
-  height: 30px;
+  height: 28px;
   position: relative;
   box-sizing: border-box;
   width: 100%;
@@ -227,7 +226,7 @@ export default {
   border: none;
   padding: 8px;
   box-sizing: border-box;
-  height: 30px;
+  height: 28px;
   width: calc(100% - 40px);
   box-sizing: border-box;
 }

@@ -289,7 +289,7 @@ label {
   border-radius: 2px;
   overflow: hidden;
   flex-grow: 2;
-  height: 30px;
+  height: 28px;
   position: relative;
 }
 
@@ -305,9 +305,9 @@ label {
 
 .base-input {
   width: 100%;
-  height: 30px;
+  height: 28px;
   border: none;
-  padding: 0 8px;
+
   box-sizing: border-box;
   outline: none;
   display: flex;
