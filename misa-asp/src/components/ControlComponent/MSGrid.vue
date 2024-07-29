@@ -116,12 +116,15 @@ export default {
       let model = this.configColumGrid.model;
       const newRow = new model();
       this.modelValue.push(newRow);
+      this.updateCurrentTotal();
     },
     removeRow(index) {
       this.modelValue.splice(index, 1);
+      this.updateCurrentTotal();
     },
     clearRows() {
       this.modelValue = [];
+      this.updateCurrentTotal();
     },
 
     updateRowField(rowIndex, column, selectedOption) {
@@ -161,6 +164,7 @@ export default {
       if (record) {
         this.$emit("changeValueInput", record, column);
       }
+      this.updateCurrentTotal();
     },
     updateCurrentTotal() {
       this.currentTotal = this.modelValue.reduce(
@@ -168,6 +172,7 @@ export default {
           sum + Number(row.amount.toString().replace(/\./g, "") || 0),
         0
       );
+      this.$emit("updateTotalAmount", this.currentTotal);
     },
   },
 };

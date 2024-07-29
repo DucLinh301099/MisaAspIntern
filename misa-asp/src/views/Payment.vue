@@ -212,6 +212,7 @@ export default {
       payment: {
         voucherType: "5. Chi khác",
         paymentMethod: "Ủy nhiệm chi",
+        totalAmount: null,
         accountExpenseNumber: null,
         accountReceiveNumber: null,
         bankExpenseName: null,
@@ -222,10 +223,6 @@ export default {
         ngayHachToan: null,
         ngayChungTu: null,
         soChungTu: "UNC001",
-        hanQuyetToan: null,
-        cmndNumber: null,
-        licenseDate: null,
-        licenseAddress: null,
         paymentDetail: [],
       },
       soChungTuMapping: {
@@ -240,6 +237,9 @@ export default {
   },
 
   computed: {
+    /**
+     * Các function này xử lý ẩn hiện các input theo nghiệp vụ đc yêu cầu
+     */
     hideInformationInput() {
       return (
         this.payment.paymentMethod === "Ủy nhiệm chi" ||
@@ -255,10 +255,18 @@ export default {
         this.payment.voucherType === "3. Tạm ứng cho nhân viên"
       );
     },
+    /** */
+
     defaultBillContent() {
       return `Chi tiền cho ${this.inputBillContent}`;
     },
+    /**
+     * xử lý format hiển thị của số tiền
+     */
     formattedTotalAmount() {
+      return this.totalAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    },
+    TotalAmount() {
       return this.totalAmount;
     },
   },
@@ -280,18 +288,41 @@ export default {
         record.creditAccountNumber = selectedOption.creditAccountNumber;
       }
     },
+    /**
+     * 2 function xử lý việc update số tiền khi có thêm một hàng mới được thêm
+     * trong grid.
+     * @param record
+     * @param column
+     */
     changeValueInput(record, column) {
       if (column.fieldName === "amount") {
-        this.updateTotalAmount(record);
+        this.updateTotalAmount();
       }
     },
-    updateTotalAmount(record) {
-      this.totalAmount = record.amount;
+    updateTotalAmount() {
+      const total = this.payment.paymentDetail.reduce((sum, row) => {
+        return sum + Number(row.amount.toString().replace(/\./g, "") || 0);
+      }, 0);
+      this.totalAmount = total;
+      this.payment.totalAmount = this.formattedTotalAmount;
+      this.$emit("updateTotalAmount", this.totalAmount);
     },
+    //------------------------------------
+    /**
+     * function update value của các MSInput
+     * @param field
+     * @param value
+     */
     updateValue(field, value) {
       this.payment[field] = value;
     },
 
+    /**
+     * fuction update giá trị khi chọn 1 option trong multiselect
+     * và gán nó vào payment
+     * @param type
+     * @param item
+     */
     updateSelectedRow(type, item) {
       switch (type) {
         case "bankExpense":
