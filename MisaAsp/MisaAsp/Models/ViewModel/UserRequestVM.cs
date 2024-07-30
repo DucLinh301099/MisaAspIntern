@@ -26,7 +26,7 @@ namespace MisaAsp.Models.ViewModel
         [StringLengthVI(100)]
         public string PhoneNumber { get; set; }
 
-        // New properties for RoleId and RoleName
+        
         [RequiredVI]
         public int RoleId { get; set; }
 

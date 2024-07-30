@@ -3,7 +3,7 @@
     <HeaderPayment
       :voucherType="payment.voucherType"
       :paymentMethod="payment.paymentMethod"
-      :soChungTu="payment.soChungTu"
+      :documentNumber="payment.documentNumber"
       @update:voucherType="updateValue('voucherType', $event)"
       @update:paymentMethod="updateValue('paymentMethod', $event)"
       class="header-payment"
@@ -16,13 +16,13 @@
               label="Tài khoản chi"
               @update:selectedRow="updateSelectedRow('bankExpense', $event)"
               :config="paymentConfigCombo.comboxConfig.bankExpense"
-              :value="payment.accountExpenseNumber"
+              :value="payment.accountNumber"
               :ComponentAdd="createBankAccountComponent"
             />
             <MSInput
               class="second-input"
               :type="type"
-              :value="payment.bankExpenseName"
+              :value="payment.bankName"
               @input="updateValue('bankExpenseName', $event.target.value)"
             />
           </div>
@@ -31,13 +31,13 @@
               label="Đối Tượng"
               @update:selectedRow="updateSelectedRow('customer', $event)"
               :config="paymentConfigCombo.comboxConfig.customer"
-              :value="payment.customerName"
+              :value="payment.objectName"
               :ComponentAdd="createCustomerComponent"
             />
             <MSInput
               class="second-input"
               :type="type"
-              :value="payment.customerAddress"
+              :value="payment.address"
               @input="updateValue('customerAddress', $event.target.value)"
             />
           </div>
@@ -125,10 +125,9 @@
         <DateTimeComponent
           :voucherType="payment.voucherType"
           :value="{
-            ngayHachToan: payment.ngayHachToan,
-            ngayChungTu: payment.ngayChungTu,
-            soChungTu: payment.soChungTu,
-            hanQuyetToan: payment.hanQuyetToan,
+            accountingDate: payment.accountingDate,
+            documentDate: payment.documentDate,
+            documentNumber: payment.documentNumber,
           }"
           @update:value="updateDateTimeData"
         />
@@ -143,7 +142,7 @@
     <div class=" ">
       <MSGrid
         label="Hạch toán"
-        :modelValue="payment.paymentDetail"
+        :modelValue="payment.paymentDetails"
         @changeValueInput="changeValueInput"
         :configColumGrid="paymentConfigCombo.gridConfig"
         @selectedCombox="selectedGridCombox"
@@ -154,7 +153,11 @@
     </div>
     <div>
       <div>
-        <FooterPayment class="footer-payment-a" />
+        <FooterPayment
+          :payment="payment"
+          class="footer-payment-a"
+          @submit="handleSubmit"
+        />
       </div>
     </div>
   </section>
@@ -175,9 +178,11 @@ import CreateCustomer from "../components/PaymentPage/CreateCustomer.vue";
 import CreateEmployee from "../components/PaymentPage/CreateEmployee.vue";
 
 import paymentConfig from "../config/PaymentConfig";
+import BaseSubmit from "../components/Base/BaseSubmit.vue";
 
 export default {
   name: "Payment",
+  extends: BaseSubmit,
   components: {
     HeaderPayment,
     MSCombobox,
@@ -192,19 +197,12 @@ export default {
     CreateCustomer,
     CreateEmployee,
   },
-  props: {
-    // payment: {
-    //   type: Array,
-    //   default: null,
-    // },
-  },
 
   data() {
     return {
       errorMessage: "",
       inputValue: "",
       inputBillContent: "",
-      addressValue: "",
       totalAmount: 0,
       bankNameInput: "",
       accountReceiveValue: "",
@@ -213,19 +211,25 @@ export default {
         voucherType: "5. Chi khác",
         paymentMethod: "Ủy nhiệm chi",
         totalAmount: null,
-        accountExpenseNumber: null,
-        accountReceiveNumber: null,
-        bankExpenseName: null,
-        bankReceiveName: null,
-        customerName: null,
-        customerAddress: null,
+        billContent: null,
+
+        bankName: null,
+        accountNumber: null,
+        bankAccountId: null,
+
+        objectName: null,
+        address: null,
+        customerId: null,
+
         employeeName: null,
-        ngayHachToan: null,
-        ngayChungTu: null,
-        soChungTu: "UNC001",
-        paymentDetail: [],
+        employeeId: null,
+
+        accountingDate: null,
+        documentDate: null,
+        documentNumber: "UNC001",
+        paymentDetails: [],
       },
-      soChungTuMapping: {
+      documentNumberMapping: {
         "Ủy nhiệm chi": "UNC001",
         "Séc chuyển khoản": "SCK001",
         "Séc tiền mặt": "STM001",
@@ -272,7 +276,7 @@ export default {
   },
   watch: {
     "payment.paymentMethod"(newMethod) {
-      this.payment.soChungTu = this.soChungTuMapping[newMethod] || "";
+      this.payment.documentNumber = this.documentNumberMapping[newMethod] || "";
     },
   },
   methods: {
@@ -282,10 +286,10 @@ export default {
         record.objectName = selectedOption.objectName;
       }
       if (column.fieldName === "debitAccount") {
-        record.debitAccountNumber = selectedOption.debitAccountNumber;
+        record.debitAccount = selectedOption.debitAccountNumber;
       }
       if (column.fieldName === "creditAccount") {
-        record.creditAccountNumber = selectedOption.creditAccountNumber;
+        record.creditAccount = selectedOption.creditAccountNumber;
       }
     },
     /**
@@ -300,7 +304,7 @@ export default {
       }
     },
     updateTotalAmount() {
-      const total = this.payment.paymentDetail.reduce((sum, row) => {
+      const total = this.payment.paymentDetails.reduce((sum, row) => {
         return sum + Number(row.amount.toString().replace(/\./g, "") || 0);
       }, 0);
       this.totalAmount = total;
@@ -327,15 +331,17 @@ export default {
       switch (type) {
         case "bankExpense":
           this.bankNameInput = item.bankName;
-          this.payment.accountExpenseNumber = item.accountNumber;
-          this.payment.bankExpenseName = item.bankName;
+          this.payment.accountNumber = item.accountNumber;
+          this.payment.bankName = item.bankName;
+          this.payment.bankAccountId = item.id;
           break;
         case "customer":
-          this.payment.customerName = item.objectName;
-          this.payment.customerAddress = item.address;
-          this.payment.inputValueCustomer = item.objectName;
+          this.payment.objectName = item.objectName;
+          this.payment.address = item.address;
+          this.payment.billContent = item.objectName;
           this.inputBillContent = item.objectName;
-          this.addressValue = item.address;
+          this.payment.customerId = item.id;
+
           this.updateGridDescription(item.objectName);
           break;
         case "bankReceive":
@@ -345,6 +351,8 @@ export default {
           break;
         case "employee":
           this.payment.employeeName = item.employeeName;
+          this.payment.employeeId = item.id;
+
           break;
       }
     },
@@ -358,7 +366,7 @@ export default {
       this.payment = { ...this.payment, ...updatedValue };
     },
     updateGridDescription(customerName) {
-      this.payment.paymentDetail.forEach((record) => {
+      this.payment.paymentDetails.forEach((record) => {
         record.description = `Chi tiền cho ${customerName}`;
       });
     },

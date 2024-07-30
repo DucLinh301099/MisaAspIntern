@@ -29,10 +29,10 @@ namespace MisaAsp.Controllers
         /// <returns></returns>
         [HttpPost("create-payment")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> CreatePayment([FromBody] PaymentRequest request)
+        public async Task<IActionResult> CreatePayment(PaymentMasterVM payment)
         {
         
-            var paymentMasterId = await _paymentService.AddPaymentAsync(request.PaymentMaster, request.PaymentDetails);
+            var paymentMasterId = await _paymentService.AddPaymentAsync(payment, payment.PaymentDetails);
 
             if (paymentMasterId > 0)
             {

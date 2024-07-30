@@ -58,9 +58,10 @@ namespace MisaAsp.Models.ViewModel
         [RequiredVI]
         public int CustomerId { get; set; }
 
-        [RequiredVI]
+        [RequiredVI]    
         public int EmployeeId { get; set; }
 
-        
+        [NotMapped]
+        public List<PaymentDetailVM> PaymentDetails { get; set; }
     }
 }

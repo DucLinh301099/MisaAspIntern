@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using MisaAsp.Models.ViewModel;
 using MisaAsp.Repositories.Base;
+using Newtonsoft.Json;
 using System.Data;
 
 namespace MisaAsp.Repositories
@@ -17,6 +18,10 @@ namespace MisaAsp.Repositories
 
         public async Task<int> AddPaymentAsync(PaymentMasterVM paymentMaster, List<PaymentDetailVM> paymentDetails)
         {
+            // Chuyển đổi danh sách paymentDetails thành chuỗi JSON
+            var paymentDetailJson = JsonConvert.SerializeObject(paymentDetails);
+
+            // Thiết lập các tham số cho hàm SQL
             var paymentMasterParameters = new
             {
                 VoucherType = paymentMaster.VoucherType,
@@ -27,34 +32,26 @@ namespace MisaAsp.Repositories
                 DocumentNumber = paymentMaster.DocumentNumber,
                 TotalAmount = paymentMaster.TotalAmount,
                 EmployeeName = paymentMaster.EmployeeName,
-                ObjectName = paymentMaster.ObjectName,
+                pm_ObjectName = paymentMaster.ObjectName,
                 Address = paymentMaster.Address,
                 BankName = paymentMaster.BankName,
                 AccountNumber = paymentMaster.AccountNumber,
                 BankAccountId = paymentMaster.BankAccountId,
                 CustomerId = paymentMaster.CustomerId,
-                EmployeeId = paymentMaster.EmployeeId
+                EmployeeId = paymentMaster.EmployeeId,
+                PaymentDetailsJson = paymentDetailJson
             };
 
+            // Gọi hàm SQL insert_paymentmaster và lấy id của bản ghi vừa chèn
             var paymentMasterId = await ExecuteProcScalarAsync<int>("insert_paymentmaster", paymentMasterParameters);
-
-            foreach (var paymentDetail in paymentDetails)
-            {
-                var paymentDetailParameters = new
-                {
-                    DebitAccount = paymentDetail.DebitAccount,
-                    CreditAccount = paymentDetail.CreditAccount,
-                    Amount = paymentDetail.Amount,
-                    ObjectId = paymentDetail.ObjectId,
-                    PaymentId = paymentMasterId,
-                    ObjectName = paymentDetail.ObjectName
-                };
-
-                await ExecuteProcScalarAsync<int>("insert_paymentdetail", paymentDetailParameters);
-            }
 
             return paymentMasterId;
         }
+
+
+
+
+
         public async Task<IEnumerable<PaymentMasterVM>> GetAllPaymentsAsync()
         {
             var payments = await QueryProcAsync<PaymentMasterVM>("getallpayments", null);

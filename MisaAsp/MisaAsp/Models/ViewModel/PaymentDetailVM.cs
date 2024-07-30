@@ -29,7 +29,7 @@ namespace MisaAsp.Models.ViewModel
         [StringLengthVI(100)]
         public string ObjectName { get; set; }
 
-        [RequiredVI]
+       
         public int PaymentId { get; set; }
 
 

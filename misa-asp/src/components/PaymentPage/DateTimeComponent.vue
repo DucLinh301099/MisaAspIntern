@@ -3,9 +3,9 @@
     <div class="form-group">
       <label for="ngay-hach-toan">Ngày hạch toán</label>
       <MSInput
-        :value="ngayHachToan"
+        :value="accountingDate"
         class="date-input"
-        @input="updateValue('ngayHachToan', $event.target.value)"
+        @input="updateValue('accountingDate', $event.target.value)"
         type="date"
         placeholder="DD/MM/YY"
       />
@@ -14,8 +14,8 @@
       <label for="ngay-chung-tu">Ngày chứng từ</label>
       <MSInput
         class="date-input"
-        :value="ngayChungTu"
-        @input="updateValue('ngayChungTu', $event.target.value)"
+        :value="documentDate"
+        @input="updateValue('documentDate', $event.target.value)"
         type="date"
       />
     </div>
@@ -23,8 +23,8 @@
       <label for="so-chung-tu">Số chứng từ</label>
       <MSInput
         class="date-input"
-        :value="soChungTu"
-        @input="updateValue('soChungTu', $event.target.value)"
+        :value="documentNumber"
+        @input="updateValue('documentNumber', $event.target.value)"
       />
     </div>
     <div class="form-group" v-if="voucherType === '3.Tạm ứng cho nhân viên'">
@@ -60,9 +60,9 @@ export default {
   data() {
     const today = new Date().toISOString().split("T")[0]; // luôn hiển thị ngày hôm nay
     return {
-      ngayHachToan: this.value.ngayHachToan || today,
-      ngayChungTu: this.value.ngayChungTu || today,
-      soChungTu: this.value.soChungTu,
+      accountingDate: this.value.accountingDate || today,
+      documentDate: this.value.documentDate || today,
+      documentNumber: this.value.documentNumber,
       hanQuyetToan: this.value.hanQuyetToan || today,
     };
   },
@@ -70,9 +70,9 @@ export default {
     value: {
       handler(newVal) {
         const today = new Date().toISOString().split("T")[0];
-        this.ngayHachToan = newVal.ngayHachToan || today;
-        this.ngayChungTu = newVal.ngayChungTu || today;
-        this.soChungTu = newVal.soChungTu;
+        this.accountingDate = newVal.accountingDate || today;
+        this.documentDate = newVal.documentDate || today;
+        this.documentNumber = newVal.documentNumber;
         this.hanQuyetToan = newVal.hanQuyetToan || today;
       },
       deep: true,

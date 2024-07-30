@@ -54,7 +54,7 @@ const props = defineProps({
     type: String,
     required: true,
   },
-  soChungTu: {
+  documentNumber: {
     type: String,
     required: true,
   },
@@ -63,7 +63,7 @@ const emit = defineEmits(["update:voucherType", "update:paymentMethod"]);
 
 const localVoucherType = ref(props.voucherType);
 const localPaymentMethod = ref(props.paymentMethod);
-const localSoChungTu = ref(props.soChungTu);
+const localdocumentNumber = ref(props.documentNumber);
 
 watch(
   () => props.voucherType,
@@ -80,9 +80,9 @@ watch(
 );
 
 watch(
-  () => props.soChungTu,
+  () => props.documentNumber,
   (newVal) => {
-    localSoChungTu.value = newVal;
+    localdocumentNumber.value = newVal;
   }
 );
 
@@ -97,7 +97,7 @@ const voucherOptions = [
 const paymentMethods = ["Ủy nhiệm chi", "Séc chuyển khoản", "Séc tiền mặt"];
 
 const title = computed(
-  () => `${localPaymentMethod.value} ${localSoChungTu.value}`
+  () => `${localPaymentMethod.value} ${localdocumentNumber.value}`
 );
 
 const updateVoucherType = (value) => {

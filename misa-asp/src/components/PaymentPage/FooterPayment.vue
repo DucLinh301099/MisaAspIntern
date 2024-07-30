@@ -3,16 +3,16 @@
     <button class="cancel-btn" @click="cancel">Hủy</button>
 
     <div class="dropdown">
-      <button class="save-btn" @click="submitForm('save')">Cất</button>
+      <button class="save-btn" @click="emitSubmit('save')">Cất</button>
       <div class="dropdown-container">
-        <button class="btn save-add-btn" @click="submitForm('saveAndPrint')">
+        <button class="btn save-add-btn" @click="emitSubmit('saveAndPrint')">
           Cất và In
         </button>
         <button class="dropdown-toggle" @click="toggleDropdown">&#9660;</button>
         <div class="dropdown-menu" v-if="isDropdownVisible">
-          <button @click="handleAction('add')">Cất và Thêm</button>
-          <button @click="handleAction('close')">Cất và Đóng</button>
-          <button @click="handleAction('print')">Cất và In</button>
+          <button @click="emitSubmit('add')">Cất và Thêm</button>
+          <button @click="emitSubmit('close')">Cất và Đóng</button>
+          <button @click="emitSubmit('print')">Cất và In</button>
         </div>
       </div>
     </div>
@@ -20,10 +20,14 @@
 </template>
 
 <script>
-import axios from "axios";
-
 export default {
   name: "FooterPayment",
+  props: {
+    payment: {
+      type: Object,
+      required: true,
+    },
+  },
   data() {
     return {
       isDropdownVisible: false,
@@ -33,36 +37,12 @@ export default {
     toggleDropdown() {
       this.isDropdownVisible = !this.isDropdownVisible;
     },
-    handleAction(action) {
-      console.log(`Action selected: ${action}`);
+    emitSubmit(action) {
+      this.$emit("submit", action);
       this.isDropdownVisible = false;
-      this.submitForm(action);
-    },
-    async submitForm(action) {
-      try {
-        const paymentData = this.$root.$data.payment; // đảm bảo payment có dữ liệu hoặc nó là 1 prop
-        console.log("Submitting payment data: ", paymentData);
-
-        // api call từ backend
-        const response = await axios.post("/api/payment", paymentData);
-
-        console.log("Payment submitted successfully", response);
-
-        // xử lý các submit khác nhau
-        if (action === "add") {
-          // Logic for "Cất và Thêm"
-        } else if (action === "close") {
-          // Logic for "Cất và Đóng"
-        } else if (action === "print") {
-          // Logic for "Cất và In"
-        }
-      } catch (error) {
-        console.error("Error submitting payment", error);
-      }
     },
     cancel() {
-      console.log("Cancel action");
-      // logic khi cancel
+      this.$emit("cancel");
     },
   },
 };
@@ -143,7 +123,7 @@ export default {
 
 .dropdown-menu {
   position: absolute;
-  bottom: 100%; /* Position above the dropdown container */
+  bottom: 100%;
   left: 0;
   background-color: white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
