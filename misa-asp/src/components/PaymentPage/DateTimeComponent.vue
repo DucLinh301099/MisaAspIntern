@@ -40,13 +40,9 @@
 </template>
 
 <script>
-import MSInput from "../Base/MSInput.vue";
-
 export default {
   name: "DateTimeComponent",
-  components: {
-    MSInput,
-  },
+
   props: {
     voucherType: {
       type: String,

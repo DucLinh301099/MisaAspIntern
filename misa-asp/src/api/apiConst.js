@@ -1,7 +1,4 @@
 // định nghãi các enpoint của api 
-
-
-
 const Api = {
     bankExpense: {
         url: 'BankAccount/bank-account',

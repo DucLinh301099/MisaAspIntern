@@ -3,14 +3,6 @@
     <SideBarComponent />
     <div class="content">
       <div class="header">
-        <MSAlert
-          :message="alertMessage"
-          :type="alertType"
-          :visible="alertVisible"
-          :isConfirm="alertIsConfirm"
-          :isShow="alertIsShow"
-          @confirm="handleConfirm"
-        />
         <div class="create">
           <p class="links">
             <router-link class="router-link" to="/admin"
@@ -108,16 +100,14 @@
 <script>
 import { account } from "../../api/account";
 import SideBarComponent from "../AdminPage/SideBarComponent.vue";
-import MSAlert from "../Base/MSAlert.vue";
 import MSInput from "../Base/MSInput.vue";
-import BaseHandleSubmit from "../Base/BaseHandleSubmit.vue";
+import BaseForm from "../Base/BaseForm.vue";
 
 export default {
   name: "EditUserPage",
-  extends: BaseHandleSubmit,
+  extends: BaseForm,
   components: {
     SideBarComponent,
-    MSAlert,
     MSInput,
   },
   props: ["id"],
@@ -128,11 +118,6 @@ export default {
       phoneNumberErrors: [],
       emailErrors: [],
       editUser: null,
-      alertMessage: "",
-      alertVisible: false,
-      alertIsConfirm: false,
-      confirmAction: null,
-      alertIsShow: true,
     };
   },
   async created() {
@@ -185,6 +170,13 @@ export default {
       }
       this.alertVisible = false;
     },
+    /**
+     * function cập nhật giá trị khi muốn thay đổi thông
+     * tin trong các ô input và sẽ làm các tooltip hiển thị
+     * lỗi sẽ ẩn đi khi nhập thông tin thay đổi
+     * @param field
+     * @param value
+     */
     updateValue(field, value) {
       this.editUser[field] = value;
       switch (field) {

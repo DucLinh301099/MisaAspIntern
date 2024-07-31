@@ -10,6 +10,9 @@
           :type="type"
           :value="inputValue"
           :noBorder="true"
+          :errors="error"
+          ref="ref"
+          data-field="datafield"
           @input="handleOnInput"
           @focus="handleFocus"
           @blur="handleBlur"
@@ -62,34 +65,22 @@
         @afterCallSuccess="handleSubmitModal"
       />
     </Modal>
-    <MSAlert
-      :message="alertMessage"
-      :type="alertType"
-      :visible="alertVisible"
-      :isConfirm="alertIsConfirm"
-      :isShow="alertIsShow"
-      @confirm="handleConfirm"
-    />
   </div>
 </template>
 
 <script>
-import MSInput from "../Base/MSInput.vue";
 import Multiselect from "vue-multiselect";
 import "vue-multiselect/dist/vue-multiselect.css";
 import Modal from "../Base/Modal.vue";
-import MSAlert from "../Base/MSAlert.vue";
-import { base } from "../../api/base";
-import BaseHandleSubmit from "../Base/BaseHandleSubmit.vue";
+import { baseApi } from "../../api/baseApi";
+import BaseForm from "../Base/BaseForm.vue";
 
 export default {
   name: "MSCombobox",
-  extends: BaseHandleSubmit,
+  extends: BaseForm,
   components: {
-    MSInput,
     Multiselect,
     Modal,
-    MSAlert,
   },
   props: {
     selectedRow: {
@@ -100,6 +91,19 @@ export default {
       type: String,
       default: null,
     },
+    error: {
+      type: Array,
+      default: () => [],
+    },
+    ref: {
+      type: String,
+      default: null,
+    },
+    datafield: {
+      type: String,
+      default: null,
+    },
+
     selectedOption: {
       type: Object,
       default: null,
@@ -134,11 +138,6 @@ export default {
       isInputFocused: false,
       isCreateModalVisible: false,
       optionsData: this.options != null ? this.options : [],
-      alertMessage: "",
-      alertVisible: false,
-      alertIsConfirm: false,
-      alertIsShow: false,
-      confirmAction: null,
       formData: {},
     };
   },
@@ -154,6 +153,9 @@ export default {
     endpoint() {
       return this.config.endpoint;
     },
+    /**
+     * function hiển thị theo tìm kiếm người dùng nhập vào input
+     */
     filteredOptions() {
       if (!Array.isArray(this.optionsData)) {
         return [];
@@ -175,13 +177,17 @@ export default {
     },
   },
   methods: {
+    /**
+     * function call api được viết để thực hiện chung
+     * cho nhiều ô input khác nhau
+     */
     async fetchData() {
       if (!this.config || !this.config.endpoint) {
         return;
       }
       try {
-        base.buildUrlRequest(this.config);
-        const response = await base.getAuthenApi(this.config.url);
+        baseApi.buildUrlRequest(this.config);
+        const response = await baseApi.getAuthenApi(this.config.url);
         this.optionsData = this.extractData(response);
       } catch (error) {
         this.optionsData = [];
@@ -197,10 +203,20 @@ export default {
       }
       return [];
     },
+    /**
+     * function mở multiselect
+     * và hiện thị data thông qua function fecthData
+     */
     async onExpandCombox() {
       await this.fetchData();
       this.showTable = true;
     },
+
+    /**
+     * function xử lý khi người dùng chọn 1 option
+     * trong multilselect
+     * @param item
+     */
     selectRow(item) {
       let displayFirstValue = this.config.columnConfig?.find(
         (col) => col.isDisplay
@@ -217,12 +233,20 @@ export default {
       this.$emit("update:selectedRow", item);
       this.showTable = false;
     },
+    /**
+     * function gán giá trị khi nhập liệu vào ô input
+     * @param event
+     */
     handleOnInput(event) {
       this.inputValue = event.target.value;
     },
     handleInputChange(value) {
       this.internalSelectedOption = value;
     },
+    /**
+     * 3 function thực hiện đóng mở và lưu thông tin
+     * của modal
+     */
     openCreateModal() {
       this.isCreateModalVisible = true;
     },
@@ -232,26 +256,16 @@ export default {
 
     handleSubmitModal(responseData) {
       if (responseData && responseData.isSuccess) {
-        this.showConfirm("Tạo mới thành công tài khoản mới!", () => {
+        this.showAlert("Tạo mới thành công tài khoản mới!", () => {
           this.$emit("createSubmit", responseData);
           this.closeCreateModal();
         });
       }
     },
 
-    showConfirm(message, action) {
-      this.alertMessage = message;
-      this.confirmAction = action;
-      this.alertVisible = true;
-      this.alertIsConfirm = true;
-      this.alertIsShow = false;
-    },
-    handleConfirm() {
-      if (this.confirmAction) {
-        this.confirmAction();
-      }
-      this.alertVisible = false;
-    },
+    /**
+     * 2 function xử lý focus và blur của input
+     */
     handleFocus() {
       this.isInputFocused = true;
     },

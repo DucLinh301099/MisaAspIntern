@@ -100,15 +100,12 @@
 
 <script>
 import { customer } from "../../api/customer";
-import MSInput from "../Base/MSInput.vue";
-import BaseHandleSubmit from "../Base/BaseHandleSubmit.vue";
+import BaseForm from "../Base/BaseForm.vue";
 
 export default {
   name: "CreateCustomer",
-  extends: BaseHandleSubmit,
-  components: {
-    MSInput,
-  },
+  extends: BaseForm,
+
   data() {
     return {
       objectId: "",

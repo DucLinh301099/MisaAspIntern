@@ -1,7 +1,7 @@
 import axios from 'axios';
-import Api from '../api/apiConst';
 
-export const base = {
+
+export const baseApi = {
 
   /**
    * Hàm định nghĩa endpoint của api

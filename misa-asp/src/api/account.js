@@ -1,5 +1,5 @@
 
-import { base } from '../api/base.js';
+import { baseApi } from './baseApi.js';
 import Api from '../api/apiConst';
 import router from '../router';
 
@@ -16,7 +16,7 @@ export const account = {
     EmailOrPhoneNumber: emailOrPhoneNumber,
     Password: password,
   };
-  const response = await base.postApi(
+  const response = await baseApi.postApi(
     Api.login.url,
     params,
     (responseData) => {
@@ -56,7 +56,7 @@ export const account = {
       Password: password,
       RoleId: roleId
     };
-    const responseData = await base.postApi(Api.register.url, params);
+    const responseData = await baseApi.postApi(Api.register.url, params);
     return responseData;
   },
    
@@ -65,7 +65,7 @@ export const account = {
    * @returns 
    */
   async getAllUser() {
-    return await base.getAuthenApi(Api.getAllUser.url, null);
+    return await baseApi.getAuthenApi(Api.getAllUser.url, null);
   },
 
   /**
@@ -73,17 +73,17 @@ export const account = {
    * @param {*} employeeCode 
    * @param {*} employeeName 
    * @param {*} department 
-   * @param {*} mobilePhone 
+   * @param {*} phoneNumber 
    * @returns 
    */
-  async createEmployee(employeeCode, employeeName, department, mobilePhone) {
+  async createEmployee(employeeCode, employeeName, department, phoneNumber) {
     let params = {
       EmployeeCode: employeeCode,
       EmployeeName: employeeName,
       Department: department,
-      MobilePhone: mobilePhone,
+      PhoneNumber: phoneNumber,
     };
-    const responseData = await base.postAuthenApi(Api.createEmployee.url, params);
+    const responseData = await baseApi.postAuthenApi(Api.createEmployee.url, params);
     return responseData;
   },
 
@@ -106,7 +106,7 @@ export const account = {
       Password: password,
       RoleId: roleId
     };
-    const responseData = await base.postApi(Api.register.url, params);
+    const responseData = await baseApi.postApi(Api.register.url, params);
     return responseData;
   },
 
@@ -117,7 +117,7 @@ export const account = {
    */
   async getUserById(id) {
     try {
-      const response = await base.getAuthenApi(Api.getUserById.url,id);
+      const response = await baseApi.getAuthenApi(Api.getUserById.url,id);
       return response.data;
     } catch (error) {
       throw error.response ? error.response.data : error.message;
@@ -135,7 +135,7 @@ export const account = {
       let params = {
         Email: email,
       };
-     const reponse = await base.postApi(Api.password.url, params);
+     const reponse = await baseApi.postApi(Api.password.url, params);
      return reponse.data;
     }catch (error) {  
     throw error; // Ném lỗi ra để các hàm gọi bên ngoài có thể xử lý
@@ -151,7 +151,7 @@ export const account = {
       try {      
         const getUser = await this.getUserById(user.id);
         if (getUser) {              
-          const responseData = await base.putAuthenApi(Api.updateUser.url,user);            
+          const responseData = await baseApi.putAuthenApi(Api.updateUser.url,user);            
           return responseData;
         } else {
           throw new Error('Không tìm thấy người dùng này');
@@ -168,7 +168,7 @@ export const account = {
    */
   async deleteUserById(id) { 
   try {
-    const response = await base.deleteAuthenApi(Api.deleteUserById.url, id);
+    const response = await baseApi.deleteAuthenApi(Api.deleteUserById.url, id);
     return response.data;
    }catch (error) {  
     throw error; // Ném lỗi ra để các hàm gọi bên ngoài có thể xử lý
@@ -181,7 +181,7 @@ export const account = {
    */
   async logout() {
     try {
-    const response = await base.postApi(Api.logout.url);
+    const response = await baseApi.postApi(Api.logout.url);
     return response.data;
   } catch (error) {  
     throw error; // Ném lỗi ra để các hàm gọi bên ngoài có thể xử lý

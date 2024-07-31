@@ -1,13 +1,14 @@
 <template>
   <section class="payment">
     <HeaderPayment
-      :voucherType="payment.voucherType"
-      :paymentMethod="payment.paymentMethod"
-      :documentNumber="payment.documentNumber"
+      :voucherType="currentItem.voucherType"
+      :paymentMethod="currentItem.paymentMethod"
+      :documentNumber="currentItem.documentNumber"
       @update:voucherType="updateValue('voucherType', $event)"
       @update:paymentMethod="updateValue('paymentMethod', $event)"
       class="header-payment"
     />
+
     <div class="input-information">
       <div class="input-information-right">
         <div class="account-input-container">
@@ -16,13 +17,16 @@
               label="Tài khoản chi"
               @update:selectedRow="updateSelectedRow('bankExpense', $event)"
               :config="paymentConfigCombo.comboxConfig.bankExpense"
-              :value="payment.accountNumber"
+              :value="currentItem.accountNumber"
               :ComponentAdd="createBankAccountComponent"
+              :ref="bankAccount"
+              :datafield="bankAccount"
+              :error="bankAccountErros"
             />
             <MSInput
               class="second-input"
               :type="type"
-              :value="payment.bankName"
+              :value="currentItem.bankName"
               @input="updateValue('bankExpenseName', $event.target.value)"
             />
           </div>
@@ -31,13 +35,13 @@
               label="Đối Tượng"
               @update:selectedRow="updateSelectedRow('customer', $event)"
               :config="paymentConfigCombo.comboxConfig.customer"
-              :value="payment.objectName"
+              :value="currentItem.objectName"
               :ComponentAdd="createCustomerComponent"
             />
             <MSInput
               class="second-input"
               :type="type"
-              :value="payment.address"
+              :value="currentItem.address"
               @input="updateValue('customerAddress', $event.target.value)"
             />
           </div>
@@ -47,14 +51,14 @@
               label="Tài Khoản Nhận"
               :showButton="false"
               @update:selectedRow="updateSelectedRow('bankReceive', $event)"
-              :value="payment.accountReceiveNumber"
+              :value="currentItem.accountReceiveNumber"
               :config="paymentConfigCombo.comboxConfig.bankReceive"
             />
             <MSInput
               v-if="!hideAccountReceive"
               class="second-input"
               :type="type"
-              :value="payment.bankReceiveName"
+              :value="currentItem.bankReceiveName"
               @input="updateValue('bankReceiveName', $event.target.value)"
             />
           </div>
@@ -62,7 +66,7 @@
             <div class="input-container-info-1">
               <label for="so-cmnd">Số CMND</label>
               <MSInput
-                :value="payment.cmndNumber"
+                :value="currentItem.cmndNumber"
                 @input="updateValue('cmndNumber', $event.target.value)"
                 type="text"
                 class="base-input-info"
@@ -72,7 +76,7 @@
               <div class="input-field">
                 <label for="ngay-cap">Ngày cấp</label>
                 <MSInput
-                  :value="payment.licenseDate"
+                  :value="currentItem.licenseDate"
                   @input="updateValue('licenseDate', $event.target.value)"
                   type="date"
                   class="base-input-info"
@@ -82,7 +86,7 @@
                 <label for="noi-cap">Nơi cấp</label>
                 <MSInput
                   type="text"
-                  :value="payment.licenseAddress"
+                  :value="currentItem.licenseAddress"
                   @input="updateValue('licenseAddress', $event.target.value)"
                   class="base-input-info"
                 />
@@ -106,7 +110,7 @@
               label="Nhân viên"
               @update:selectedRow="updateSelectedRow('employee', $event)"
               :config="paymentConfigCombo.comboxConfig.employee"
-              :value="payment.employeeName"
+              :value="currentItem.employeeName"
               :ComponentAdd="createEmployeeComponent"
             />
           </div>
@@ -123,11 +127,11 @@
       </div>
       <div class="input-information-center">
         <DateTimeComponent
-          :voucherType="payment.voucherType"
+          :voucherType="currentItem.voucherType"
           :value="{
-            accountingDate: payment.accountingDate,
-            documentDate: payment.documentDate,
-            documentNumber: payment.documentNumber,
+            accountingDate: currentItem.accountingDate,
+            documentDate: currentItem.documentDate,
+            documentNumber: currentItem.documentNumber,
           }"
           @update:value="updateDateTimeData"
         />
@@ -142,7 +146,7 @@
     <div class=" ">
       <MSGrid
         label="Hạch toán"
-        :modelValue="payment.paymentDetails"
+        :modelValue="currentItem.paymentDetails"
         @changeValueInput="changeValueInput"
         :configColumGrid="paymentConfigCombo.gridConfig"
         @selectedCombox="selectedGridCombox"
@@ -154,7 +158,7 @@
     <div>
       <div>
         <FooterPayment
-          :payment="payment"
+          :payment="currentItem"
           class="footer-payment-a"
           @submit="handleSubmit"
         />
@@ -179,6 +183,8 @@ import CreateEmployee from "../components/PaymentPage/CreateEmployee.vue";
 
 import paymentConfig from "../config/PaymentConfig";
 import BaseSubmit from "../components/Base/BaseSubmit.vue";
+import Api from "../api/apiConst";
+import { bankAccount } from "../api/bank";
 
 export default {
   name: "Payment",
@@ -200,6 +206,7 @@ export default {
 
   data() {
     return {
+      apiUrl: Api.payment.url,
       errorMessage: "",
       inputValue: "",
       inputBillContent: "",
@@ -207,7 +214,7 @@ export default {
       bankNameInput: "",
       accountReceiveValue: "",
       paymentConfigCombo: paymentConfig,
-      payment: {
+      currentItem: {
         voucherType: "5. Chi khác",
         paymentMethod: "Ủy nhiệm chi",
         totalAmount: null,
@@ -234,6 +241,7 @@ export default {
         "Séc chuyển khoản": "SCK001",
         "Séc tiền mặt": "STM001",
       },
+      bankAccountErros: [],
       createCustomerComponent: CreateCustomer,
       createBankAccountComponent: CreateBankAccount,
       createEmployeeComponent: CreateEmployee,
@@ -246,17 +254,17 @@ export default {
      */
     hideInformationInput() {
       return (
-        this.payment.paymentMethod === "Ủy nhiệm chi" ||
-        this.payment.paymentMethod === "Séc chuyển khoản"
+        this.currentItem.paymentMethod === "Ủy nhiệm chi" ||
+        this.currentItem.paymentMethod === "Séc chuyển khoản"
       );
     },
     hideAccountReceive() {
-      return this.payment.paymentMethod === "Séc tiền mặt";
+      return this.currentItem.paymentMethod === "Séc tiền mặt";
     },
     hideCreateEmployeeInput() {
       return (
-        this.payment.voucherType === "2. Trả các khoản vay" ||
-        this.payment.voucherType === "3. Tạm ứng cho nhân viên"
+        this.currentItem.voucherType === "2. Trả các khoản vay" ||
+        this.currentItem.voucherType === "3. Tạm ứng cho nhân viên"
       );
     },
     /** */
@@ -275,11 +283,19 @@ export default {
     },
   },
   watch: {
-    "payment.paymentMethod"(newMethod) {
-      this.payment.documentNumber = this.documentNumberMapping[newMethod] || "";
+    "currentItem.paymentMethod"(newMethod) {
+      this.currentItem.documentNumber =
+        this.documentNumberMapping[newMethod] || "";
     },
   },
   methods: {
+    /**
+     * function gán giá trị vào record để lưu thông tin vào modelvalue
+     * trong MSGrid và sẽ lưu lại vào paymentDetails thông qua props
+     * @param record
+     * @param column
+     * @param selectedOption
+     */
     selectedGridCombox(record, column, selectedOption) {
       if (column.fieldName === "customer") {
         record.objectId = selectedOption.objectId;
@@ -303,12 +319,18 @@ export default {
         this.updateTotalAmount();
       }
     },
+
+    /**
+     * function cập nhật giá trị của totalamount
+     * ở đây sẽ quay lại MSGrid lấy giá trị của amount rồi tính tổng
+     * ra thành totalamount hiển thị ra màn hình.
+     */
     updateTotalAmount() {
-      const total = this.payment.paymentDetails.reduce((sum, row) => {
+      const total = this.currentItem.paymentDetails.reduce((sum, row) => {
         return sum + Number(row.amount.toString().replace(/\./g, "") || 0);
       }, 0);
       this.totalAmount = total;
-      this.payment.totalAmount = this.formattedTotalAmount;
+      this.currentItem.totalAmount = this.formattedTotalAmount;
       this.$emit("updateTotalAmount", this.totalAmount);
     },
     //------------------------------------
@@ -318,12 +340,12 @@ export default {
      * @param value
      */
     updateValue(field, value) {
-      this.payment[field] = value;
+      this.currentItem[field] = value;
     },
 
     /**
      * fuction update giá trị khi chọn 1 option trong multiselect
-     * và gán nó vào payment
+     * và gán nó vào object currentItem
      * @param type
      * @param item
      */
@@ -331,42 +353,79 @@ export default {
       switch (type) {
         case "bankExpense":
           this.bankNameInput = item.bankName;
-          this.payment.accountNumber = item.accountNumber;
-          this.payment.bankName = item.bankName;
-          this.payment.bankAccountId = item.id;
+          this.currentItem.accountNumber = item.accountNumber;
+          this.currentItem.bankName = item.bankName;
+          this.currentItem.bankAccountId = item.id;
           break;
         case "customer":
-          this.payment.objectName = item.objectName;
-          this.payment.address = item.address;
-          this.payment.billContent = item.objectName;
+          this.currentItem.objectName = item.objectName;
+          this.currentItem.address = item.address;
+          this.currentItem.billContent = item.objectName;
           this.inputBillContent = item.objectName;
-          this.payment.customerId = item.id;
+          this.currentItem.customerId = item.id;
 
           this.updateGridDescription(item.objectName);
           break;
         case "bankReceive":
           this.accountReceiveValue = item.bankName;
-          this.payment.accountReceiveNumber = item.accountNumber;
-          this.payment.bankReceiveName = item.bankName;
+          this.currentItem.accountReceiveNumber = item.accountNumber;
+          this.currentItem.bankReceiveName = item.bankName;
           break;
         case "employee":
-          this.payment.employeeName = item.employeeName;
-          this.payment.employeeId = item.id;
+          this.currentItem.employeeName = item.employeeName;
+          this.currentItem.employeeId = item.id;
 
           break;
       }
     },
+
+    /**
+     * hàm gọi từ BaseSubmit thực hiện việc sau khi submit thành công
+     * sẽ thực hiện các yêu cầu tùy theo ng dùng mong muốn
+     * @param responseData
+     */
+    afterCallSuccess(responseData) {
+      this.showConfirm("Lưu thành công thông tin", () => {
+        if (responseData) {
+          this.$router.push("/payment");
+        }
+      });
+    },
+
+    /**
+     * function thực hiện xử lý mở đóng alert
+     * @param message
+     * @param action
+     */
+    showConfirm(message, action) {
+      this.alertMessage = message;
+      this.confirmAction = action;
+      this.alertVisible = true;
+      this.alertIsConfirm = true;
+      this.alertIsShow = false;
+    },
+    handleConfirm() {
+      if (this.confirmAction) {
+        this.confirmAction();
+      }
+      this.alertVisible = false;
+    },
+
+    /**
+     * các function thực hiện gán data cho các input khác nhau
+     * @param
+     */
     updateDateTimeData(updatedValue) {
-      this.payment = updatedValue;
+      this.currentItem = updatedValue;
     },
     updateBillContent(newValue) {
       this.inputBillContent = newValue.replace("Chi tiền cho ", "");
     },
     updateDateTimeData(updatedValue) {
-      this.payment = { ...this.payment, ...updatedValue };
+      this.currentItem = { ...this.currentItem, ...updatedValue };
     },
     updateGridDescription(customerName) {
-      this.payment.paymentDetails.forEach((record) => {
+      this.currentItem.paymentDetails.forEach((record) => {
         record.description = `Chi tiền cho ${customerName}`;
       });
     },

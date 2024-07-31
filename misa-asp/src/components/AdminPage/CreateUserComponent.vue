@@ -3,14 +3,6 @@
     <SideBarComponent />
     <div class="content">
       <div class="header">
-        <MSAlert
-          :message="alertMessage"
-          :type="alertType"
-          :visible="alertVisible"
-          :isConfirm="alertIsConfirm"
-          :isShow="alertIsShow"
-          @confirm="handleConfirm"
-        />
         <div class="create">
           <p class="links">
             <router-link class="text" to="/admin"
@@ -129,16 +121,14 @@
 <script>
 import { account } from "../../api/account";
 import SideBarComponent from "../AdminPage/SideBarComponent.vue";
-import MSAlert from "../Base/MSAlert.vue";
 import MSInput from "../Base/MSInput.vue";
-import BaseHandleSubmit from "../Base/BaseHandleSubmit.vue";
+import BaseForm from "../Base/BaseForm.vue";
 
 export default {
   name: "CreateUserComponent",
-  extends: BaseHandleSubmit,
+  extends: BaseForm,
   components: {
     SideBarComponent,
-    MSAlert,
     MSInput,
   },
   data() {
@@ -155,13 +145,6 @@ export default {
       phoneNumberErrors: [],
       emailErrors: [],
       passwordErrors: [],
-
-      alertMessage: "",
-      alertType: "info",
-      alertVisible: false,
-      alertIsConfirm: false,
-      confirmAction: null,
-      alertIsShow: true,
     };
   },
   methods: {

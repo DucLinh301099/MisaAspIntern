@@ -93,8 +93,8 @@ namespace MisaAsp.Repositories
             {
                 EmployeeCode = request.EmployeeCode,
                 EmployeeName = request.EmployeeName,
-                Department = request.Department,             
-                MobilePhone = request.MobilePhone,
+                Department = request.Department,
+                PhoneNumber = request.PhoneNumber,
            
             };
             return await ExecuteProcScalarAsync<int>("createemployee", parameters);

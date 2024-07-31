@@ -55,7 +55,7 @@ let paymentConfig = {
         { columnName: 'Mã nhân viên', fieldName: 'employeeCode' },
         { columnName: 'Tên nhân viên', fieldName: 'employeeName',isDisplay: true, isValue: true, },
         { columnName: "Đơn vị", fieldName: "department" },
-        { columnName: "ĐT di động", fieldName: "mobilePhone" },
+        { columnName: "ĐT di động", fieldName: "phoneNumber" },
       ],
     },
     customer: {

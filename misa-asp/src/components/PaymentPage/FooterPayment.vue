@@ -1,6 +1,6 @@
 <template>
   <div class="footer-payment">
-    <button class="cancel-btn" @click="cancel">Hủy</button>
+    <button class="cancel-btn" @click="emitSubmit('cancel')">Hủy</button>
 
     <div class="dropdown">
       <button class="save-btn" @click="emitSubmit('save')">Cất</button>
@@ -10,9 +10,9 @@
         </button>
         <button class="dropdown-toggle" @click="toggleDropdown">&#9660;</button>
         <div class="dropdown-menu" v-if="isDropdownVisible">
-          <button @click="emitSubmit('add')">Cất và Thêm</button>
-          <button @click="emitSubmit('close')">Cất và Đóng</button>
-          <button @click="emitSubmit('print')">Cất và In</button>
+          <button @click="emitSubmit('saveAndAdd')">Cất và Thêm</button>
+          <button @click="emitSubmit('saveAndClose')">Cất và Đóng</button>
+          <button @click="emitSubmit('saveAndPrint')">Cất và In</button>
         </div>
       </div>
     </div>
@@ -22,12 +22,7 @@
 <script>
 export default {
   name: "FooterPayment",
-  props: {
-    payment: {
-      type: Object,
-      required: true,
-    },
-  },
+  props: {},
   data() {
     return {
       isDropdownVisible: false,
@@ -40,9 +35,6 @@ export default {
     emitSubmit(action) {
       this.$emit("submit", action);
       this.isDropdownVisible = false;
-    },
-    cancel() {
-      this.$emit("cancel");
     },
   },
 };

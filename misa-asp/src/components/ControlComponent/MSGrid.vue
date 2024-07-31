@@ -112,21 +112,39 @@ export default {
     },
   },
   methods: {
+    /**
+     * Thêm một dòng mới vào bảng
+     */
     addRow() {
       let model = this.configColumGrid.model;
       const newRow = new model();
       this.modelValue.push(newRow);
       this.updateCurrentTotal();
     },
+
+    /**
+     * Xóa một dòng trong bảng
+     * @param {number} index - Chỉ số của dòng cần xóa
+     */
     removeRow(index) {
       this.modelValue.splice(index, 1);
       this.updateCurrentTotal();
     },
+
+    /**
+     * Xóa tất cả các dòng trong bảng
+     */
     clearRows() {
       this.modelValue = [];
       this.updateCurrentTotal();
     },
 
+    /**
+     * Cập nhật giá trị  khi chọn một giá trị từ combobox
+     * @param {number} rowIndex - Chỉ số của dòng
+     * @param {object} column - Cấu hình của cột
+     * @param {object} selectedOption - Giá trị được chọn từ combobox
+     */
     updateRowField(rowIndex, column, selectedOption) {
       let record = this.modelValue[rowIndex],
         fieldName = column.fieldName;
@@ -136,18 +154,40 @@ export default {
       }
     },
 
+    /**
+     * Xử lý sự kiện khi một ô được focus
+     * @param {number} rowIndex - Chỉ số của dòng
+     * @param {string} fieldName - Tên trường của cột
+     */
     handleFocus(rowIndex, fieldName) {
       this.focusedCell = { rowIndex, fieldName };
     },
+
+    /**
+     * Xử lý sự kiện khi một ô mất focus
+     */
     handleBlur() {
       this.focusedCell = { rowIndex: null, fieldName: null };
     },
+
+    /**
+     * Kiểm tra xem ô có đang được focus hay không
+     * @param {number} rowIndex - Chỉ số của dòng
+     * @param {string} fieldName - Tên trường của cột
+     * @returns {boolean} - Trạng thái focus của ô
+     */
     isInputFocused(rowIndex, fieldName) {
       return (
         this.focusedCell.rowIndex === rowIndex &&
         this.focusedCell.fieldName === fieldName
       );
     },
+
+    /**
+     * Thay đổi giá trị của ô trong bảng
+     * @param {number} rowIndex - Chỉ số của dòng
+     * @param {object} column - Cấu hình của cột
+     */
     changeValueInput(rowIndex, column) {
       let record = this.modelValue[rowIndex];
       if (record && column && column.dataType) {
@@ -166,6 +206,10 @@ export default {
       }
       this.updateCurrentTotal();
     },
+
+    /**
+     * Cập nhật tổng giá trị hiện tại của các dòng trong bảng
+     */
     updateCurrentTotal() {
       this.currentTotal = this.modelValue.reduce(
         (sum, row) =>
@@ -179,6 +223,7 @@ export default {
 </script>
 
 <style scoped>
+/* (Existing styles remain unchanged) */
 .accounting-component {
   padding-left: 20px;
   padding-right: 20px;

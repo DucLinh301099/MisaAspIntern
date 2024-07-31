@@ -1,36 +1,55 @@
 <script>
-import { payment } from "../../api/payment";
+import { baseApi } from "../../api/baseApi";
 
 export default {
+  extends: "BaseForm",
   methods: {
+    /**
+     * function xử lý submit form và xử lý các quá trình
+     * sau khi thành công, thật bại
+     * @param param0
+     */
     async handleSubmit(action) {
-      this.customValidate();
-
-      let paymentData = this.payment;
-      let responseData;
-
-      try {
-        responseData = await payment.createPayment(paymentData);
-      } catch (error) {
-        responseData = { isSuccess: false, error };
-      }
-
-      if (responseData.isSuccess) {
-        await this.afterCallSuccess(responseData);
-        await this.handleCreateSubmit(responseData);
-        this.$emit("afterCallSuccess", action, responseData);
+      if (action == "cancel" || action == "close") {
+        // xử lý cho đóng hoặc hủy
       } else {
-        await this.afterCallError(responseData);
-        await this.afterCallErrorCustom(responseData);
-        this.$emit("afterCallError", responseData);
-      }
+        this.customValidate();
 
-      if (action === "save") {
-        // Logic for "Cất và Thêm"
-      } else if (action === "close") {
-        // Logic for "Cất và Đóng"
-      } else if (action === "print") {
-        // Logic for "Cất và In"
+        let responseData;
+
+        try {
+          responseData = await baseApi.postAuthenApi(
+            this.apiUrl,
+            this.currentItem
+          );
+        } catch (error) {
+          responseData = { isSuccess: false, error };
+        }
+
+        if (responseData.isSuccess) {
+          await this.afterCallSuccess(responseData);
+          await this.handleCreateSubmit(responseData);
+          this.$emit("afterCallSuccess", action, responseData);
+        } else {
+          await this.afterCallError(responseData);
+          await this.afterCallErrorCustom(responseData);
+          this.$emit("afterCallError", responseData);
+        }
+
+        switch (action) {
+          case "save":
+            // Logic for "Cất và Xem"
+            break;
+          case "saveAndAdd":
+            // Logic for "Cất và Xem"
+            break;
+          case "saveAndPrint":
+            // Logic for "Cất và In"
+            break;
+          case "saveAndClose":
+            // Logic for "Cất và Đóng"
+            break;
+        }
       }
     },
 
@@ -40,6 +59,10 @@ export default {
 
     async afterCallSuccess() {},
 
+    /**
+     * function xử lý sau khi submit có lỗi
+     * @param responseData
+     */
     async afterCallError(responseData) {
       let refsForm = this.$refs;
       if (refsForm) {

@@ -3,16 +3,6 @@
     <SideBarComponent />
     <div class="content">
       <div class="header">
-        <MSAlert
-          :message="alertMessage"
-          :type="alertType"
-          :visible="alertVisible"
-          :isConfirm="alertIsConfirm"
-          :isShow="alertIsShow"
-          @close="alertVisible = false"
-          @confirm="handleConfirm"
-          @cancel="alertVisible = false"
-        />
         <h1>Trang Quản Lý</h1>
         <div class="user-info">
           <img :src="userAvatar" alt="Avatar" class="avatar" />
@@ -67,12 +57,12 @@
 <script>
 import { account } from "../../api/account";
 import SideBarComponent from "../AdminPage/SideBarComponent.vue";
-import MSAlert from "../Base/MSAlert.vue";
+import BaseForm from "../Base/BaseForm.vue";
 export default {
   name: "AdminComponent",
+  extends: BaseForm,
   components: {
     SideBarComponent,
-    MSAlert,
   },
   data() {
     return {
@@ -81,12 +71,6 @@ export default {
       userName: localStorage.getItem("lastName") || "",
       userAvatar:
         "https://static.vecteezy.com/system/resources/thumbnails/007/407/996/small/user-icon-person-icon-client-symbol-login-head-sign-icon-design-vector.jpg", // Placeholder avatar, you can replace with actual URL
-      alertMessage: "",
-      alertType: "info",
-      alertVisible: false,
-      alertIsConfirm: false,
-      confirmAction: null,
-      alertIsShow: null,
     };
   },
   async created() {
@@ -138,26 +122,6 @@ export default {
           this.showAlert("Đăng xuất thất bại: " + error.message, "error");
         }
       });
-    },
-    showAlert(message, action) {
-      this.alertMessage = message;
-      this.confirmAction = action;
-      this.alertVisible = true;
-      this.alertIsConfirm = true;
-      this.alertIsShow = false;
-    },
-    showConfirm(message, action) {
-      this.alertMessage = message;
-      this.confirmAction = action;
-      this.alertVisible = true;
-      this.alertIsConfirm = true;
-      this.alertIsShow = true;
-    },
-    handleConfirm() {
-      if (this.confirmAction) {
-        this.confirmAction();
-      }
-      this.alertVisible = false;
     },
   },
 };

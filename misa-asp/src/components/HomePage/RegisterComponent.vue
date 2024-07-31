@@ -1,14 +1,6 @@
 <template>
   <div class="register-page">
     <div class="register-container">
-      <MSAlert
-        :message="alertMessage"
-        :type="alertType"
-        :visible="alertVisible"
-        :isConfirm="alertIsConfirm"
-        :isShow="alertIsShow"
-        @confirm="handleConfirm"
-      />
       <div class="logo-section-register">
         <router-link to="/">
           <img
@@ -120,17 +112,12 @@
 
 <script>
 import { account } from "../../api/account";
-import MSInput from "../Base/MSInput.vue";
-import MSAlert from "../Base/MSAlert.vue";
-import BaseHandleSubmit from "../Base/BaseHandleSubmit.vue";
+import BaseForm from "../Base/BaseForm.vue";
 
 export default {
   name: "RegisterComponent",
-  extends: BaseHandleSubmit,
-  components: {
-    MSInput,
-    MSAlert,
-  },
+  extends: BaseForm,
+
   data() {
     return {
       firstName: "",
@@ -144,11 +131,6 @@ export default {
       phoneNumberErrors: [],
       emailErrors: [],
       passwordErrors: [],
-      alertMessage: "",
-      alertVisible: false,
-      alertIsConfirm: false,
-      confirmAction: null,
-      alertIsShow: true,
     };
   },
   methods: {
@@ -163,14 +145,14 @@ export default {
       );
     },
     afterCallSuccess(responseData) {
-      this.showConfirm("Đăng ký thành công tài khoản mới!", () => {
+      this.showAlert("Đăng ký thành công tài khoản mới!", () => {
         if (responseData) {
           this.$router.push("/login");
         }
       });
     },
     afterCallErrorCustom(responseData) {
-      this.showConfirm(
+      this.showAlert(
         "Đăng ký thất bại - Thông tin đăng ký không hợp lệ",
         () => {
           if (!responseData.isSuccess) {
@@ -180,19 +162,6 @@ export default {
       );
     },
 
-    showConfirm(message, action) {
-      this.alertMessage = message;
-      this.confirmAction = action;
-      this.alertVisible = true;
-      this.alertIsConfirm = true;
-      this.alertIsShow = false;
-    },
-    handleConfirm() {
-      if (this.confirmAction) {
-        this.confirmAction();
-      }
-      this.alertVisible = false;
-    },
     updateValue(field, value) {
       this[field] = value;
       switch (field) {
@@ -310,6 +279,7 @@ img {
   display: flex;
   justify-content: space-between;
   padding-bottom: 5px;
+  gap: 10px;
 }
 .form-group-inline {
   flex: 0 0 48%;

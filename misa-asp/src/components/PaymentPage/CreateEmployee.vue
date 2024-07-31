@@ -40,11 +40,11 @@
           <label for="mobile-phone">Điện thoại</label>
           <MSInput
             type="text"
-            ref="MobilePhone"
-            data-field="mobilePhone"
-            :errors="mobilePhoneErrors"
-            :value="mobilePhone"
-            @input="updateValue('mobilePhone', $event.target.value)"
+            ref="PhoneNumber"
+            data-field="phoneNumber"
+            :errors="phoneNumberErrors"
+            :value="phoneNumber"
+            @input="updateValue('phoneNumber', $event.target.value)"
             class="input-field"
           />
         </div>
@@ -81,25 +81,23 @@
 
 <script>
 import { account } from "../../api/account";
-import MSInput from "../Base/MSInput.vue";
-import BasehandleSubmit from "../Base/BaseHandleSubmit.vue";
+
+import BaseForm from "../Base/BaseForm.vue";
 
 export default {
   name: "CreateEmployee",
-  extends: BasehandleSubmit,
-  components: {
-    MSInput,
-  },
+  extends: BaseForm,
+
   data() {
     return {
       employeeCode: "",
       employeeName: "",
-      mobilePhone: "",
+      phoneNumber: "",
       department: "",
 
       employeeCodeErrors: [],
       employeeNameErrors: [],
-      mobilePhoneErrors: [],
+      phoneNumberErrors: [],
       departmentErrors: [],
     };
   },
@@ -108,7 +106,7 @@ export default {
       return await account.createEmployee(
         this.employeeCode,
         this.employeeName,
-        this.mobilePhone,
+        this.phoneNumber,
         this.department
       );
     },
@@ -121,8 +119,8 @@ export default {
         case "employeeName":
           this.employeeNameErrors = [];
           break;
-        case "mobilePhone":
-          this.mobilePhoneErrors = [];
+        case "phoneNumber":
+          this.phoneNumberErrors = [];
           break;
         case "department":
           this.departmentErrors = [];

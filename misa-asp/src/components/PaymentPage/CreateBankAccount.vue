@@ -15,7 +15,6 @@
             :errors="accountNumberErrors"
             @input="updateValue('accountNumber', $event.target.value)"
             class="input-field"
-            required
           />
         </div>
         <div class="input-container">
@@ -30,7 +29,6 @@
             :errors="bankNameErrors"
             @input="updateValue('bankName', $event.target.value)"
             class="input-field"
-            required
           />
         </div>
       </div>
@@ -48,13 +46,17 @@
             :errors="branchErrors"
             @input="updateValue('branch', $event.target.value)"
             class="input-field"
-            required
           />
         </div>
         <div class="input-container full-width">
           <label for="account-type">Loại tài khoản</label>
           <div class="custom-select">
-            <select id="account-type" v-model="typeOfBank" class="input-field">
+            <select
+              id="account-type"
+              v-model="typeOfBank"
+              required
+              class="input-field"
+            >
               <option class="options" value="1">Tài khoản chi</option>
               <option class="options" value="2">Tài khoản nhận</option>
             </select>
@@ -82,15 +84,11 @@
 
 <script>
 import { bankAccount } from "../../api/bank";
-import MSInput from "../Base/MSInput.vue";
-import BaseHandleSubmit from "../Base/BaseHandleSubmit.vue";
+import BaseForm from "../Base/BaseForm.vue";
 
 export default {
   name: "CreateBankAccount",
-  extends: BaseHandleSubmit,
-  components: {
-    MSInput,
-  },
+  extends: BaseForm,
   data() {
     return {
       accountNumber: "",

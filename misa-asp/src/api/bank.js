@@ -1,5 +1,5 @@
 // src/api/bankAccount.js
-import { base } from '../api/base.js';
+import { baseApi } from './baseApi.js';
 import Api from '../api/apiConst';
 
 export const bankAccount = {
@@ -20,7 +20,7 @@ export const bankAccount = {
       Branch: branch,
       TypeOfBank: typeOfBank,
     };
-    const responseData = await base.postAuthenApi(Api.bank.url, params);
+    const responseData = await baseApi.postAuthenApi(Api.bank.url, params);
     return responseData;
     
   }

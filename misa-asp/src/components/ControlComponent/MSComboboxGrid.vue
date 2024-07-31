@@ -73,7 +73,7 @@
 <script>
 import Multiselect from "vue-multiselect";
 import "vue-multiselect/dist/vue-multiselect.css";
-import { base } from "../../api/base";
+import { baseApi } from "../../api/baseApi";
 import MSInput from "../Base/MSInput.vue";
 
 export default {
@@ -107,6 +107,9 @@ export default {
     };
   },
   computed: {
+    /**
+     * hiển thị data theo tìm kiếm và hiển thị tất cả data
+     */
     filteredOptions() {
       let columnConfig = this.config.columnConfig;
       if (this.inputValue === "") {
@@ -125,12 +128,15 @@ export default {
     },
   },
   methods: {
+    /**
+     * function gọi api để lấy dữ liệu từ BE
+     */
     async fetchData() {
       if (!this.config || !this.config.endpoint) {
         return;
       }
       try {
-        const response = await base.getAuthenApi(this.config.endpoint);
+        const response = await baseApi.getAuthenApi(this.config.endpoint);
         if (
           response.data &&
           Array.isArray(response.data) // Giả định API trả về danh sách các objects
@@ -149,10 +155,15 @@ export default {
         this.optionsData = [];
       }
     },
+
+    /**
+     * function mở multilselect và gọi api qua function fetchData
+     */
     async onExpandCombox() {
       await this.fetchData();
       this.showTable = true;
     },
+
     updateInputValue(event) {
       this.inputValue = event.target.value;
     },
@@ -170,6 +181,10 @@ export default {
       }, 5000);
     },
 
+    /**
+     * function xử lý khi chọn 1 option trong multilSelect
+     * @param item
+     */
     selectRow(item) {
       let columnConfig = this.config.columnConfig;
       let displayFirstValue = columnConfig?.find(
