@@ -29,7 +29,6 @@
               class="login-input"
               :value="emailOrPhoneNumber"
               ref="EmailOrPhoneNumber"
-              data-field="emailOrPhoneNumber"
               :errors="emailOrPhoneNumberErrors"
               @input="updateValue('emailOrPhoneNumber', $event.target.value)"
               placeholder="Số điện thoại/Email"
@@ -41,7 +40,6 @@
               type="password"
               :value="password"
               class="login-input"
-              data-field="password"
               @input="updateValue('password', $event.target.value)"
               :errors="passwordErrors"
               placeholder="Mật khẩu"
@@ -77,7 +75,6 @@ export default {
       password: "",
       emailOrPhoneNumberErrors: [],
       passwordErrors: [],
-      refs: [],
     };
   },
   methods: {

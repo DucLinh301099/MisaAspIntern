@@ -22,11 +22,9 @@
                 type="text"
                 class="create-user-input"
                 ref="FirstName"
-                data-field="firstName"
                 :errors="firstNameErrors"
                 :value="firstName"
                 @input="updateValue('firstName', $event.target.value)"
-                required
               />
             </div>
             <div class="form-group">
@@ -38,11 +36,9 @@
                 type="text"
                 class="create-user-input"
                 ref="LastName"
-                data-field="lastName"
                 :errors="lastNameErrors"
                 :value="lastName"
                 @input="updateValue('lastName', $event.target.value)"
-                required
               />
             </div>
           </div>
@@ -56,11 +52,9 @@
                 type="text"
                 class="create-user-input"
                 ref="Email"
-                data-field="email"
                 :errors="emailErrors"
                 :value="email"
                 @input="updateValue('email', $event.target.value)"
-                required
               />
             </div>
             <div class="form-group">
@@ -73,7 +67,6 @@
                 class="create-user-input"
                 :value="phoneNumber"
                 ref="PhoneNumber"
-                data-field="phoneNumber"
                 :errors="phoneNumberErrors"
                 @input="updateValue('phoneNumber', $event.target.value)"
               />
@@ -90,7 +83,6 @@
                 class="create-user-input"
                 :value="password"
                 ref="Password"
-                data-field="password"
                 :errors="passwordErrors"
                 @input="updateValue('password', $event.target.value)"
               />
@@ -121,7 +113,6 @@
 <script>
 import { account } from "../../api/account";
 import SideBarComponent from "../AdminPage/SideBarComponent.vue";
-import MSInput from "../Base/MSInput.vue";
 import BaseForm from "../Base/BaseForm.vue";
 
 export default {
@@ -129,7 +120,6 @@ export default {
   extends: BaseForm,
   components: {
     SideBarComponent,
-    MSInput,
   },
   data() {
     return {
@@ -159,14 +149,14 @@ export default {
       );
     },
     afterCallSuccess(responseData) {
-      this.showConfirm("Tạo mới thành công tài khoản mới!", () => {
+      this.showAlert("Tạo mới thành công tài khoản mới!", () => {
         if (responseData) {
           this.$router.push("/admin");
         }
       });
     },
     afterCallErrorCustom(responseData) {
-      this.showConfirm(
+      this.showAlert(
         "Tạo mới thất bại thất bại - Thông tin đăng ký không hợp lệ",
         () => {
           if (!responseData.isSuccess) {
@@ -179,19 +169,7 @@ export default {
     cancelCreate() {
       this.$router.push("/admin");
     },
-    showConfirm(message, action) {
-      this.alertMessage = message;
-      this.confirmAction = action;
-      this.alertVisible = true;
-      this.alertIsConfirm = true;
-      this.alertIsShow = false;
-    },
-    handleConfirm() {
-      if (this.confirmAction) {
-        this.confirmAction();
-      }
-      this.alertVisible = false;
-    },
+
     updateValue(field, value) {
       this[field] = value;
       switch (field) {

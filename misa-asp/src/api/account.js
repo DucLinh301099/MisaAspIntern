@@ -76,12 +76,12 @@ export const account = {
    * @param {*} phoneNumber 
    * @returns 
    */
-  async createEmployee(employeeCode, employeeName, department, phoneNumber) {
+  async createEmployee(employeeCode, employeeName, phoneNumber,department ) {
     let params = {
       EmployeeCode: employeeCode,
       EmployeeName: employeeName,
-      Department: department,
       PhoneNumber: phoneNumber,
+      Department: department,
     };
     const responseData = await baseApi.postAuthenApi(Api.createEmployee.url, params);
     return responseData;

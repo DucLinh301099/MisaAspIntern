@@ -81,7 +81,8 @@ namespace MisaAsp.Attribute
 
                 // Tạo đối tượng ResOutput và xử lý lỗi
                 var res = new ResOutput();
-                res.HandleError(null, null, errorCode);
+                string ErrorMessage = "Đã xảy ra lỗi khi xử lý yêu cầu của bạn";
+                res.HandleError(ErrorMessage, null, errorCode);
                 // Thiết lập kết quả trả về của action
                 currentContext.Result = new ContentResult
                 {

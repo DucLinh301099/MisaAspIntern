@@ -11,7 +11,6 @@
           <MSInput
             type="text"
             ref="EmployeeCode"
-            data-field="employeeCode"
             :errors="employeeCodeErrors"
             :value="employeeCode"
             @input="updateValue('employeeCode', $event.target.value)"
@@ -26,7 +25,6 @@
           <MSInput
             type="text"
             ref="EmployeeName"
-            data-field="employeeName"
             :errors="employeeNameErrors"
             :value="employeeName"
             @input="updateValue('employeeName', $event.target.value)"
@@ -37,11 +35,10 @@
       </div>
       <div class="form-row">
         <div class="input-container">
-          <label for="mobile-phone">Điện thoại</label>
+          <label for="phone-number">Điện thoại</label>
           <MSInput
             type="text"
             ref="PhoneNumber"
-            data-field="phoneNumber"
             :errors="phoneNumberErrors"
             :value="phoneNumber"
             @input="updateValue('phoneNumber', $event.target.value)"
@@ -53,7 +50,6 @@
           <MSInput
             type="text"
             ref="Department"
-            data-field="department"
             :errors="departmentErrors"
             :value="department"
             @input="updateValue('department', $event.target.value)"

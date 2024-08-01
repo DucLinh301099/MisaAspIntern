@@ -1,6 +1,7 @@
 <template>
   <div id="app">
     <MSAlert
+      class="ms-alert"
       :message="alertMessage"
       :type="alertType"
       :visible="alertVisible"
@@ -41,6 +42,8 @@ export default {
 };
 </script>
 
-<style>
-/* Add your global styles here */
+<style scoped>
+.ms-alert {
+  margin-top: 20px;
+}
 </style>

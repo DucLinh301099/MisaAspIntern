@@ -19,13 +19,12 @@
               :config="paymentConfigCombo.comboxConfig.bankExpense"
               :value="currentItem.accountNumber"
               :ComponentAdd="createBankAccountComponent"
-              :ref="bankAccount"
-              :datafield="bankAccount"
-              :error="bankAccountErros"
+              :refComponent="refComponentAcc"
+              ref="bankExpenseComponent"
+              :errors="bankAccountIdErros"
             />
             <MSInput
               class="second-input"
-              :type="type"
               :value="currentItem.bankName"
               @input="updateValue('bankExpenseName', $event.target.value)"
             />
@@ -37,10 +36,10 @@
               :config="paymentConfigCombo.comboxConfig.customer"
               :value="currentItem.objectName"
               :ComponentAdd="createCustomerComponent"
+              :errors="customerIdErros"
             />
             <MSInput
               class="second-input"
-              :type="type"
               :value="currentItem.address"
               @input="updateValue('customerAddress', $event.target.value)"
             />
@@ -57,7 +56,6 @@
             <MSInput
               v-if="!hideAccountReceive"
               class="second-input"
-              :type="type"
               :value="currentItem.bankReceiveName"
               @input="updateValue('bankReceiveName', $event.target.value)"
             />
@@ -68,7 +66,6 @@
               <MSInput
                 :value="currentItem.cmndNumber"
                 @input="updateValue('cmndNumber', $event.target.value)"
-                type="text"
                 class="base-input-info"
               />
             </div>
@@ -85,7 +82,6 @@
               <div class="input-field">
                 <label for="noi-cap">Nơi cấp</label>
                 <MSInput
-                  type="text"
                   :value="currentItem.licenseAddress"
                   @input="updateValue('licenseAddress', $event.target.value)"
                   class="base-input-info"
@@ -112,6 +108,7 @@
               :config="paymentConfigCombo.comboxConfig.employee"
               :value="currentItem.employeeName"
               :ComponentAdd="createEmployeeComponent"
+              :errors="employeeIdErros"
             />
           </div>
         </div>
@@ -170,7 +167,7 @@
 <script>
 import HeaderPayment from "../components/PaymentPage/HeaderPayment.vue";
 import MSCombobox from "../components/ControlComponent/MSCombobox.vue";
-import MSInput from "../components/Base/MSInput.vue";
+
 import DateTimeComponent from "../components/PaymentPage/DateTimeComponent.vue";
 import FooterPayment from "../components/PaymentPage/FooterPayment.vue";
 
@@ -184,7 +181,6 @@ import CreateEmployee from "../components/PaymentPage/CreateEmployee.vue";
 import paymentConfig from "../config/PaymentConfig";
 import BaseSubmit from "../components/Base/BaseSubmit.vue";
 import Api from "../api/apiConst";
-import { bankAccount } from "../api/bank";
 
 export default {
   name: "Payment",
@@ -192,7 +188,7 @@ export default {
   components: {
     HeaderPayment,
     MSCombobox,
-    MSInput,
+
     DateTimeComponent,
     FooterPayment,
 
@@ -206,6 +202,7 @@ export default {
 
   data() {
     return {
+      refComponentAcc: ["BankAccountId"],
       apiUrl: Api.payment.url,
       errorMessage: "",
       inputValue: "",
@@ -241,7 +238,9 @@ export default {
         "Séc chuyển khoản": "SCK001",
         "Séc tiền mặt": "STM001",
       },
-      bankAccountErros: [],
+      bankAccountIdErros: [],
+      customerIdErros: [],
+      employeeIdErros: [],
       createCustomerComponent: CreateCustomer,
       createBankAccountComponent: CreateBankAccount,
       createEmployeeComponent: CreateEmployee,
@@ -385,39 +384,26 @@ export default {
      * @param responseData
      */
     afterCallSuccess(responseData) {
-      this.showConfirm("Lưu thành công thông tin", () => {
+      this.showAlert("Lưu thành công thông tin", () => {
         if (responseData) {
           this.$router.push("/payment");
         }
       });
+      this.isViewMode = true;
     },
-
-    /**
-     * function thực hiện xử lý mở đóng alert
-     * @param message
-     * @param action
-     */
-    showConfirm(message, action) {
-      this.alertMessage = message;
-      this.confirmAction = action;
-      this.alertVisible = true;
-      this.alertIsConfirm = true;
-      this.alertIsShow = false;
-    },
-    handleConfirm() {
-      if (this.confirmAction) {
-        this.confirmAction();
-      }
-      this.alertVisible = false;
-    },
+    // afterCallErrorCustom(responseData) {
+    //   this.showAlert("Lưu thông tin thất bại", () => {
+    //     if (responseData.isSuccess == false) {
+    //       this.$router.push("/payment");
+    //     }
+    //   });
+    // },
 
     /**
      * các function thực hiện gán data cho các input khác nhau
      * @param
      */
-    updateDateTimeData(updatedValue) {
-      this.currentItem = updatedValue;
-    },
+
     updateBillContent(newValue) {
       this.inputBillContent = newValue.replace("Chi tiền cho ", "");
     },

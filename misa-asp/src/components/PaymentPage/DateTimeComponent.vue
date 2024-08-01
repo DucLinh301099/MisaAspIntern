@@ -4,6 +4,8 @@
       <label for="ngay-hach-toan">Ngày hạch toán</label>
       <MSInput
         :value="accountingDate"
+        ref="AccountingDate"
+        :errors="accountingDateErrors"
         class="date-input"
         @input="updateValue('accountingDate', $event.target.value)"
         type="date"
@@ -14,6 +16,8 @@
       <label for="ngay-chung-tu">Ngày chứng từ</label>
       <MSInput
         class="date-input"
+        ref="DocumentDate"
+        :errors="documentDateErrors"
         :value="documentDate"
         @input="updateValue('documentDate', $event.target.value)"
         type="date"
@@ -23,6 +27,8 @@
       <label for="so-chung-tu">Số chứng từ</label>
       <MSInput
         class="date-input"
+        ref="DocumentNumber"
+        :errors="documentNumberErrors"
         :value="documentNumber"
         @input="updateValue('documentNumber', $event.target.value)"
       />
@@ -40,9 +46,10 @@
 </template>
 
 <script>
+import BaseSubmit from "../Base/BaseSubmit.vue";
 export default {
   name: "DateTimeComponent",
-
+  extends: BaseSubmit,
   props: {
     voucherType: {
       type: String,
@@ -51,6 +58,18 @@ export default {
     value: {
       type: Object,
       default: () => ({}),
+    },
+    accountingDateErrors: {
+      type: Array,
+      default: () => [],
+    },
+    documentDateErrors: {
+      type: Array,
+      default: () => [],
+    },
+    documentNumberErrors: {
+      type: Array,
+      default: () => [],
     },
   },
   data() {

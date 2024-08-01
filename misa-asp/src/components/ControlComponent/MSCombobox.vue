@@ -7,17 +7,19 @@
       <div class="input-with-button" :class="{ focus: isInputFocused }">
         <MSInput
           class="base-input"
-          :type="type"
           :value="inputValue"
           :noBorder="true"
-          :errors="error"
-          ref="ref"
-          data-field="datafield"
+          :errors="errors"
+          :ref="refComponent[0]"
           @input="handleOnInput"
           @focus="handleFocus"
           @blur="handleBlur"
         />
-        <button v-if="showButton" @click="openCreateModal" class="add-button">
+        <button
+          v-if="showButton && !disabled"
+          @click="openCreateModal"
+          class="add-button"
+        >
           +
         </button>
         <multiselect
@@ -73,11 +75,12 @@ import Multiselect from "vue-multiselect";
 import "vue-multiselect/dist/vue-multiselect.css";
 import Modal from "../Base/Modal.vue";
 import { baseApi } from "../../api/baseApi";
-import BaseForm from "../Base/BaseForm.vue";
+
+import BaseSubmit from "../Base/BaseSubmit.vue";
 
 export default {
   name: "MSCombobox",
-  extends: BaseForm,
+  extends: BaseSubmit,
   components: {
     Multiselect,
     Modal,
@@ -91,17 +94,13 @@ export default {
       type: String,
       default: null,
     },
-    error: {
+    errors: {
       type: Array,
       default: () => [],
     },
-    ref: {
-      type: String,
-      default: null,
-    },
-    datafield: {
-      type: String,
-      default: null,
+    refComponent: {
+      type: Array,
+      default: () => [],
     },
 
     selectedOption: {
@@ -127,6 +126,10 @@ export default {
     value: {
       type: Object,
       default: null,
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
@@ -256,10 +259,9 @@ export default {
 
     handleSubmitModal(responseData) {
       if (responseData && responseData.isSuccess) {
-        this.showAlert("Tạo mới thành công tài khoản mới!", () => {
-          this.$emit("createSubmit", responseData);
-          this.closeCreateModal();
-        });
+        this.$emit("createSubmit", responseData);
+        this.closeCreateModal();
+        this.showAlert(responseData.message, () => {});
       }
     },
 
@@ -290,6 +292,21 @@ export default {
 label {
   margin-bottom: 8px;
   font-weight: bold;
+}
+.combobox-account-input-wrapper.disabled .input-with-button {
+  background-color: #d3d3d3; /* Màu xám nhạt */
+  cursor: not-allowed;
+}
+
+.combobox-account-input-wrapper.disabled .base-input,
+.combobox-account-input-wrapper.disabled .multiselect__input {
+  background-color: #d3d3d3;
+  cursor: not-allowed;
+}
+
+.combobox-account-input-wrapper.disabled .multiselect__tags {
+  background-color: #d3d3d3;
+  cursor: not-allowed;
 }
 
 .input-container {

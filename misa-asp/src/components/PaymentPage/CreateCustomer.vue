@@ -11,12 +11,10 @@
           <MSInput
             type="text"
             ref="ObjectId"
-            data-field="objectId"
             :errors="objectIdErrors"
             :value="objectId"
             @input="updateValue('objectId', $event.target.value)"
             class="input-field-a"
-            required
           />
         </div>
         <div class="input-container">
@@ -26,12 +24,10 @@
           <MSInput
             type="text"
             ref="ObjectName"
-            data-field="objectName"
             :errors="objectNameErrors"
             :value="objectName"
             @input="updateValue('objectName', $event.target.value)"
             class="input-field-a"
-            required
           />
         </div>
       </div>
@@ -44,11 +40,9 @@
             type="text"
             :value="taxCode"
             ref="TaxCode"
-            data-field="taxCode"
             :errors="taxCodeErrors"
             @input="updateValue('taxCode', $event.target.value)"
             class="input-field-a"
-            required
           />
         </div>
         <div class="input-container">
@@ -57,11 +51,9 @@
             type="text"
             :value="phoneNumber"
             ref="PhoneNumber"
-            data-field="phoneNumber"
             :errors="phoneNumberErrors"
             @input="updateValue('phoneNumber', $event.target.value)"
             class="input-field-a"
-            required
           />
         </div>
       </div>
@@ -72,11 +64,9 @@
             type="text"
             :value="address"
             ref="Address"
-            data-field="address"
             :errors="addressErrors"
             @input="updateValue('address', $event.target.value)"
             class="input-field-b"
-            required
           />
         </div>
       </div>

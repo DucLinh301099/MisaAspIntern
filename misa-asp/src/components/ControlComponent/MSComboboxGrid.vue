@@ -10,8 +10,9 @@
       >
         <MSInput
           :value="inputValue"
-          :type="type"
           :noBorder="true"
+          ref="refs"
+          :errors="errors"
           @input="updateInputValue"
           @focus="handleFocus"
           @blur="handleBlur"
@@ -27,8 +28,6 @@
         <multiselect
           ref="multiselect"
           :style="{ visibility: isMultiselectVisible ? 'visible' : 'hidden' }"
-          :value="selectedOption"
-          @input="updateSelectedOption"
           :options="filteredOptions"
           :searchable="true"
           :close-on-select="true"
@@ -74,13 +73,11 @@
 import Multiselect from "vue-multiselect";
 import "vue-multiselect/dist/vue-multiselect.css";
 import { baseApi } from "../../api/baseApi";
-import MSInput from "../Base/MSInput.vue";
 
 export default {
   name: "MSComboboxGrid",
   components: {
     Multiselect,
-    MSInput,
   },
   props: {
     selectedRow: {
@@ -94,6 +91,14 @@ export default {
     config: {
       type: Object,
       required: true,
+    },
+    errors: {
+      type: Array,
+      default: () => [],
+    },
+    refs: {
+      type: Array,
+      default: () => [],
     },
   },
   data() {

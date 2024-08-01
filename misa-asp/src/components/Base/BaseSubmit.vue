@@ -1,8 +1,9 @@
 <script>
 import { baseApi } from "../../api/baseApi";
+import BaseForm from "./BaseForm.vue";
 
 export default {
-  extends: "BaseForm",
+  extends: BaseForm,
   methods: {
     /**
      * function xử lý submit form và xử lý các quá trình
@@ -38,7 +39,6 @@ export default {
 
         switch (action) {
           case "save":
-            // Logic for "Cất và Xem"
             break;
           case "saveAndAdd":
             // Logic for "Cất và Xem"
@@ -65,12 +65,33 @@ export default {
      */
     async afterCallError(responseData) {
       let refsForm = this.$refs;
+
       if (refsForm) {
-        if (responseData.code && responseData.code.length) {
+        // trải phẳng refs ra
+        let refList = [];
+        for (const key in refsForm) {
+          if (refsForm.hasOwnProperty(key)) {
+            const item = refsForm[key];
+            if (item.refComponent && item.refComponent.length) {
+              const refChild = item.$refs;
+              refList.push(refChild);
+            } else {
+              refList.push(item);
+            }
+          }
+        }
+
+        if (
+          refList &&
+          refList.length &&
+          responseData.code &&
+          responseData.code.length
+        ) {
           for (let i = 0; i < responseData.code.length; i++) {
-            var item = responseData.code[i];
-            if (refsForm[item.FieldName]) {
-              refsForm[item.FieldName].errors.push(item.ErrorText);
+            let item = responseData.code[i],
+              refItemError = refList.find((i) => i[item.FieldName]);
+            if (refItemError) {
+              refItemError[item.FieldName].errors.push(item.ErrorText);
             }
           }
         }
