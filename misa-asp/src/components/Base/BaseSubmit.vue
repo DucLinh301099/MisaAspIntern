@@ -69,18 +69,7 @@ export default {
       if (refsForm) {
         // trải phẳng refs ra
         let refList = [];
-        for (const key in refsForm) {
-          if (refsForm.hasOwnProperty(key)) {
-            const item = refsForm[key];
-            if (item.refComponent && item.refComponent.length) {
-              const refChild = item.$refs;
-              refList.push(refChild);
-            } else {
-              refList.push(item);
-            }
-          }
-        }
-
+        this.getRefByParent(refsForm, refList);
         if (
           refList &&
           refList.length &&
@@ -89,10 +78,35 @@ export default {
         ) {
           for (let i = 0; i < responseData.code.length; i++) {
             let item = responseData.code[i],
-              refItemError = refList.find((i) => i[item.FieldName]);
+              refItemError = refList.find(
+                (i) => i[item.FieldName.toLowerCase()]
+              );
             if (refItemError) {
-              refItemError[item.FieldName].errors.push(item.ErrorText);
+              refItemError[item.FieldName.toLowerCase()].errors.push(
+                item.ErrorText
+              );
             }
+          }
+        }
+      }
+    },
+
+    getRefByParent(refsComponent, refList, parentKey = "") {
+      for (let key in refsComponent) {
+        if (refsComponent.hasOwnProperty(key)) {
+          let item = refsComponent[key];
+          if (item && item.length) {
+            item = item[0];
+          }
+          if (item.field && item.field.length) {
+            parentKey += item.field;
+            let refsChild = item.$refs;
+            this.getRefByParent(refsChild, refList, parentKey);
+          } else {
+            let itemRef = {};
+            key = parentKey + key;
+            itemRef[key.toLowerCase()] = item;
+            refList.push(itemRef);
           }
         }
       }

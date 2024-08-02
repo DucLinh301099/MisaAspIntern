@@ -59,18 +59,6 @@ export default {
       type: Object,
       default: () => ({}),
     },
-    accountingDateErrors: {
-      type: Array,
-      default: () => [],
-    },
-    documentDateErrors: {
-      type: Array,
-      default: () => [],
-    },
-    documentNumberErrors: {
-      type: Array,
-      default: () => [],
-    },
   },
   data() {
     const today = new Date().toISOString().split("T")[0]; // luôn hiển thị ngày hôm nay

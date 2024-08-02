@@ -4,13 +4,16 @@
       {{ label }} <span class="required" v-if="isRequired">*</span>
     </label>
     <div class="input-container">
-      <div class="input-with-button" :class="{ focus: isInputFocused }">
+      <div
+        class="input-with-button"
+        :class="{ focus: isInputFocused, 'has-error': errors.length > 0 }"
+      >
         <MSInput
           class="base-input"
           :value="inputValue"
+          :comboboxError="errors.length > 0"
           :noBorder="true"
           :errors="errors"
-          :ref="refComponent[0]"
           @input="handleOnInput"
           @focus="handleFocus"
           @blur="handleBlur"
@@ -98,9 +101,9 @@ export default {
       type: Array,
       default: () => [],
     },
-    refComponent: {
-      type: Array,
-      default: () => [],
+    field: {
+      type: String,
+      default: null,
     },
 
     selectedOption: {
@@ -288,7 +291,9 @@ export default {
 .input-with-button.focus {
   border-color: green;
 }
-
+.input-with-button.has-error {
+  border: 1px solid #f85050;
+}
 label {
   margin-bottom: 8px;
   font-weight: bold;

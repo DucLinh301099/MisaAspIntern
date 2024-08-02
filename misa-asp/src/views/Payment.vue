@@ -12,6 +12,7 @@
     <div class="input-information">
       <div class="input-information-right">
         <div class="account-input-container">
+          <!--html của input bankexpense -->
           <div class="account-input-wrapper">
             <MSCombobox
               label="Tài khoản chi"
@@ -19,8 +20,7 @@
               :config="paymentConfigCombo.comboxConfig.bankExpense"
               :value="currentItem.accountNumber"
               :ComponentAdd="createBankAccountComponent"
-              :refComponent="refComponentAcc"
-              ref="bankExpenseComponent"
+              ref="BankAccountId"
               :errors="bankAccountIdErros"
             />
             <MSInput
@@ -29,6 +29,7 @@
               @input="updateValue('bankExpenseName', $event.target.value)"
             />
           </div>
+          <!--html của input customer -->
           <div class="account-input-wrapper">
             <MSCombobox
               label="Đối Tượng"
@@ -37,6 +38,7 @@
               :value="currentItem.objectName"
               :ComponentAdd="createCustomerComponent"
               :errors="customerIdErros"
+              ref="CustomerId"
             />
             <MSInput
               class="second-input"
@@ -44,6 +46,7 @@
               @input="updateValue('customerAddress', $event.target.value)"
             />
           </div>
+          <!--html của input bankReceive -->
           <div class="account-input-wrapper">
             <MSCombobox
               v-if="!hideAccountReceive"
@@ -60,6 +63,7 @@
               @input="updateValue('bankReceiveName', $event.target.value)"
             />
           </div>
+          <!-- html của các input CMND, Ngày cấp, Nơi cấp -->
           <div v-if="!hideInformationInput" class="information-input-wrapper">
             <div class="input-container-info-1">
               <label for="so-cmnd">Số CMND</label>
@@ -89,7 +93,7 @@
               </div>
             </div>
           </div>
-
+          <!--html của input nội dung thanh toán -->
           <div class="bill-content-input-wrapper">
             <label for="bill-content-input">Nội dung thanh toán</label>
             <div class="input-container">
@@ -100,6 +104,7 @@
               />
             </div>
           </div>
+          <!--html của input nhân viên -->
           <div class="account-input-wrapper">
             <MSCombobox
               v-if="!hideCreateEmployeeInput"
@@ -109,6 +114,7 @@
               :value="currentItem.employeeName"
               :ComponentAdd="createEmployeeComponent"
               :errors="employeeIdErros"
+              ref="EmployeeId"
             />
           </div>
         </div>
@@ -122,16 +128,55 @@
           </div>
         </div>
       </div>
+      <!-- Các thành phần của Datetime Input -->
       <div class="input-information-center">
-        <DateTimeComponent
-          :voucherType="currentItem.voucherType"
-          :value="{
-            accountingDate: currentItem.accountingDate,
-            documentDate: currentItem.documentDate,
-            documentNumber: currentItem.documentNumber,
-          }"
-          @update:value="updateDateTimeData"
-        />
+        <div class="datetime-wrapper">
+          <div class="form-group">
+            <label for="ngay-hach-toan">Ngày hạch toán</label>
+            <MSDatetime
+              type="date"
+              class="date-input"
+              ref="AccountingDate"
+              :errors="accountingDateErrors"
+              :value="currentItem.accountingDate"
+              @change="updateCurrentItem('accountingDate', $event)"
+            />
+          </div>
+          <div class="form-group">
+            <label for="ngay-chung-tu">Ngày chứng từ</label>
+            <MSDatetime
+              type="date"
+              class="date-input"
+              ref="DocumentDate"
+              :errors="documentDateErrors"
+              :value="currentItem.documentDate"
+              @change="updateCurrentItem('documentDate', $event)"
+            />
+          </div>
+          <div class="form-group">
+            <label for="so-chung-tu">Số chứng từ</label>
+            <MSDatetime
+              class="date-input"
+              type="text"
+              ref="DocumentNumber"
+              :errors="documentNumberErrors"
+              :value="currentItem.documentNumber"
+              @change="updateCurrentItem('documentNumber', $event)"
+            />
+          </div>
+          <div
+            class="form-group"
+            v-if="currentItem.voucherType === '3. Tạm ứng cho nhân viên'"
+          >
+            <label for="han-quyet-toan">Hạn quyết toán</label>
+            <MSDatetime
+              type="date"
+              class="date-input"
+              :value="currentItem.hanQuyetToan"
+              @input="updateValue('hanQuyetToan', $event)"
+            />
+          </div>
+        </div>
       </div>
       <div class="input-information-left">
         <div class="summary-component">
@@ -140,13 +185,18 @@
         </div>
       </div>
     </div>
+
     <div class=" ">
+      <!--html của Grid  -->
       <MSGrid
         label="Hạch toán"
         :modelValue="currentItem.paymentDetails"
         @changeValueInput="changeValueInput"
         :configColumGrid="paymentConfigCombo.gridConfig"
         @selectedCombox="selectedGridCombox"
+        field="PaymentDetails"
+        ref="PaymentDetails"
+        :errors="fieldErrors"
       />
       <div>
         <AttachFile />
@@ -181,6 +231,7 @@ import CreateEmployee from "../components/PaymentPage/CreateEmployee.vue";
 import paymentConfig from "../config/PaymentConfig";
 import BaseSubmit from "../components/Base/BaseSubmit.vue";
 import Api from "../api/apiConst";
+import MSDatetime from "../components/Base/MSDateTime.vue";
 
 export default {
   name: "Payment",
@@ -188,6 +239,7 @@ export default {
   components: {
     HeaderPayment,
     MSCombobox,
+    MSDatetime,
 
     DateTimeComponent,
     FooterPayment,
@@ -202,14 +254,12 @@ export default {
 
   data() {
     return {
-      refComponentAcc: ["BankAccountId"],
       apiUrl: Api.payment.url,
       errorMessage: "",
       inputValue: "",
       inputBillContent: "",
       totalAmount: 0,
-      bankNameInput: "",
-      accountReceiveValue: "",
+
       paymentConfigCombo: paymentConfig,
       currentItem: {
         voucherType: "5. Chi khác",
@@ -241,6 +291,15 @@ export default {
       bankAccountIdErros: [],
       customerIdErros: [],
       employeeIdErros: [],
+      accountingDateErrors: [],
+      documentDateErrors: [],
+      documentNumberErrors: [],
+
+      fieldErrors: {
+        creditAccountError: [],
+        debitAccountError: [],
+      },
+
       createCustomerComponent: CreateCustomer,
       createBankAccountComponent: CreateBankAccount,
       createEmployeeComponent: CreateEmployee,
@@ -334,12 +393,29 @@ export default {
     },
     //------------------------------------
     /**
-     * function update value của các MSInput
+     * function update value của các MSInput và các MSdatetime
      * @param field
      * @param value
      */
     updateValue(field, value) {
       this.currentItem[field] = value;
+    },
+    updateCurrentItem(field, event) {
+      const value = event.target.value;
+      this.currentItem[field] = value;
+      switch (field) {
+        case "accountingDate":
+          this.accountingDateErrors = [];
+          break;
+        case "documentDate":
+          this.documentDateErrors = [];
+          break;
+        case "documentNumber":
+          this.documentNumberErrors = [];
+          break;
+        default:
+          break;
+      }
     },
 
     /**
@@ -351,10 +427,10 @@ export default {
     updateSelectedRow(type, item) {
       switch (type) {
         case "bankExpense":
-          this.bankNameInput = item.bankName;
           this.currentItem.accountNumber = item.accountNumber;
           this.currentItem.bankName = item.bankName;
           this.currentItem.bankAccountId = item.id;
+          this.bankAccountIdErros = [];
           break;
         case "customer":
           this.currentItem.objectName = item.objectName;
@@ -362,18 +438,17 @@ export default {
           this.currentItem.billContent = item.objectName;
           this.inputBillContent = item.objectName;
           this.currentItem.customerId = item.id;
-
+          this.customerIdErros = [];
           this.updateGridDescription(item.objectName);
           break;
         case "bankReceive":
-          this.accountReceiveValue = item.bankName;
           this.currentItem.accountReceiveNumber = item.accountNumber;
           this.currentItem.bankReceiveName = item.bankName;
           break;
         case "employee":
           this.currentItem.employeeName = item.employeeName;
           this.currentItem.employeeId = item.id;
-
+          this.employeeIdErros = [];
           break;
       }
     },
@@ -391,13 +466,6 @@ export default {
       });
       this.isViewMode = true;
     },
-    // afterCallErrorCustom(responseData) {
-    //   this.showAlert("Lưu thông tin thất bại", () => {
-    //     if (responseData.isSuccess == false) {
-    //       this.$router.push("/payment");
-    //     }
-    //   });
-    // },
 
     /**
      * các function thực hiện gán data cho các input khác nhau
@@ -407,13 +475,14 @@ export default {
     updateBillContent(newValue) {
       this.inputBillContent = newValue.replace("Chi tiền cho ", "");
     },
-    updateDateTimeData(updatedValue) {
-      this.currentItem = { ...this.currentItem, ...updatedValue };
-    },
+
     updateGridDescription(customerName) {
       this.currentItem.paymentDetails.forEach((record) => {
         record.description = `Chi tiền cho ${customerName}`;
       });
+    },
+    generateGridRefs(rowIndex, fieldName) {
+      return `${rowIndex}-${fieldName}`;
     },
   },
 };
@@ -540,8 +609,41 @@ label {
   margin-bottom: auto;
 }
 .input-information-left {
-  width: 30%;
+  width: 35%;
 }
+
+/* css của datetimeinput */
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 13px;
+}
+.date-input {
+  box-sizing: border-box;
+  outline: none;
+  border: 1px solid #999;
+  border-radius: 2px;
+  overflow: hidden;
+  height: 29px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+}
+.datetime-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 200px;
+  margin: 0 auto;
+  border: 1px solid #999;
+  border-top: none;
+  border-bottom: none;
+  border-right: none;
+  padding-left: 25px;
+  padding-top: 5px;
+}
+/**----------- */
 
 .bill-content-input-wrapper {
   display: flex;

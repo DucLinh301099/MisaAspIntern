@@ -29,6 +29,12 @@
                 :config="column.dropDownConfig"
                 @input="changeValueInput(rowIndex, column)"
                 @update:selectedRow="updateRowField(rowIndex, column, $event)"
+                :ref="`[${rowIndex}].${column.fieldName}`"
+                :errors="
+                  errors && errors[column.fieldName]
+                    ? errors[column.fieldName]
+                    : []
+                "
               />
             </div>
             <div v-else>
@@ -59,13 +65,13 @@
 
 <script>
 import MSComboboxGrid from "../ControlComponent/MSComboboxGrid.vue";
-import MSInput from "../Base/MSInput.vue";
+import BaseSubmit from "../Base/BaseSubmit.vue";
 
 export default {
   name: "MSGrid",
+  extends: BaseSubmit,
   components: {
     MSComboboxGrid,
-    MSInput,
   },
   props: {
     submitTotal: Function,
@@ -89,6 +95,14 @@ export default {
     label: {
       type: String,
       default: null,
+    },
+    field: {
+      type: String,
+      default: null,
+    },
+    erros: {
+      type: Array,
+      default: () => [],
     },
   },
   data() {

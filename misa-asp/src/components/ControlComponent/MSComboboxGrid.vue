@@ -11,7 +11,8 @@
         <MSInput
           :value="inputValue"
           :noBorder="true"
-          ref="refs"
+          :ref="field"
+          :field="field"
           :errors="errors"
           @input="updateInputValue"
           @focus="handleFocus"
@@ -73,12 +74,14 @@
 import Multiselect from "vue-multiselect";
 import "vue-multiselect/dist/vue-multiselect.css";
 import { baseApi } from "../../api/baseApi";
+import BaseSubmit from "../Base/BaseSubmit.vue";
 
 export default {
   name: "MSComboboxGrid",
   components: {
     Multiselect,
   },
+  extends: BaseSubmit,
   props: {
     selectedRow: {
       type: Object,
@@ -96,9 +99,9 @@ export default {
       type: Array,
       default: () => [],
     },
-    refs: {
-      type: Array,
-      default: () => [],
+    field: {
+      type: String,
+      default: null,
     },
   },
   data() {

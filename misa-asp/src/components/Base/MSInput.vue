@@ -1,7 +1,12 @@
 <template>
   <div
     class="ms-input"
-    :class="{ focused: isFocused, 'no-border': noBorder, 'has-error': error }"
+    :class="{
+      focused: isFocused,
+      'no-border': noBorder,
+      'has-error': error,
+      'combobox-input-error': comboboxError,
+    }"
   >
     <input
       :type="type"
@@ -10,9 +15,9 @@
       @focus="handleFocus"
       @blur="handleBlur"
       :placeholder="placeholder"
-      :class="{ 'input-error': error }"
+      :class="{ 'input-error': error && !comboboxError }"
     />
-    <span v-if="error" class="error-icon">!</span>
+    <span v-if="error && type !== 'date'" class="error-icon">!</span>
     <span v-if="error" class="error-tooltip">{{ error }}</span>
   </div>
 </template>
@@ -44,6 +49,14 @@ export default {
     noBorder: {
       type: Boolean,
       default: false,
+    },
+    comboboxError: {
+      type: Boolean,
+      default: false,
+    },
+    field: {
+      type: String,
+      default: null,
     },
   },
   data() {
@@ -99,6 +112,10 @@ export default {
 
 .ms-input.has-error {
   border: 1px solid #f85050;
+}
+
+.ms-input.combobox-input-error {
+  border: none;
 }
 
 .error-icon {
