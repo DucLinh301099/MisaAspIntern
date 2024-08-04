@@ -1,5 +1,5 @@
 <template>
-  <div class="combobox-account-input-wrapper">
+  <div class="combobox-account-input-wrapper" :class="{ disabled: disabled }">
     <label for="combobox-label">
       {{ label }} <span class="required" v-if="isRequired">*</span>
     </label>
@@ -14,6 +14,7 @@
           :comboboxError="errors.length > 0"
           :noBorder="true"
           :errors="errors"
+          :disabled="disabled"
           @input="handleOnInput"
           @focus="handleFocus"
           @blur="handleBlur"
@@ -31,6 +32,7 @@
           :close-on-select="true"
           placeholder=""
           class="multiselect"
+          :disabled="disabled"
           @open="onExpandCombox"
           @close="showTable = false"
           @focusin="handleFocus"
@@ -105,7 +107,6 @@ export default {
       type: String,
       default: null,
     },
-
     selectedOption: {
       type: Object,
       default: null,
@@ -132,7 +133,7 @@ export default {
     },
     disabled: {
       type: Boolean,
-      default: false,
+      default: false,  // Thêm props disabled
     },
   },
   data() {
@@ -159,9 +160,6 @@ export default {
     endpoint() {
       return this.config.endpoint;
     },
-    /**
-     * function hiển thị theo tìm kiếm người dùng nhập vào input
-     */
     filteredOptions() {
       if (!Array.isArray(this.optionsData)) {
         return [];
@@ -183,10 +181,6 @@ export default {
     },
   },
   methods: {
-    /**
-     * function call api được viết để thực hiện chung
-     * cho nhiều ô input khác nhau
-     */
     async fetchData() {
       if (!this.config || !this.config.endpoint) {
         return;
@@ -209,20 +203,10 @@ export default {
       }
       return [];
     },
-    /**
-     * function mở multiselect
-     * và hiện thị data thông qua function fecthData
-     */
     async onExpandCombox() {
       await this.fetchData();
       this.showTable = true;
     },
-
-    /**
-     * function xử lý khi người dùng chọn 1 option
-     * trong multilselect
-     * @param item
-     */
     selectRow(item) {
       let displayFirstValue = this.config.columnConfig?.find(
         (col) => col.isDisplay
@@ -239,27 +223,18 @@ export default {
       this.$emit("update:selectedRow", item);
       this.showTable = false;
     },
-    /**
-     * function gán giá trị khi nhập liệu vào ô input
-     * @param event
-     */
     handleOnInput(event) {
       this.inputValue = event.target.value;
     },
     handleInputChange(value) {
       this.internalSelectedOption = value;
     },
-    /**
-     * 3 function thực hiện đóng mở và lưu thông tin
-     * của modal
-     */
     openCreateModal() {
       this.isCreateModalVisible = true;
     },
     closeCreateModal() {
       this.isCreateModalVisible = false;
     },
-
     handleSubmitModal(responseData) {
       if (responseData && responseData.isSuccess) {
         this.$emit("createSubmit", responseData);
@@ -267,10 +242,6 @@ export default {
         this.showAlert(responseData.message, () => {});
       }
     },
-
-    /**
-     * 2 function xử lý focus và blur của input
-     */
     handleFocus() {
       this.isInputFocused = true;
     },
@@ -299,7 +270,7 @@ label {
   font-weight: bold;
 }
 .combobox-account-input-wrapper.disabled .input-with-button {
-  background-color: #d3d3d3; /* Màu xám nhạt */
+  background-color: #d3d3d3;
   cursor: not-allowed;
 }
 
@@ -343,7 +314,6 @@ label {
   width: 100%;
   height: 28px;
   border: none;
-
   box-sizing: border-box;
   outline: none;
   display: flex;

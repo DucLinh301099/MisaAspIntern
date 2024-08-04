@@ -4,12 +4,12 @@ import BaseForm from "./BaseForm.vue";
 
 export default {
   extends: BaseForm,
+  data() {
+    return {
+      isDisabled: false,  // Thêm biến trạng thái
+    };
+  },
   methods: {
-    /**
-     * function xử lý submit form và xử lý các quá trình
-     * sau khi thành công, thật bại
-     * @param param0
-     */
     async handleSubmit(action) {
       if (action == "cancel" || action == "close") {
         // xử lý cho đóng hoặc hủy
@@ -31,6 +31,7 @@ export default {
           await this.afterCallSuccess(responseData);
           await this.handleCreateSubmit(responseData);
           this.$emit("afterCallSuccess", action, responseData);
+          
         } else {
           await this.afterCallError(responseData);
           await this.afterCallErrorCustom(responseData);
@@ -39,9 +40,13 @@ export default {
 
         switch (action) {
           case "save":
+            // Logic for "Cất và Xem"
+            if (action === "save") {  // Kiểm tra nếu action là "save"
+            this.isDisabled = true;  // Vô hiệu hóa các input
+          }
             break;
           case "saveAndAdd":
-            // Logic for "Cất và Xem"
+            // Logic for "Cất và đóng"
             break;
           case "saveAndPrint":
             // Logic for "Cất và In"
@@ -59,10 +64,6 @@ export default {
 
     async afterCallSuccess() {},
 
-    /**
-     * function xử lý sau khi submit có lỗi
-     * @param responseData
-     */
     async afterCallError(responseData) {
       let refsForm = this.$refs;
 

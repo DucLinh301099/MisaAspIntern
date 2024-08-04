@@ -27,7 +27,7 @@
           <span class="tooltip">Tài khoản không được để trống.</span>
         </div>
         <multiselect
-          ref="multiselect"
+            
           :style="{ visibility: isMultiselectVisible ? 'visible' : 'hidden' }"
           :options="filteredOptions"
           :searchable="true"

@@ -15,6 +15,7 @@
       @focus="handleFocus"
       @blur="handleBlur"
       :placeholder="placeholder"
+      :disabled="disabled"  
       :class="{ 'input-error': error && !comboboxError }"
     />
     <span v-if="error && type !== 'date'" class="error-icon">!</span>
@@ -57,6 +58,10 @@ export default {
     field: {
       type: String,
       default: null,
+    },
+    disabled: {
+      type: Boolean,  // Thêm props disabled
+      default: false,
     },
   },
   data() {

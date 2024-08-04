@@ -22,11 +22,13 @@
               :ComponentAdd="createBankAccountComponent"
               ref="BankAccountId"
               :errors="bankAccountIdErros"
+              :disabled="isDisabled"
             />
             <MSInput
               class="second-input"
               :value="currentItem.bankName"
               @input="updateValue('bankExpenseName', $event.target.value)"
+              :disabled="isDisabled"
             />
           </div>
           <!--html của input customer -->
@@ -39,11 +41,13 @@
               :ComponentAdd="createCustomerComponent"
               :errors="customerIdErros"
               ref="CustomerId"
+              :disabled="isDisabled"
             />
             <MSInput
               class="second-input"
               :value="currentItem.address"
               @input="updateValue('customerAddress', $event.target.value)"
+              :disabled="isDisabled"
             />
           </div>
           <!--html của input bankReceive -->
@@ -55,12 +59,14 @@
               @update:selectedRow="updateSelectedRow('bankReceive', $event)"
               :value="currentItem.accountReceiveNumber"
               :config="paymentConfigCombo.comboxConfig.bankReceive"
+              :disabled="isDisabled"
             />
             <MSInput
               v-if="!hideAccountReceive"
               class="second-input"
               :value="currentItem.bankReceiveName"
               @input="updateValue('bankReceiveName', $event.target.value)"
+              :disabled="isDisabled"
             />
           </div>
           <!-- html của các input CMND, Ngày cấp, Nơi cấp -->
@@ -71,6 +77,7 @@
                 :value="currentItem.cmndNumber"
                 @input="updateValue('cmndNumber', $event.target.value)"
                 class="base-input-info"
+                :disabled="isDisabled"
               />
             </div>
             <div class="input-container-info-2">
@@ -81,6 +88,7 @@
                   @input="updateValue('licenseDate', $event.target.value)"
                   type="date"
                   class="base-input-info"
+                  :disabled="isDisabled"
                 />
               </div>
               <div class="input-field">
@@ -89,6 +97,7 @@
                   :value="currentItem.licenseAddress"
                   @input="updateValue('licenseAddress', $event.target.value)"
                   class="base-input-info"
+                  :disabled="isDisabled"
                 />
               </div>
             </div>
@@ -101,6 +110,7 @@
                 :value="defaultBillContent"
                 class="base-input-content"
                 @input="updateBillContent"
+                :disabled="isDisabled"
               />
             </div>
           </div>
@@ -115,6 +125,7 @@
               :ComponentAdd="createEmployeeComponent"
               :errors="employeeIdErros"
               ref="EmployeeId"
+              :disabled="isDisabled"
             />
           </div>
         </div>
@@ -140,6 +151,7 @@
               :errors="accountingDateErrors"
               :value="currentItem.accountingDate"
               @change="updateCurrentItem('accountingDate', $event)"
+              :disabled="isDisabled"
             />
           </div>
           <div class="form-group">
@@ -151,6 +163,7 @@
               :errors="documentDateErrors"
               :value="currentItem.documentDate"
               @change="updateCurrentItem('documentDate', $event)"
+              :disabled="isDisabled"
             />
           </div>
           <div class="form-group">
@@ -162,6 +175,7 @@
               :errors="documentNumberErrors"
               :value="currentItem.documentNumber"
               @change="updateCurrentItem('documentNumber', $event)"
+              :disabled="isDisabled"
             />
           </div>
           <div
@@ -174,6 +188,7 @@
               class="date-input"
               :value="currentItem.hanQuyetToan"
               @input="updateValue('hanQuyetToan', $event)"
+              :disabled="isDisabled"
             />
           </div>
         </div>
@@ -254,6 +269,7 @@ export default {
 
   data() {
     return {
+      isDisabled: false,
       apiUrl: Api.payment.url,
       errorMessage: "",
       inputValue: "",
@@ -458,14 +474,19 @@ export default {
      * sẽ thực hiện các yêu cầu tùy theo ng dùng mong muốn
      * @param responseData
      */
-    afterCallSuccess(responseData) {
-      this.showAlert("Lưu thành công thông tin", () => {
-        if (responseData) {
-          this.$router.push("/payment");
-        }
-      });
-      this.isViewMode = true;
-    },
+     afterCallSuccess(responseData) {
+    this.showAlert("Lưu thành công thông tin", () => {
+      if (responseData) {
+        this.$router.push("/payment");
+      }
+    });
+    this.isViewMode = true;
+
+    // Set isDisabled thành true khi action là "save"
+    if (responseData.action === "save") {
+      this.isDisabled = true;
+    }
+  },
 
     /**
      * các function thực hiện gán data cho các input khác nhau
