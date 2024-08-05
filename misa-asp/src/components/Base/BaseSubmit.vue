@@ -36,27 +36,29 @@ export default {
           await this.afterCallErrorCustom(responseData);
           this.$emit("afterCallError", responseData);
         }
-
         switch (action) {
-          case "save":
-            // Logic for "Cất và Xem"
-            if (responseData.isSuccess && action === "save") {
-              // Kiểm tra nếu action là "save"
-              this.isDisabled = true; // Vô hiệu hóa các input
-            }
-            break;
-          case "saveAndAdd":
-            // Logic for "Cất và đóng"
-            break;
-          case "saveAndPrint":
-            // Logic for "Cất và In"
-            break;
-          case "saveAndClose":
-            // Logic for "Cất và Đóng"
-            break;
-        }
+        case "save":
+          if (responseData.isSuccess && action === "save") {
+            this.isDisabled = true;
+          }
+          break;
+        case "saveAndAdd":
+          break;
+        case "saveAndPrint":
+          break;
+        case "saveAndClose":
+           this.showAlert("Lưu thành công thông tin", () => {
+           if (responseData.isSuccess && action === "saveAndClose") {
+           this.$router.push("/admin");
+         }
+         });
+          
+          break;
+       }
+
       }
     },
+   
 
     customValidate() {},
 

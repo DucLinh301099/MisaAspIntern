@@ -14,6 +14,7 @@ export default {
   data() {
     return {
       errors: null,
+      
     };
   },
   props: {
@@ -25,10 +26,7 @@ export default {
       type: String,
       default: "text",
     },
-    field: {
-      type: String,
-      default: null,
-    },
+    
   },
   watch: {
     errors(newVal) {
@@ -42,6 +40,8 @@ export default {
     handleInput(event) {
       const value = event.target.value;
       this.$emit("input", value);
+      this.errors = null;
+      this.$refs.inputComponent.setError(null);
     },
     setError(item) {
       this.errors = item;

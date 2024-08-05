@@ -443,13 +443,7 @@ export default {
      * sẽ thực hiện các yêu cầu tùy theo ng dùng mong muốn
      * @param responseData
      */
-    afterCallSuccess(responseData) {
-      this.showAlert("Lưu thành công thông tin", () => {
-        if (responseData) {
-          this.$router.push("/payment");
-        }
-      });
-    },
+    
 
     /**
      * các function thực hiện gán data cho các input khác nhau

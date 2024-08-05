@@ -5,8 +5,8 @@
     <div class="dropdown">
       <button class="save-btn" @click="emitSubmit('save')">Cất</button>
       <div class="dropdown-container">
-        <button class="btn save-add-btn" @click="emitSubmit('saveAndPrint')">
-          Cất và đóng
+        <button class="btn save-add-btn" @click="emitSubmit('saveAndClose')">
+          Cất và Đóng
         </button>
         <button class="dropdown-toggle" @click="toggleDropdown">&#9660;</button>
         <div class="dropdown-menu" v-if="isDropdownVisible">
@@ -35,7 +35,9 @@ export default {
     emitSubmit(action) {
       this.$emit("submit", action);
       this.isDropdownVisible = false;
+      
     },
+    
   },
 };
 </script>
@@ -56,7 +58,7 @@ export default {
 
 .btn {
   padding: 10px 20px;
-  font-size: 16px;
+  font-size: 15px;
   cursor: pointer;
 }
 
@@ -74,7 +76,7 @@ export default {
   background-color: #38393d;
   color: white;
   margin-right: 10px;
-  padding: 10px 20px;
+  padding: 6px 18px;
   border: 1px solid #6b6c72;
   border-radius: 3px;
   font-size: 16px;
@@ -86,6 +88,9 @@ export default {
   color: white;
   border: none;
   border-radius: 2.5px 0 0 2.5px;
+  height: 32px;
+  font-size: 15px;
+    padding: 5px 20px;
 }
 
 .dropdown {
@@ -110,7 +115,7 @@ export default {
   color: white;
   cursor: pointer;
   border-radius: 0 2.5px 2.5px 0;
-  font-size: 16px;
+  font-size: 11px;
 }
 
 .dropdown-menu {
