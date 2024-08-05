@@ -29,7 +29,6 @@
               class="login-input"
               :value="emailOrPhoneNumber"
               ref="EmailOrPhoneNumber"
-              :errors="emailOrPhoneNumberErrors"
               @input="updateValue('emailOrPhoneNumber', $event.target.value)"
               placeholder="Số điện thoại/Email"
             />
@@ -41,7 +40,6 @@
               :value="password"
               class="login-input"
               @input="updateValue('password', $event.target.value)"
-              :errors="passwordErrors"
               placeholder="Mật khẩu"
             />
           </div>
@@ -73,10 +71,9 @@ export default {
     return {
       emailOrPhoneNumber: "",
       password: "",
-      emailOrPhoneNumberErrors: [],
-      passwordErrors: [],
     };
   },
+
   methods: {
     /**
      * Các function này được kế thừa từ BaseHandleSubmit
@@ -107,16 +104,7 @@ export default {
 
     updateValue(field, value) {
       this[field] = value;
-      switch (field) {
-        case "emailOrPhoneNumber":
-          this.emailOrPhoneNumberErrors = [];
-          break;
-        case "password":
-          this.passwordErrors = [];
-          break;
-        default:
-          break;
-      }
+      this.$refs[field].errors = null; // Xóa lỗi khi nhập lại dữ liệu
     },
   },
 };

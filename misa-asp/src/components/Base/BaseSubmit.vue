@@ -6,7 +6,7 @@ export default {
   extends: BaseForm,
   data() {
     return {
-      isDisabled: false,  // Thêm biến trạng thái
+      isDisabled: false, // Thêm biến trạng thái
     };
   },
   methods: {
@@ -31,7 +31,6 @@ export default {
           await this.afterCallSuccess(responseData);
           await this.handleCreateSubmit(responseData);
           this.$emit("afterCallSuccess", action, responseData);
-          
         } else {
           await this.afterCallError(responseData);
           await this.afterCallErrorCustom(responseData);
@@ -41,9 +40,10 @@ export default {
         switch (action) {
           case "save":
             // Logic for "Cất và Xem"
-            if (action === "save") {  // Kiểm tra nếu action là "save"
-            this.isDisabled = true;  // Vô hiệu hóa các input
-          }
+            if (responseData.isSuccess && action === "save") {
+              // Kiểm tra nếu action là "save"
+              this.isDisabled = true; // Vô hiệu hóa các input
+            }
             break;
           case "saveAndAdd":
             // Logic for "Cất và đóng"
@@ -83,7 +83,7 @@ export default {
                 (i) => i[item.FieldName.toLowerCase()]
               );
             if (refItemError) {
-              refItemError[item.FieldName.toLowerCase()].errors.push(
+              refItemError[item.FieldName.toLowerCase()].setError(
                 item.ErrorText
               );
             }

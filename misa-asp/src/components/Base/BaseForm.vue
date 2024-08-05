@@ -46,12 +46,17 @@ export default {
           for (let i = 0; i < responseData.code.length; i++) {
             var item = responseData.code[i];
             if (refsForm[item.FieldName]) {
-              refsForm[item.FieldName].errors.push(item.ErrorText);
+              // Chuyển đổi errors từ mảng thành chuỗi
+              refsForm[item.FieldName].errors = item.ErrorText.replace(
+                /[\[\]]/g,
+                ""
+              );
             }
           }
         }
       }
     },
+
     // gọi lại hàm này trong tk con và xử lý lỗi theo yêu cầu
     async afterCallErrorCustom() {},
     async handleCreateSubmit() {},

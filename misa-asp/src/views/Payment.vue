@@ -7,6 +7,7 @@
       @update:voucherType="updateValue('voucherType', $event)"
       @update:paymentMethod="updateValue('paymentMethod', $event)"
       class="header-payment"
+      :disabled="isDisabled"
     />
 
     <div class="input-information">
@@ -21,7 +22,6 @@
               :value="currentItem.accountNumber"
               :ComponentAdd="createBankAccountComponent"
               ref="BankAccountId"
-              :errors="bankAccountIdErros"
               :disabled="isDisabled"
             />
             <MSInput
@@ -39,7 +39,6 @@
               :config="paymentConfigCombo.comboxConfig.customer"
               :value="currentItem.objectName"
               :ComponentAdd="createCustomerComponent"
-              :errors="customerIdErros"
               ref="CustomerId"
               :disabled="isDisabled"
             />
@@ -123,7 +122,6 @@
               :config="paymentConfigCombo.comboxConfig.employee"
               :value="currentItem.employeeName"
               :ComponentAdd="createEmployeeComponent"
-              :errors="employeeIdErros"
               ref="EmployeeId"
               :disabled="isDisabled"
             />
@@ -148,7 +146,6 @@
               type="date"
               class="date-input"
               ref="AccountingDate"
-              :errors="accountingDateErrors"
               :value="currentItem.accountingDate"
               @change="updateCurrentItem('accountingDate', $event)"
               :disabled="isDisabled"
@@ -160,7 +157,6 @@
               type="date"
               class="date-input"
               ref="DocumentDate"
-              :errors="documentDateErrors"
               :value="currentItem.documentDate"
               @change="updateCurrentItem('documentDate', $event)"
               :disabled="isDisabled"
@@ -172,7 +168,6 @@
               class="date-input"
               type="text"
               ref="DocumentNumber"
-              :errors="documentNumberErrors"
               :value="currentItem.documentNumber"
               @change="updateCurrentItem('documentNumber', $event)"
               :disabled="isDisabled"
@@ -211,10 +206,10 @@
         @selectedCombox="selectedGridCombox"
         field="PaymentDetails"
         ref="PaymentDetails"
-        :errors="fieldErrors"
+        :disabled="isDisabled"
       />
       <div>
-        <AttachFile />
+        <AttachFile :disabled="isDisabled" />
       </div>
     </div>
     <div>
@@ -233,7 +228,6 @@
 import HeaderPayment from "../components/PaymentPage/HeaderPayment.vue";
 import MSCombobox from "../components/ControlComponent/MSCombobox.vue";
 
-import DateTimeComponent from "../components/PaymentPage/DateTimeComponent.vue";
 import FooterPayment from "../components/PaymentPage/FooterPayment.vue";
 
 import MSGrid from "../components/ControlComponent/MSGrid.vue";
@@ -256,7 +250,6 @@ export default {
     MSCombobox,
     MSDatetime,
 
-    DateTimeComponent,
     FooterPayment,
 
     MSGrid,
@@ -303,17 +296,6 @@ export default {
         "Ủy nhiệm chi": "UNC001",
         "Séc chuyển khoản": "SCK001",
         "Séc tiền mặt": "STM001",
-      },
-      bankAccountIdErros: [],
-      customerIdErros: [],
-      employeeIdErros: [],
-      accountingDateErrors: [],
-      documentDateErrors: [],
-      documentNumberErrors: [],
-
-      fieldErrors: {
-        creditAccountError: [],
-        debitAccountError: [],
       },
 
       createCustomerComponent: CreateCustomer,
@@ -419,19 +401,6 @@ export default {
     updateCurrentItem(field, event) {
       const value = event.target.value;
       this.currentItem[field] = value;
-      switch (field) {
-        case "accountingDate":
-          this.accountingDateErrors = [];
-          break;
-        case "documentDate":
-          this.documentDateErrors = [];
-          break;
-        case "documentNumber":
-          this.documentNumberErrors = [];
-          break;
-        default:
-          break;
-      }
     },
 
     /**
@@ -446,7 +415,7 @@ export default {
           this.currentItem.accountNumber = item.accountNumber;
           this.currentItem.bankName = item.bankName;
           this.currentItem.bankAccountId = item.id;
-          this.bankAccountIdErros = [];
+
           break;
         case "customer":
           this.currentItem.objectName = item.objectName;
@@ -454,8 +423,8 @@ export default {
           this.currentItem.billContent = item.objectName;
           this.inputBillContent = item.objectName;
           this.currentItem.customerId = item.id;
-          this.customerIdErros = [];
           this.updateGridDescription(item.objectName);
+
           break;
         case "bankReceive":
           this.currentItem.accountReceiveNumber = item.accountNumber;
@@ -464,7 +433,7 @@ export default {
         case "employee":
           this.currentItem.employeeName = item.employeeName;
           this.currentItem.employeeId = item.id;
-          this.employeeIdErros = [];
+
           break;
       }
     },
@@ -474,19 +443,13 @@ export default {
      * sẽ thực hiện các yêu cầu tùy theo ng dùng mong muốn
      * @param responseData
      */
-     afterCallSuccess(responseData) {
-    this.showAlert("Lưu thành công thông tin", () => {
-      if (responseData) {
-        this.$router.push("/payment");
-      }
-    });
-    this.isViewMode = true;
-
-    // Set isDisabled thành true khi action là "save"
-    if (responseData.action === "save") {
-      this.isDisabled = true;
-    }
-  },
+    afterCallSuccess(responseData) {
+      this.showAlert("Lưu thành công thông tin", () => {
+        if (responseData) {
+          this.$router.push("/payment");
+        }
+      });
+    },
 
     /**
      * các function thực hiện gán data cho các input khác nhau
@@ -556,7 +519,7 @@ export default {
 }
 
 label {
-  margin-bottom: 8px;
+  margin-bottom: 7px;
   font-weight: bold;
 }
 .accountingGrid {
@@ -600,7 +563,7 @@ label {
   border-radius: 2px;
 
   box-sizing: border-box;
-  height: 30px;
+  height: 28px;
   flex-grow: 1;
   margin-left: 15px;
   width: 50%;
@@ -638,7 +601,7 @@ label {
 .form-group {
   display: flex;
   flex-direction: column;
-  margin-bottom: 13px;
+  margin-bottom: 14px;
 }
 .date-input {
   box-sizing: border-box;
@@ -646,7 +609,7 @@ label {
   border: 1px solid #999;
   border-radius: 2px;
   overflow: hidden;
-  height: 29px;
+  height: 27px;
   width: 100%;
   display: flex;
   align-items: center;
@@ -752,6 +715,6 @@ label {
   border: 1px solid #999;
   display: flex;
   align-items: center;
-  height: 28px;
+  height: 26px;
 }
 </style>

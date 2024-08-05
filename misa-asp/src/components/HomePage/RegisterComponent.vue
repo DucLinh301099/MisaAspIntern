@@ -29,7 +29,6 @@
               ref="FirstName"
               class="register-input"
               :value="firstName"
-              :errors="firstNameErrors"
               @input="updateValue('firstName', $event.target.value)"
               placeholder="Họ và đệm"
             />
@@ -40,7 +39,6 @@
               ref="LastName"
               class="register-input"
               :value="lastName"
-              :errors="lastNameErrors"
               @input="updateValue('lastName', $event.target.value)"
               placeholder="Tên"
             />
@@ -52,7 +50,6 @@
             ref="Email"
             class="register-input"
             :value="email"
-            :errors="emailErrors"
             @input="updateValue('email', $event.target.value)"
             placeholder="Email"
           />
@@ -63,7 +60,6 @@
             ref="PhoneNumber"
             class="register-input"
             :value="phoneNumber"
-            :errors="phoneNumberErrors"
             @input="updateValue('phoneNumber', $event.target.value)"
             placeholder="Số điện thoại"
           />
@@ -74,7 +70,6 @@
             ref="Password"
             class="register-input"
             :value="password"
-            :errors="passwordErrors"
             @input="updateValue('password', $event.target.value)"
             placeholder="Mật khẩu"
           />
@@ -121,11 +116,6 @@ export default {
       phoneNumber: "",
       password: "",
       roleId: "",
-      firstNameErrors: [],
-      lastNameErrors: [],
-      phoneNumberErrors: [],
-      emailErrors: [],
-      passwordErrors: [],
     };
   },
   methods: {
@@ -159,25 +149,7 @@ export default {
 
     updateValue(field, value) {
       this[field] = value;
-      switch (field) {
-        case "firstName":
-          this.firstNameErrors = [];
-          break;
-        case "lastName":
-          this.lastNameErrors = [];
-          break;
-        case "email":
-          this.emailErrors = [];
-          break;
-        case "phoneNumber":
-          this.phoneNumberErrors = [];
-          break;
-        case "password":
-          this.passwordErrors = [];
-          break;
-        default:
-          break;
-      }
+      this.$refs[field].errors = null; // Xóa lỗi khi nhập lại dữ liệu
     },
   },
 };

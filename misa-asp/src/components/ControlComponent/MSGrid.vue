@@ -20,6 +20,7 @@
           <td>{{ rowIndex + 1 }}</td>
           <td
             class="td-grid"
+            :class="getColumnClass(column.columnName)"
             v-for="(column, colIndex) in columnConfig"
             :key="colIndex"
           >
@@ -30,11 +31,7 @@
                 @input="changeValueInput(rowIndex, column)"
                 @update:selectedRow="updateRowField(rowIndex, column, $event)"
                 :ref="`[${rowIndex}].${column.fieldName}`"
-                :errors="
-                  errors && errors[column.fieldName]
-                    ? errors[column.fieldName]
-                    : []
-                "
+                :disabled="disabled"
               />
             </div>
             <div v-else>
@@ -47,18 +44,30 @@
                 }"
                 @focus="handleFocus(rowIndex, column.fieldName)"
                 @blur="handleBlur"
+                :disabled="disabled"
+                ref="inputComponent"
               />
             </div>
           </td>
           <td>
-            <button @click="removeRow(rowIndex)" v-if="hasRemoveRow">🗑️</button>
+            <button
+              @click="removeRow(rowIndex)"
+              :disabled="disabled"
+              v-if="hasRemoveRow"
+            >
+              🗑️
+            </button>
           </td>
         </tr>
       </tbody>
     </table>
     <div class="accounting-footer">
-      <button class="btn-left" @click="addRow">Thêm dòng</button>
-      <button class="btn-right" @click="clearRows">Xóa hết dòng</button>
+      <button :disabled="disabled" class="btn-left" @click="addRow">
+        Thêm dòng
+      </button>
+      <button :disabled="disabled" class="btn-right" @click="clearRows">
+        Xóa hết dòng
+      </button>
     </div>
   </div>
 </template>
@@ -80,6 +89,10 @@ export default {
       type: Array,
       default: null,
     },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
     hasRemoveRow: {
       type: Boolean,
       default: true,
@@ -100,16 +113,13 @@ export default {
       type: String,
       default: null,
     },
-    erros: {
-      type: Array,
-      default: () => [],
-    },
   },
   data() {
     return {
       columnConfig: this.configColumGrid.columnConfig,
       currentTotal: 0,
       focusedCell: { rowIndex: null, fieldName: null },
+      errors: null,
     };
   },
   mounted() {
@@ -124,41 +134,29 @@ export default {
         this.updateCurrentTotal();
       },
     },
+    errors(newVal) {
+      let refList = this.$refs;
+      if (refList["inputComponent"]) {
+        refList["inputComponent"].setError(newVal);
+      }
+    },
   },
+
   methods: {
-    /**
-     * Thêm một dòng mới vào bảng
-     */
     addRow() {
       let model = this.configColumGrid.model;
       const newRow = new model();
       this.modelValue.push(newRow);
       this.updateCurrentTotal();
     },
-
-    /**
-     * Xóa một dòng trong bảng
-     * @param {number} index - Chỉ số của dòng cần xóa
-     */
     removeRow(index) {
       this.modelValue.splice(index, 1);
       this.updateCurrentTotal();
     },
-
-    /**
-     * Xóa tất cả các dòng trong bảng
-     */
     clearRows() {
       this.modelValue = [];
       this.updateCurrentTotal();
     },
-
-    /**
-     * Cập nhật giá trị  khi chọn một giá trị từ combobox
-     * @param {number} rowIndex - Chỉ số của dòng
-     * @param {object} column - Cấu hình của cột
-     * @param {object} selectedOption - Giá trị được chọn từ combobox
-     */
     updateRowField(rowIndex, column, selectedOption) {
       let record = this.modelValue[rowIndex],
         fieldName = column.fieldName;
@@ -167,41 +165,18 @@ export default {
         this.$emit("selectedCombox", record, column, selectedOption);
       }
     },
-
-    /**
-     * Xử lý sự kiện khi một ô được focus
-     * @param {number} rowIndex - Chỉ số của dòng
-     * @param {string} fieldName - Tên trường của cột
-     */
     handleFocus(rowIndex, fieldName) {
       this.focusedCell = { rowIndex, fieldName };
     },
-
-    /**
-     * Xử lý sự kiện khi một ô mất focus
-     */
     handleBlur() {
       this.focusedCell = { rowIndex: null, fieldName: null };
     },
-
-    /**
-     * Kiểm tra xem ô có đang được focus hay không
-     * @param {number} rowIndex - Chỉ số của dòng
-     * @param {string} fieldName - Tên trường của cột
-     * @returns {boolean} - Trạng thái focus của ô
-     */
     isInputFocused(rowIndex, fieldName) {
       return (
         this.focusedCell.rowIndex === rowIndex &&
         this.focusedCell.fieldName === fieldName
       );
     },
-
-    /**
-     * Thay đổi giá trị của ô trong bảng
-     * @param {number} rowIndex - Chỉ số của dòng
-     * @param {object} column - Cấu hình của cột
-     */
     changeValueInput(rowIndex, column) {
       let record = this.modelValue[rowIndex];
       if (record && column && column.dataType) {
@@ -220,10 +195,6 @@ export default {
       }
       this.updateCurrentTotal();
     },
-
-    /**
-     * Cập nhật tổng giá trị hiện tại của các dòng trong bảng
-     */
     updateCurrentTotal() {
       this.currentTotal = this.modelValue.reduce(
         (sum, row) =>
@@ -232,12 +203,26 @@ export default {
       );
       this.$emit("updateTotalAmount", this.currentTotal);
     },
+    setError(item) {
+      this.errors.push(item);
+    },
+    getColumnClass(columnName) {
+      if (
+        columnName === "TK Nợ" ||
+        columnName === "TK Có" ||
+        columnName === "Đối tượng"
+      ) {
+        return "medium-column";
+      } else if (columnName === "Số tiền") {
+        return "narrow-column";
+      }
+      return "";
+    },
   },
 };
 </script>
 
 <style scoped>
-/* (Existing styles remain unchanged) */
 .accounting-component {
   padding-left: 20px;
   padding-right: 20px;
@@ -248,6 +233,12 @@ export default {
 
 .td-grid {
   height: 40px;
+}
+.td-grid.medium-column {
+  width: 170px; /* Adjust as necessary */
+}
+.td-grid.narrow-column {
+  width: 170px; /* Adjust as necessary */
 }
 .thead {
   background-color: #f4f5f8;
@@ -284,7 +275,7 @@ export default {
   border-collapse: collapse;
   margin-bottom: 16px;
   margin-top: 8px;
-  font-size: 15px;
+  font-size: 14px;
 }
 
 .accounting-table th {
@@ -334,7 +325,7 @@ export default {
 }
 
 button {
-  padding: 6px 10px;
+  padding: 5px 8px;
   border: none;
   border-radius: 2.5px;
   cursor: pointer;

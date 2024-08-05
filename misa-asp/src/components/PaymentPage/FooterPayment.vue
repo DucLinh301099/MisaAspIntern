@@ -6,12 +6,12 @@
       <button class="save-btn" @click="emitSubmit('save')">Cất</button>
       <div class="dropdown-container">
         <button class="btn save-add-btn" @click="emitSubmit('saveAndPrint')">
-          Cất và In
+          Cất và đóng
         </button>
         <button class="dropdown-toggle" @click="toggleDropdown">&#9660;</button>
         <div class="dropdown-menu" v-if="isDropdownVisible">
           <button @click="emitSubmit('saveAndAdd')">Cất và Thêm</button>
-          <button @click="emitSubmit('saveAndClose')">Cất và Đóng</button>
+
           <button @click="emitSubmit('saveAndPrint')">Cất và In</button>
         </div>
       </div>
@@ -63,7 +63,7 @@ export default {
 .cancel-btn {
   background-color: #38393d;
   color: white;
-  padding: 10px 20px;
+  padding: 6px 18px;
   border: 1px solid #6b6c72;
   border-radius: 3px;
   font-size: 16px;

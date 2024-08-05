@@ -13,6 +13,7 @@
             :options="voucherOptions"
             class="combo-input"
             @update:modelValue="updateVoucherType"
+            :disabled="disabled"
           ></Multiselect>
           <label class="inline-label">Phương thức thanh toán</label>
           <Multiselect
@@ -20,6 +21,7 @@
             :options="paymentMethods"
             class="combo-input-1"
             @update:modelValue="updatePaymentMethod"
+            :disabled="disabled"
           ></Multiselect>
         </div>
         <div class="right-section">
@@ -29,8 +31,10 @@
           <button class="icon-button-help">
             <i class="material-icons">help_outline</i>
           </button>
-          <button class="icon-button-close">
-            <i class="material-icons">close</i>
+          <button class="icon-button-close button">
+            <router-link to="/admin" class="link-color">
+              <i class="material-icons">close</i>
+            </router-link>
           </button>
         </div>
       </div>
@@ -57,6 +61,10 @@ const props = defineProps({
   documentNumber: {
     type: String,
     required: true,
+  },
+  disabled: {
+    type: Boolean,
+    default: false, // Thêm props disabled
   },
 });
 const emit = defineEmits(["update:voucherType", "update:paymentMethod"]);
@@ -116,6 +124,9 @@ const updatePaymentMethod = (value) => {
   background-color: #f4f5f8;
   font-family: AvertaStdCY, Helvetica, Arial, sans-serif;
 }
+.link-color {
+  color: gray;
+}
 
 #payment-layout,
 #form-layout {
@@ -168,10 +179,10 @@ const updatePaymentMethod = (value) => {
 .combo-input {
   border: 1px solid #ccc;
   border-radius: 1.5px;
-  min-width: 250px;
+  min-width: 280px;
   font-size: 14px;
-  height: 32px;
-  min-height: 30px;
+  height: 26px;
+  min-height: 26px;
 
   margin-left: 5px;
   margin-right: 15px;
@@ -181,8 +192,8 @@ const updatePaymentMethod = (value) => {
   border-radius: 1.5px;
   min-width: 200px;
   font-size: 14px;
-  height: 32px;
-  min-height: 30px;
+  height: 26px;
+  min-height: 26px;
 
   margin-left: 15px;
   margin-right: 5px;
@@ -192,6 +203,7 @@ const updatePaymentMethod = (value) => {
   white-space: nowrap;
   font-weight: 300;
   margin-bottom: 0;
+  font-size: 15px;
 }
 
 .right-section {
@@ -202,7 +214,7 @@ const updatePaymentMethod = (value) => {
 }
 
 .icon-button-close {
-  scale: 1.3;
+  scale: 1.5;
   border: none;
   margin-left: 10px;
   background-color: #f7f7f7;

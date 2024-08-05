@@ -6,18 +6,21 @@
     <div class="input-container">
       <div
         class="input-with-button"
-        :class="{ focus: isInputFocused, 'has-error': errors.length > 0 }"
+        :class="{
+          focus: isInputFocused,
+          'has-error': errors && errors.length > 0,
+        }"
       >
         <MSInput
           class="base-input"
           :value="inputValue"
-          :comboboxError="errors.length > 0"
+          :comboboxError="errors && errors.length > 0"
           :noBorder="true"
-          :errors="errors"
           :disabled="disabled"
           @input="handleOnInput"
           @focus="handleFocus"
           @blur="handleBlur"
+          ref="inputComponent"
         />
         <button
           v-if="showButton && !disabled"
@@ -99,10 +102,6 @@ export default {
       type: String,
       default: null,
     },
-    errors: {
-      type: Array,
-      default: () => [],
-    },
     field: {
       type: String,
       default: null,
@@ -133,7 +132,7 @@ export default {
     },
     disabled: {
       type: Boolean,
-      default: false,  // Thêm props disabled
+      default: false,
     },
   },
   data() {
@@ -146,6 +145,7 @@ export default {
       isCreateModalVisible: false,
       optionsData: this.options != null ? this.options : [],
       formData: {},
+      errors: null,
     };
   },
   watch: {
@@ -154,6 +154,12 @@ export default {
     },
     internalSelectedOption(newVal) {
       this.$emit("update:selectedOption", newVal);
+    },
+    errors(newVal) {
+      let refList = this.$refs;
+      if (refList["inputComponent"]) {
+        refList["inputComponent"].setError(newVal);
+      }
     },
   },
   computed: {
@@ -222,6 +228,8 @@ export default {
       }
       this.$emit("update:selectedRow", item);
       this.showTable = false;
+      this.errors = null;
+      this.$refs.inputComponent.setError(null);
     },
     handleOnInput(event) {
       this.inputValue = event.target.value;
@@ -247,6 +255,9 @@ export default {
     },
     handleBlur() {
       this.isInputFocused = false;
+    },
+    setError(item) {
+      this.errors = item;
     },
   },
 };
@@ -296,7 +307,7 @@ label {
   border-radius: 2px;
   overflow: hidden;
   flex-grow: 2;
-  height: 28px;
+  height: 26px;
   position: relative;
 }
 
@@ -340,30 +351,6 @@ label {
   border: none;
   border-left: 1px solid #999;
   margin-left: auto;
-}
-
-.second-input {
-  border: 1px solid #999;
-  border-radius: 2px;
-  padding: 8px;
-  box-sizing: border-box;
-  height: 32px;
-  flex-grow: 1;
-  margin-left: 15px;
-  outline: none;
-  margin-top: 17px;
-}
-.second-input:focus {
-  border-color: 1px solid #68c75b;
-}
-.second-input-e {
-  border-radius: 2px;
-  padding: 8px;
-  box-sizing: border-box;
-  height: 37px;
-  flex-grow: 1;
-  width: 50%;
-  margin-left: 15px;
 }
 
 .dropdown-table-wrapper {
