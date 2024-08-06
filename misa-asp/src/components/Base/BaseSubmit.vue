@@ -7,12 +7,21 @@ export default {
   data() {
     return {
       isDisabled: false, // Thêm biến trạng thái
+      isEditMode: false, // Trạng thái chế độ chỉnh sửa
     };
   },
   methods: {
     async handleSubmit(action) {
-      if (action == "cancel" || action == "close") {
+      if (action === "cancel" || action === "close") {
         // xử lý cho đóng hoặc hủy
+        this.showConfirm("Bạn chắc chắn muốn hủy!", () => {
+          if (action === "cancel") {
+            this.$router.push("/admin");
+          }
+        });
+      } else if (action === "edit" || action === "unsaveAndEdit") {
+        this.isDisabled = false; // Cho phép chỉnh sửa
+        this.isEditMode = false; // Chuyển lại về chế độ lưu
       } else {
         this.customValidate();
 
@@ -36,29 +45,21 @@ export default {
           await this.afterCallErrorCustom(responseData);
           this.$emit("afterCallError", responseData);
         }
-        switch (action) {
-        case "save":
-          if (responseData.isSuccess && action === "save") {
-            this.isDisabled = true;
-          }
-          break;
-        case "saveAndAdd":
-          break;
-        case "saveAndPrint":
-          break;
-        case "saveAndClose":
-           this.showAlert("Lưu thành công thông tin", () => {
-           if (responseData.isSuccess && action === "saveAndClose") {
-           this.$router.push("/admin");
-         }
-         });
-          
-          break;
-       }
 
+        if (action === "save" && responseData.isSuccess) {
+          this.showAlert("Ghi sổ thành công", () => {
+            this.isDisabled = true;
+            this.isEditMode = true; // Chuyển sang chế độ chỉnh sửa
+          });
+        }
+
+        if (action === "saveAndClose" && responseData.isSuccess) {
+          this.showAlert("Ghi sổ thành công", () => {
+            this.$router.push("/admin");
+          });
+        }
       }
     },
-   
 
     customValidate() {},
 

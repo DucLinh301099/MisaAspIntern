@@ -103,7 +103,7 @@ export default {
   width: 100%;
   border: 1px solid transparent;
   height: 20px;
-  font-size: 14px;
+  font-size: 12.5px;
   transition: border-color 0.3s;
   padding-left: 10px;
 }

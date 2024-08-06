@@ -277,7 +277,7 @@ export default {
   border: 1px solid #f85050;
 }
 label {
-  margin-bottom: 8px;
+  margin-bottom: 5px;
   font-weight: bold;
 }
 .combobox-account-input-wrapper.disabled .input-with-button {
@@ -307,7 +307,7 @@ label {
   border-radius: 2px;
   overflow: hidden;
   flex-grow: 2;
-  height: 26px;
+  height: 24.8px;
   position: relative;
 }
 
@@ -347,17 +347,19 @@ label {
 }
 
 .multiselect {
-  width: 39px;
+  width: 33px;
   border: none;
   border-left: 1px solid #999;
   margin-left: auto;
 }
-
+.multiselect .multiselect__option--highlight {
+  background-color: #b0b0b0; /* Màu xám đậm hơn */
+}
 .dropdown-table-wrapper {
   position: absolute;
-  z-index: 500;
+  z-index: 400;
   background-color: white;
-  width: 60%;
+  width: 50%;
   margin-top: 65px;
   max-height: 130px;
   overflow-y: auto;

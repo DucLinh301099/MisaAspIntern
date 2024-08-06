@@ -26,10 +26,10 @@
         </div>
         <div class="right-section">
           <button class="icon-button-setting">
-            <i class="material-icons">settings</i>
+            <i class="material-icons mi-recent">settings</i>
           </button>
           <button class="icon-button-help">
-            <i class="material-icons">help_outline</i>
+            <i class="material-icons mi-recent">help_outline</i>
           </button>
           <button class="icon-button-close button">
             <router-link to="/admin" class="link-color">
@@ -159,8 +159,13 @@ const updatePaymentMethod = (value) => {
   font-size: 25px;
   margin-right: 5px;
   scale: 1.2;
+  color: rgba(0, 0, 0, 0.5);
 }
+.mi-recent {
+  margin-right: 5px;
 
+  color: rgba(0, 0, 0, 0.5);
+}
 .title {
   font-size: 24px;
   font-weight: bold;
@@ -203,7 +208,7 @@ const updatePaymentMethod = (value) => {
   white-space: nowrap;
   font-weight: 300;
   margin-bottom: 0;
-  font-size: 15px;
+  font-size: 14px;
 }
 
 .right-section {

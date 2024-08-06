@@ -239,7 +239,7 @@ export default {
   border-radius: 3px;
   overflow: hidden;
   flex-grow: 2;
-  height: 28px;
+  height: 27px;
   position: relative;
   box-sizing: border-box;
   width: 100%;
@@ -316,10 +316,12 @@ export default {
 }
 
 .multiselect {
-  width: 40px;
+  width: 35px;
   border: none;
 }
-
+.multiselect:hover {
+  background-color: #b0b0b0;
+}
 .dropdown-table-wrapper {
   position: absolute;
   z-index: 700;

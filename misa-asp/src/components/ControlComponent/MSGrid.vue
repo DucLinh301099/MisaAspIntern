@@ -4,7 +4,7 @@
     <table class="accounting-table">
       <thead class="thead">
         <tr>
-          <th>#</th>
+          <th class="th-index">#</th>
           <th v-for="(column, index) in columnConfig" :key="index">
             {{ column.columnName }}
           </th>
@@ -41,15 +41,17 @@
                 :class="{
                   'right-align-input': true,
                   focus: isInputFocused(rowIndex, column.fieldName),
+                  'ten-doi-tuong-input': column.columnName === 'Tên đối tượng',
                 }"
+                :readonly="column.columnName === 'Tên đối tượng'"
                 @focus="handleFocus(rowIndex, column.fieldName)"
                 @blur="handleBlur"
-                :disabled="disabled"
+                :disabled="disable"
                 ref="inputComponent"
               />
             </div>
           </td>
-          <td>
+          <td class="button-style">
             <button
               @click="removeRow(rowIndex)"
               :disabled="disabled"
@@ -141,7 +143,6 @@ export default {
       }
     },
   },
-
   methods: {
     addRow() {
       let model = this.configColumGrid.model;
@@ -189,7 +190,6 @@ export default {
             break;
         }
       }
-
       if (record) {
         this.$emit("changeValueInput", record, column);
       }
@@ -221,7 +221,6 @@ export default {
   },
 };
 </script>
-
 <style scoped>
 .accounting-component {
   padding-left: 20px;
@@ -230,7 +229,13 @@ export default {
 .table-tbody {
   background-color: #e5f3ff;
 }
-
+.ten-doi-tuong-input {
+  border: none !important;
+  background-color: transparent;
+  color: #000; /* Match the text color */
+  cursor: default; /* Change cursor to default */
+  pointer-events: none; /* Prevent user interactions */
+}
 .td-grid {
   height: 40px;
 }
@@ -240,26 +245,26 @@ export default {
 .td-grid.narrow-column {
   width: 170px; /* Adjust as necessary */
 }
+@media screen and (max-width: 320px) {
+  .td-grid.medium-column {
+    width: 60px; /* Adjust as necessary */
+  }
+  .td-grid.narrow-column {
+    width: 60px; /* Adjust as necessary */
+  }
+}
+.button-style {
+  width: 38px;
+}
+.th-index {
+  width: 28px;
+  align-items: center;
+}
 .thead {
   background-color: #f4f5f8;
 }
 .right-align-input.focus {
   border-color: green;
-}
-
-.btn-left {
-  margin-right: 15px;
-  border: 0.5px solid #999;
-  width: 150px;
-  background-color: #fff;
-  font-weight: bold;
-}
-
-.btn-right {
-  border: 0.5px solid #999;
-  width: 150px;
-  background-color: #fff;
-  font-weight: bold;
 }
 
 .accounting {
@@ -275,7 +280,7 @@ export default {
   border-collapse: collapse;
   margin-bottom: 16px;
   margin-top: 8px;
-  font-size: 14px;
+  font-size: 12.5px;
 }
 
 .accounting-table th {
@@ -301,7 +306,7 @@ export default {
   border: 1px solid #ccc;
   padding: 4px;
   box-sizing: border-box;
-  height: 28px;
+  height: 27px;
   border-radius: 3px;
   outline: none;
 }
@@ -330,6 +335,21 @@ button {
   border-radius: 2.5px;
   cursor: pointer;
   background-color: #e5f3ff;
+  font-size: 11.5px;
+}
+.btn-left {
+  margin-right: 10px;
+  border: 0.5px solid #999;
+  width: 120px;
+  background-color: #fff;
+  font-weight: bold;
+}
+
+.btn-right {
+  border: 0.5px solid #999;
+  width: 120px;
+  background-color: #fff;
+  font-weight: bold;
 }
 button:hover {
   background-color: #f4f5f8;

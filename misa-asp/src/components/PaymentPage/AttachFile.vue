@@ -49,27 +49,27 @@ export default {
   display: flex;
   align-items: center;
   margin-bottom: 10px;
-  font-size: 14px;
+  font-size: 12.5px;
 }
 
 .attach-icon {
   font-size: 20px;
   margin-right: 8px;
-  color: #555; /* Adjust color intensity here */
-  opacity: 0.6; /* Adjust opacity for more subtle effect */
+  color: #555;
+  opacity: 0.6;
 }
 
 .attach-title {
   font-weight: bold;
-  margin-right: 8px;
-  color: #333; /* Adjust color intensity here */
+  margin-right: 18px;
+  color: #333;
 }
 
 .attach-info {
   color: #888;
 }
 p {
-  font-size: 14px;
+  font-size: 12.5px;
 }
 .attach-dropzone {
   border: 1px solid #ccc;
@@ -78,7 +78,7 @@ p {
   text-align: center;
   cursor: pointer;
   color: #888;
-  width: 350px;
+  width: 330px;
   font-size: 16px;
 }
 

@@ -3,16 +3,41 @@
     <button class="cancel-btn" @click="emitSubmit('cancel')">Hủy</button>
 
     <div class="dropdown">
-      <button class="save-btn" @click="emitSubmit('save')">Cất</button>
+      <button v-if="!isEditMode" class="save-btn" @click="emitSubmit('save')">
+        Cất
+      </button>
+      <button v-else class="save-btn" @click="emitSubmit('edit')">Sửa</button>
+
       <div class="dropdown-container">
-        <button class="btn save-add-btn" @click="emitSubmit('saveAndClose')">
+        <button
+          v-if="!isEditMode"
+          class="btn save-add-btn"
+          @click="emitSubmit('saveAndClose')"
+        >
           Cất và Đóng
         </button>
-        <button class="dropdown-toggle" @click="toggleDropdown">&#9660;</button>
+        <button
+          v-else
+          class="btn save-add-btn"
+          @click="emitSubmit('unsaveAndEdit')"
+        >
+          Bỏ ghi và Sửa
+        </button>
+        <button
+          v-if="!isEditMode"
+          class="dropdown-toggle"
+          @click="toggleDropdown"
+        >
+          &#9660;
+        </button>
         <div class="dropdown-menu" v-if="isDropdownVisible">
-          <button @click="emitSubmit('saveAndAdd')">Cất và Thêm</button>
-
-          <button @click="emitSubmit('saveAndPrint')">Cất và In</button>
+          <button v-if="!isEditMode" @click="emitSubmit('saveAndAdd')">
+            Cất và Thêm
+          </button>
+          <!-- <button v-else @click="emitSubmit('unrecord')">Bỏ ghi</button> -->
+          <button v-if="!isEditMode" @click="emitSubmit('saveAndPrint')">
+            Cất và In
+          </button>
         </div>
       </div>
     </div>
@@ -22,7 +47,9 @@
 <script>
 export default {
   name: "FooterPayment",
-  props: {},
+  props: {
+    isEditMode: Boolean,
+  },
   data() {
     return {
       isDropdownVisible: false,
@@ -35,9 +62,7 @@ export default {
     emitSubmit(action) {
       this.$emit("submit", action);
       this.isDropdownVisible = false;
-      
     },
-    
   },
 };
 </script>
@@ -58,7 +83,7 @@ export default {
 
 .btn {
   padding: 10px 20px;
-  font-size: 15px;
+  font-size: 14px;
   cursor: pointer;
 }
 
@@ -68,7 +93,7 @@ export default {
   padding: 6px 18px;
   border: 1px solid #6b6c72;
   border-radius: 3px;
-  font-size: 16px;
+  font-size: 14px;
   cursor: pointer;
 }
 
@@ -79,7 +104,7 @@ export default {
   padding: 6px 18px;
   border: 1px solid #6b6c72;
   border-radius: 3px;
-  font-size: 16px;
+  font-size: 14px;
   cursor: pointer;
 }
 
@@ -89,8 +114,8 @@ export default {
   border: none;
   border-radius: 2.5px 0 0 2.5px;
   height: 32px;
-  font-size: 15px;
-    padding: 5px 20px;
+  font-size: 14px;
+  padding: 5px 20px;
 }
 
 .dropdown {
@@ -132,7 +157,7 @@ export default {
 
 .dropdown-menu button {
   padding: 10px 20px;
-  font-size: 16px;
+  font-size: 14px;
   background: none;
   border: none;
   cursor: pointer;

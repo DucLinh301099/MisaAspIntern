@@ -129,8 +129,10 @@
         </div>
 
         <div class="document">
-          <div class="document-content">
-            <label for="document-content">Tham chiếu chứng từ</label>
+          <div>
+            <label class="document-content" for="document-content"
+              >Tham chiếu chứng từ</label
+            >
           </div>
           <div class="document-link">
             <a href="#href"> ... </a>
@@ -217,6 +219,7 @@
         <FooterPayment
           :payment="currentItem"
           class="footer-payment-a"
+          :isEditMode="isEditMode"
           @submit="handleSubmit"
         />
       </div>
@@ -263,6 +266,7 @@ export default {
   data() {
     return {
       isDisabled: false,
+      isEditMode: false,
       apiUrl: Api.payment.url,
       errorMessage: "",
       inputValue: "",
@@ -443,7 +447,6 @@ export default {
      * sẽ thực hiện các yêu cầu tùy theo ng dùng mong muốn
      * @param responseData
      */
-    
 
     /**
      * các function thực hiện gán data cho các input khác nhau
@@ -513,7 +516,7 @@ export default {
 }
 
 label {
-  margin-bottom: 7px;
+  margin-bottom: 5px;
   font-weight: bold;
 }
 .accountingGrid {
@@ -549,7 +552,7 @@ label {
 .account-input-wrapper {
   display: flex;
   align-items: center;
-  margin-bottom: 4px;
+  margin-bottom: 5px;
 }
 
 .second-input {
@@ -557,22 +560,18 @@ label {
   border-radius: 2px;
 
   box-sizing: border-box;
-  height: 28px;
+  height: 26px;
   flex-grow: 1;
   margin-left: 15px;
   width: 50%;
-  margin-top: 16px;
+  margin-top: 11px;
   display: flex;
   align-items: center;
 }
 
-label {
-  margin-bottom: 8px;
-  font-weight: bold;
-}
 .input-information {
   display: flex;
-  font-size: 14px;
+  font-size: 12.5px;
   padding-top: 20px;
   margin-bottom: 15px;
   background-color: #f4f5f8;
@@ -589,13 +588,16 @@ label {
 .input-information-left {
   width: 35%;
 }
-
+.document-content {
+  font-weight: 300;
+  font-size: 13px;
+}
 /* css của datetimeinput */
 
 .form-group {
   display: flex;
   flex-direction: column;
-  margin-bottom: 14px;
+  margin-bottom: 13px;
 }
 .date-input {
   box-sizing: border-box;
@@ -603,11 +605,11 @@ label {
   border: 1px solid #999;
   border-radius: 2px;
   overflow: hidden;
-  height: 27px;
+  height: 26px;
   width: 100%;
-  display: flex;
-  align-items: center;
+
   background-color: #fff;
+  font-size: 14px !important;
 }
 .datetime-wrapper {
   display: flex;
@@ -626,7 +628,7 @@ label {
 .bill-content-input-wrapper {
   display: flex;
   flex-direction: column;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 .input-container {
@@ -709,6 +711,6 @@ label {
   border: 1px solid #999;
   display: flex;
   align-items: center;
-  height: 26px;
+  height: 24.8px;
 }
 </style>

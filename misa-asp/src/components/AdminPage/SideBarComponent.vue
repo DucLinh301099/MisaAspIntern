@@ -17,12 +17,15 @@
           ><i class="fa fa-bar-chart"></i> Kế toán</router-link
         >
       </li>
+      <li>
+        <router-link to="/payment-master"
+          ><i class="fa fa-bar-chart"></i> Tiền gửi
+        </router-link>
+      </li>
 
       <!-- Những trang này khi có thời gian sẽ phát triển thêm -->
 
-      <!-- <li>
-        <router-link to="/"><i class="fa fa-bar-chart"></i> Charts</router-link>
-      </li>
+      <!-- 
       <li>
         <router-link to="/"><i class="fa fa-pencil"></i> Forms</router-link>
       </li>
