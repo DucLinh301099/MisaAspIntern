@@ -11,6 +11,8 @@
         <RouterList />
         <!-- Main content goes here -->
         <GridButtonList />
+        <MSWithdrawList/>
+
       </div>
     </div>
   </div>
@@ -21,6 +23,7 @@ import Header from "../components/WithdrawList/Header.vue";
 import SideBar from "../components/WithdrawList/SideBar.vue";
 import GridButtonList from "../components/WithdrawList/GridButtonList.vue";
 import RouterList from "../components/WithdrawList/RouterList.vue";
+import MSWithdrawList from "../components/ControlComponent/MSWithdrawList.vue"
 
 export default {
   name: "WithdrawList",
@@ -29,6 +32,7 @@ export default {
     SideBar,
     GridButtonList,
     RouterList,
+    MSWithdrawList,
   },
 };
 </script>

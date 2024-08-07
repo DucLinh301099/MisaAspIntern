@@ -150,7 +150,7 @@ export default {
 <style scoped>
 .main-container {
   background-color: #fff;
-  height: 90%;
+  /* height: 90%; */
 }
 .grid-list-data {
   margin-right: 16px;
@@ -252,6 +252,9 @@ export default {
 }
 .grid-list-data .grid-button-list .search-wrapper input {
   height: 32px;
+}
+.ms-input .ms-input--input:focus{
+  border-color: #35bf22;
 }
 .ms-input .ms-input--input.icon-after-input {
   padding-right: 2.75rem;

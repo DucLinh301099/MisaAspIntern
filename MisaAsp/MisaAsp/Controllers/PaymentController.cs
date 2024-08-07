@@ -49,7 +49,7 @@ namespace MisaAsp.Controllers
         /// Api lấy tất cả thông tin của payments
         /// </summary>
         /// <returns></returns>
-        [HttpGet("payments")]
+        [HttpGet("withdraw-list")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllPayments()
         {

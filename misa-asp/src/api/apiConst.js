@@ -60,7 +60,12 @@ const Api = {
     payment: {
         url: 'Payment/create-payment',
         method:'post'
+    },
+    withdrawList:{
+        url: 'Payment/withdraw-list',
+        method:'get'
     }
+
 
 }
 export default Api;
