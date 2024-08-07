@@ -7,24 +7,28 @@
         <SideBar />
       </div>
       <div class="main-content">
+        <!-- router list goes here -->
+        <RouterList />
         <!-- Main content goes here -->
-        <MainContent />
+        <GridButtonList />
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import Header from "../components/PaymentMaster/Header.vue";
-import SideBar from "../components/PaymentMaster/SideBar.vue";
-import MainContent from "../components/PaymentMaster/MainContent.vue";
+import Header from "../components/WithdrawList/Header.vue";
+import SideBar from "../components/WithdrawList/SideBar.vue";
+import GridButtonList from "../components/WithdrawList/GridButtonList.vue";
+import RouterList from "../components/WithdrawList/RouterList.vue";
 
 export default {
-  name: "Payment",
+  name: "WithdrawList",
   components: {
     Header,
     SideBar,
-    MainContent,
+    GridButtonList,
+    RouterList,
   },
 };
 </script>
@@ -51,17 +55,20 @@ header {
 }
 
 .side-bar {
-  width: 20%;
   background-color: #f8f8f8;
-  padding: 10px;
+  margin-top: 10px;
   border-right: 1px solid #ddd;
   font-family: AvertaStdCY, Helvetica, Arial, sans-serif;
+  background-color: #fff;
+  width: 190px;
 }
 
 .main-content {
-  width: 80%;
-  padding: 20px;
+  width: 100%;
+  padding-left: 20px;
+  padding-top: 15px;
   overflow-y: auto;
-  background-color: #ddd;
+  background-color: #eeeff1;
+  padding-right: 10px;
 }
 </style>

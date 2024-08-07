@@ -297,7 +297,7 @@ export default {
 .logo-container {
   display: flex;
   padding: 12px;
-  margin-right: 25px;
+  margin-right: 35px;
   align-items: center;
   justify-content: center;
   justify-content: flex-start;

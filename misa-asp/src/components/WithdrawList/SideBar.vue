@@ -2,12 +2,14 @@
   <div data-v-50994340="" class="menu-container expand">
     <div id="quick-add-dropdown">
       <div class="dropdown-secondary ms-dropdown">
-        <div class="ms-button--text flex align-center">
-          <span class="mi mi-16 mi-plus--success"></span
-          ><span class="pr-4" style="padding-left: 10px; font-size: 14px"
-            >Thêm nhanh</span
-          ><!----><!----><!---->
-        </div>
+        <button class="button-text">
+          <div class="ms-button--text flex align-center">
+            <span class="mi mi-16 mi-plus--success"></span
+            ><span class="pr-4" style="padding-left: 10px; font-size: 14px"
+              >Thêm nhanh</span
+            ><!----><!----><!---->
+          </div>
+        </button>
       </div>
     </div>
     <div class="menu-item-list scroller">
@@ -106,7 +108,9 @@
           <div class="menu-item-cont">
             <div class="v-popover">
               <div aria-describedby="popover_orahjbwag9" class="trigger">
-                <a href="/app/BA" class="menu-item router-link-active active"
+                <a
+                  href="/app/BA"
+                  class="menu-item menu-item-bank router-link-active active"
                   ><div class="menu-item__icon menu-item-logo__icon">
                     <div class="mi mi-24 mi-sidebar-bank"></div>
                   </div>
@@ -429,56 +433,7 @@
           </div>
         </div>
       </div>
-      <div class="con-ms-tooltip">
-        <div class="msTooltipParent">
-          <div
-            class="ms-tooltip"
-            style="left: 0px; top: 0px; position: fixed; display: none"
-          ></div>
-        </div>
-        <div class="tooltip-content">
-          <div class="menu-item-separate" style="display: none"></div>
-          <div class="menu-item-cont">
-            <div class="v-popover">
-              <div aria-describedby="popover_em7cplqivm" class="trigger">
-                <a href="/app/CP" class="menu-item router-link-active"
-                  ><div class="menu-item__icon menu-item-logo__icon">
-                    <div class="mi mi-24 mi-sidebar-compare"></div>
-                  </div>
-                  <div class="menu-item__title">Kiểm soát rủi ro</div>
-                  <div class="flex-1"></div>
-                  <!----><!----><!----></a
-                ><!---->
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="con-ms-tooltip">
-        <div class="msTooltipParent">
-          <div
-            class="ms-tooltip"
-            style="left: 0px; top: 0px; position: fixed; display: none"
-          ></div>
-        </div>
-        <div class="tooltip-content">
-          <div class="menu-item-separate" style="display: none"></div>
-          <div class="menu-item-cont">
-            <div class="v-popover">
-              <div aria-describedby="popover_zf769pa13y" class="trigger">
-                <a href="/app/LO" class="menu-item router-link-active"
-                  ><div class="menu-item__icon menu-item-logo__icon">
-                    <div class="mi mi-24 mi-sidebar-lending"></div>
-                  </div>
-                  <div class="menu-item__title">Kết nối vay vốn</div>
-                  <div class="flex-1"></div>
-                  <!----><!----><!----></a
-                ><!---->
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+
       <div class="con-ms-tooltip">
         <div class="msTooltipParent">
           <div
@@ -564,8 +519,7 @@ export default {
   font-size: 13px;
   -webkit-transition: all 0.3s ease;
   position: relative;
-  background-color: #fff;
-  width: 52px;
+
   transition: all ease 0.2s;
 }
 #quick-add-dropdown {
@@ -596,6 +550,11 @@ export default {
   height: 100%;
   position: relative;
 }
+.button-text {
+  border: none;
+  background-color: #fff;
+  margin-bottom: 10px;
+}
 .ms-button-secondary {
   border: 1px solid #8d9096;
   color: #111;
@@ -614,7 +573,7 @@ export default {
 }
 
 .ms-button--text {
-  padding: 0 10px;
+  padding: 7px 20px !important;
   border: 2px solid #3b3c3f !important;
   border-radius: 30px;
   height: var(--rounded-button-height);
@@ -627,6 +586,10 @@ export default {
   white-space: nowrap;
   font-size: 13px;
   line-height: 13px;
+}
+
+.ms-button--text:hover {
+  background-color: #d2d3d6;
 }
 
 .align-center {
@@ -653,5 +616,148 @@ export default {
 }
 .pr-4 {
   padding-right: 4px !important;
+}
+.ms-tooltip {
+  display: block;
+  height: auto;
+  position: absolute;
+  z-index: 30000;
+  background: #505050;
+  padding: 3px 10px;
+  font-size: 12px;
+  border-radius: 2px;
+  white-space: nowrap;
+  color: #fff;
+}
+.con-ms-tooltip .tooltip-content {
+  height: 100%;
+}
+.menu-item-separate {
+  height: 1px;
+  color: #eceef1;
+  border-bottom: 1px solid #eceef1;
+  margin: 6px 10px;
+}
+.menu-item-cont {
+  line-height: 42px;
+  height: 42px;
+  margin-top: 4px;
+  position: relative;
+}
+.expand .menu-item {
+  padding-left: 14px;
+}
+.menu-item {
+  color: #212121;
+  font-weight: 500;
+  display: flex;
+  cursor: pointer;
+  padding-left: 11px;
+  padding-right: 14px;
+}
+.menu-item .menu-item-logo__icon {
+  margin-right: 8px;
+}
+.menu-item .menu-item__icon {
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  height: 42px;
+}
+.mi-sidebar-dashboard {
+  background-position: -30px -1628px;
+}
+.mi-24 {
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  min-height: 24px;
+}
+.menu-item .menu-item__title {
+  z-index: 1;
+}
+.flex-1 {
+  flex: 1 1 0% !important;
+}
+.menu-item .menu-item__icon {
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  height: 42px;
+}
+.mi-arrow-right--small {
+  background-position: -602px -1861px;
+}
+.mi-16 {
+  width: 16px;
+  height: 16px;
+  min-width: 16px;
+  min-height: 16px;
+}
+.menu-item-bank {
+  content: "";
+  width: calc(83% - 14px);
+  height: 100%;
+  border-radius: 8px;
+  left: 8px;
+  background: #eceef1;
+  position: absolute;
+}
+.menu-item:hover:before {
+  content: "";
+  width: calc(100% - 16px);
+  height: 100%;
+  border-radius: 8px;
+  left: 8px;
+  background: #eceef1;
+  position: absolute;
+}
+.mi-sidebar-automation-process {
+  background-position: -716px -1660px;
+}
+.mi-sidebar-cash {
+  background-position: -73px -1628px;
+}
+.menu-item.active .menu-item__icon .mi-sidebar-bank {
+  background-position: -117px -1585px;
+}
+.mi-sidebar-pu {
+  background-position: -161px -1628px;
+}
+.mi-sidebar-sale {
+  background-position: -204px -1628px;
+}
+.mi-sidebar-invoice {
+  background-position: -249px -1628px;
+}
+.mi-sidebar-stock {
+  background-position: -291px -1628px;
+}
+.mi-sidebar-tools {
+  background-position: -336px -1628px;
+}
+.mi-sidebar-fixed-assets {
+  background-position: -378px -1630px;
+}
+.mi-sidebar-salary {
+  background-position: -467px -1659px;
+}
+.mi-sidebar-tax {
+  background-position: -423px -1630px;
+}
+.mi-sidebar-price {
+  background-position: -467px -1628px;
+}
+.mi-sidebar-general {
+  background-position: -510px -1628px;
+}
+.mi-sidebar-report {
+  background-position: -547px -1630px;
+}
+.mi-sidebar-di {
+  background-position: -547px -1660px;
+}
+.mi-sidebar-opening {
+  background-position: -632px -1660px;
 }
 </style>

@@ -357,14 +357,13 @@ export default {
      * @param selectedOption
      */
     selectedGridCombox(record, column, selectedOption) {
-      if (column.fieldName === "customer") {
+      if (column.fieldName === "objectId") {
         record.objectId = selectedOption.objectId;
+
         record.objectName = selectedOption.objectName;
-      }
-      if (column.fieldName === "debitAccount") {
+      } else if (column.fieldName === "debitAccount") {
         record.debitAccount = selectedOption.debitAccountNumber;
-      }
-      if (column.fieldName === "creditAccount") {
+      } else if (column.fieldName === "creditAccount") {
         record.creditAccount = selectedOption.creditAccountNumber;
       }
     },

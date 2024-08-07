@@ -32,7 +32,7 @@
             <i class="material-icons mi-recent">help_outline</i>
           </button>
           <button class="icon-button-close button">
-            <router-link to="/admin" class="link-color">
+            <router-link to="/withdraw-list" class="link-color">
               <i class="material-icons">close</i>
             </router-link>
           </button>

@@ -141,7 +141,7 @@ paymentConfig.gridConfig = {
     { columnName: "Số tiền", fieldName: "amount", dataType: "currency" },
     {
       columnName: "Đối tượng",
-      fieldName: "customer",
+      fieldName: "objectId",
       dataType: "dropdown",
       dropDownConfig: paymentConfig.comboxConfig.customer
     },
@@ -151,6 +151,7 @@ paymentConfig.gridConfig = {
       dataType: "text",
         
     },
+    
   ],
   model: RowModel
 };

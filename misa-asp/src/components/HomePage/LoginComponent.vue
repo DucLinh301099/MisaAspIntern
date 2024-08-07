@@ -85,7 +85,7 @@ export default {
     afterCallSuccess(responseData) {
       this.showAlert("Đăng nhập thành công!", () => {
         if (responseData.data.role === "Admin") {
-          this.$router.push("/admin");
+          this.$router.push("/withdraw-list");
         } else {
           this.$router.push("/userAccount");
         }

@@ -4,7 +4,7 @@ import LoginComponent from '../components/HomePage/LoginComponent.vue';
 import RegisterComponent from '../components/HomePage/RegisterComponent.vue';
 import ForgotPasswordComponent from '../components/HomePage/ForgotPasswordComponent.vue';
 import AdminComponent from '../components/AdminPage/AdminComponent.vue'; // Import AdminComponent
-import PaymentMaster from '../views/PaymentMaster.vue';
+import WithdrawList from '../views/WithdrawList.vue';
 
 import EditUserPage from '../components/AdminPage/EditUserPage.vue'; // Import EditUserPage
 import CreateUserComponent from '../components/AdminPage/CreateUserComponent.vue'; // Import CreateUserComponent
@@ -22,7 +22,7 @@ const routes = [
   { path: '/userAccount', component: UserAccount, meta: { requiresAuth: true, role: 'User' } },  // Add route for UserComponent
   { path: '/edit-user/:id', component: EditUserPage, meta: { requiresAuth: true, role: 'Admin' }, props: true },
   { path: '/payment', component: Payment, meta: { requiresAuth: true, role: 'Admin' } },
-  { path: '/payment-master', component: PaymentMaster, meta: { requiresAuth: true, role: 'Admin' } },
+  { path: '/withdraw-list', component: WithdrawList, meta: { requiresAuth: true, role: 'Admin' } },
   { path: '/forgot-password', component: ForgotPasswordComponent },
   { path: '/create-user', component: CreateUserComponent, meta: { requiresAuth: true, role: 'Admin' } },
   { path: '/create-bank-account', component: CreateBankAccount, meta: { requiresAuth: true, role: 'Admin' } },

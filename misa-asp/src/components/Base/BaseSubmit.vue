@@ -16,7 +16,7 @@ export default {
         // xử lý cho đóng hoặc hủy
         this.showConfirm("Bạn chắc chắn muốn hủy!", () => {
           if (action === "cancel") {
-            this.$router.push("/admin");
+            this.$router.push("/withdraw-list");
           }
         });
       } else if (action === "edit" || action === "unsaveAndEdit") {
@@ -55,7 +55,7 @@ export default {
 
         if (action === "saveAndClose" && responseData.isSuccess) {
           this.showAlert("Ghi sổ thành công", () => {
-            this.$router.push("/admin");
+            this.$router.push("/withdraw-list");
           });
         }
       }

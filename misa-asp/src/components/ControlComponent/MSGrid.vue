@@ -26,16 +26,18 @@
           >
             <div v-if="column.dataType === 'dropdown'">
               <MSComboboxGrid
+                v-if="!disabled"
                 :value="row[column.fieldName]"
                 :config="column.dropDownConfig"
                 @input="changeValueInput(rowIndex, column)"
                 @update:selectedRow="updateRowField(rowIndex, column, $event)"
                 :ref="`[${rowIndex}].${column.fieldName}`"
-                :disabled="disabled"
               />
+              <span v-else>{{ row[column.fieldName] }}</span>
             </div>
             <div v-else>
               <input
+                v-if="!disabled"
                 v-model="row[column.fieldName]"
                 @input="changeValueInput(rowIndex, column)"
                 :class="{
@@ -43,12 +45,11 @@
                   focus: isInputFocused(rowIndex, column.fieldName),
                   'ten-doi-tuong-input': column.columnName === 'Tên đối tượng',
                 }"
-                :readonly="column.columnName === 'Tên đối tượng'"
                 @focus="handleFocus(rowIndex, column.fieldName)"
                 @blur="handleBlur"
-                :disabled="disable"
                 ref="inputComponent"
               />
+              <span v-else>{{ row[column.fieldName] }}</span>
             </div>
           </td>
           <td class="button-style">

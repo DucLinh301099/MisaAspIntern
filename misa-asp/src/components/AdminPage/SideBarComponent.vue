@@ -18,7 +18,7 @@
         >
       </li>
       <li>
-        <router-link to="/payment-master"
+        <router-link to="/withdraw-list"
           ><i class="fa fa-bar-chart"></i> Tiền gửi
         </router-link>
       </li>
