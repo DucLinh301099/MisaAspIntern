@@ -10,6 +10,8 @@ namespace MisaAsp.Repositories
     {
         Task<int> AddPaymentAsync(PaymentMasterVM paymentMaster, List<PaymentDetailVM> paymentDetails);
         Task<IEnumerable<PaymentMasterVM>> GetAllPaymentsAsync();
+        Task<bool> DeletePaymentAsync(int id);           
+        Task<PaymentMasterVM> GetPaymentWithDetailsByIdAsync(int id);
 
     }
     public class PaymentRepository : BaseRepository, IPaymentRepository
@@ -50,14 +52,51 @@ namespace MisaAsp.Repositories
 
 
 
-
+        
 
         public async Task<IEnumerable<PaymentMasterVM>> GetAllPaymentsAsync()
         {
             var payments = await QueryProcAsync<PaymentMasterVM>("getallpayments", null);
+            
 
             return payments;
         }
+        public async Task<bool> DeletePaymentAsync(int id)
+        {
+            var parameters = new
+            { paymentmaster_id = id, };
+            var result = await ExecuteProcScalarAsync<bool>("deletepayment", parameters);
+            return result;
+        }
+        public async Task<PaymentMasterVM> GetPaymentWithDetailsByIdAsync(int id)
+        {
+            var sql = "SELECT * FROM get_payment_with_details_by_id_01(@PaymentMasterId);";
+            var parameters = new { PaymentMasterId = id };
+            var paymentDictionary = new Dictionary<int, PaymentMasterVM>();
+
+            var result = await _connection.QueryAsync<PaymentMasterVM, PaymentDetailVM, PaymentMasterVM>(
+                sql,
+                (payment, detail) =>
+                {
+                    if (!paymentDictionary.TryGetValue(payment.Id, out var currentPayment))
+                    {
+                        currentPayment = payment;
+                        currentPayment.PaymentDetails = new List<PaymentDetailVM>();
+                        paymentDictionary.Add(currentPayment.Id, currentPayment);
+                    }
+                    if (detail != null)
+                    {
+                        currentPayment.PaymentDetails.Add(detail);
+                    }
+                    return currentPayment;
+                },
+                parameters,
+                splitOn: "detailid");  // Ensure that this matches the detail ID column name
+
+            return paymentDictionary.Values.FirstOrDefault();
+        }
+
+
 
 
 

@@ -21,7 +21,7 @@
               </div>
             </div>
           </li>
-          <li class="ms-tabs-li ">
+          <li class="ms-tabs-li">
             <div class="line-top"></div>
             <div type="button" class="ms-tabs-btn">
               <div class="ms-label tab-label">
@@ -64,7 +64,7 @@
                 khác
                 <!---->
               </div>
-              <div class=" mi mi-24 mi mi-24 mi-arrow-up--black"></div>
+              <div class="mi mi-24 mi mi-24 mi-arrow-up--black"></div>
             </div>
           </li>
         </ul>
@@ -83,7 +83,7 @@
               <div class="ms-dropdown">
                 <!----><button>
                   <!---->
-                  <div class=" ms-button--text flex align-center">
+                  <div class="ms-button--text flex align-center">
                     <!----><!----><a class="flex items-center"
                       ><div
                         class="mi mi-24 mi mi-24 mi-setting__list pointer"
@@ -168,7 +168,12 @@ export default {
   justify-content: space-between;
   border-bottom: 1px solid #d4d7dc;
 }
-
+.mi-setting__list:hover {
+  background-position: -88px -256px;
+}
+.mi-separate-to-master-detail:hover {
+  background-position: -851px -1878px;
+}
 .flex {
   display: flex !important;
 }

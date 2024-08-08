@@ -77,5 +77,6 @@ namespace MisaAsp.Models.ViewModel
 
         [NotMapped]
         public List<PaymentDetailVM> PaymentDetails { get; set; }
+
     }
 }

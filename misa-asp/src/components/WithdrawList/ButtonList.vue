@@ -1,125 +1,124 @@
 <template>
-  <div class="main-container">
-    <div class="grid-list-data sticky left-0">
-      <div class="grid-button-list">
+  <div class="grid-list-data sticky left-0">
+    <div class="grid-button-list">
+      <div class="flex">
+        <div class="flex flex-grow">
+          <div class="check-all-arrow">
+            <div class="mi mi-24"></div>
+          </div>
+
+          <div id="filter-dropdown">
+            <div class="dropdown-secondary ms-dropdown">
+              <!----><button
+                name="button"
+                shortkey-target=""
+                class="ms-component ms-button ms-button-secondary ms-button ms-con-dropdown-radius-true-true expand-more-button"
+              >
+                <!---->
+                <div class="ms-button--text flex align-center">
+                  <span class="pr-4">Lọc</span
+                  ><!---->
+                  <div class="mi mi-16 mi-arrow-up--black">&nbsp;</div>
+                </div>
+              </button>
+            </div>
+          </div>
+          <div class="filter-conditions">
+            <div class="filter-item--default">Đầu năm tới hiện tại</div>
+          </div>
+        </div>
         <div class="flex">
-          <div class="flex flex-grow">
-            <div class="check-all-arrow">
-              <div class="mi mi-24"></div>
+          <div class="ultility-buttons">
+            <div class="flex search-wrapper">
+              <div class="ms-input">
+                <!---->
+                <div>
+                  <div
+                    class="ms-component ms-con-input-label ms-input style-label"
+                  >
+                    <!----><span
+                      ><div class="ms-con-input">
+                        <input
+                          @input="onInput"
+                          placeholder="Nhập từ khóa tìm kiếm"
+                          type="text"
+                          class="ms-input--input hasIcon icon-after-input ms-input-normal"
+                        /><!---->
+                        <div class="con-ms-tooltip">
+                          <div class="msTooltipParent"></div>
+                          <div class="tooltip-content">
+                            <div
+                              class="ms-input--icon icon-after mi-search mi mi-16"
+                            ></div>
+                          </div>
+                        </div>
+                        <!----><!---->
+                      </div></span
+                    ><span></span>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <div id="filter-dropdown">
-              <div class="dropdown-secondary ms-dropdown">
-                <!----><button
+            <div class="list-button">
+              <div class="add-button ms-dropdown">
+                <button
+                  @click="goToPaymentPage"
                   name="button"
-                  shortkey-target=""
-                  class="ms-component ms-button expand-more-button ms-button-secondary ms-button ms-con-dropdown-radius-true-true expand-more-button"
+                  class="ms-component ms-button ms-button-primary ms-button ms-radius-true ms-dropdown-style-default ms-radius-true"
                 >
                   <!---->
                   <div class="ms-button--text flex align-center">
-                    <span class="pr-4">Lọc</span
-                    ><!---->
-                    <div class="mi mi-16 mi-arrow-up--black">&nbsp;</div>
+                    <div class="con-ms-tooltip">
+                      <div class="msTooltipParent"></div>
+                      <div class="tooltip-content">Thêm</div>
+                    </div>
+                  </div></button
+                ><button
+                  name="button"
+                  class="ms-component ms-button expand-more-button ms-button-primary ms-button ms-con-dropdown-radius-false-true ms-padding-is-single-false-size-default expand-more-button"
+                >
+                  <!---->
+                  <div class="ms-button--text flex align-center">
+                    <div class="line"></div>
+                    <div class="mi mi-16 mi-arrow-up--white bg-green">
+                      &nbsp;
+                    </div>
                   </div>
                 </button>
               </div>
             </div>
-            <div class="filter-conditions">
-              <div class="filter-item--default">Đầu năm tới hiện tại</div>
-            </div>
-          </div>
-          <div class="flex">
-            <div class="ultility-buttons">
-              <div class="flex search-wrapper">
-                <div class="ms-input">
-                  <!---->
-                  <div>
-                    <div
-                      class="ms-component ms-con-input-label ms-input style-label"
-                    >
-                      <!----><span
-                        ><div class="ms-con-input">
-                          <input
-                            placeholder="Nhập từ khóa tìm kiếm"
-                            type="text"
-                            class="ms-input--input hasIcon icon-after-input ms-input-normal"
-                          /><!---->
-                          <div class="con-ms-tooltip">
-                            <div class="msTooltipParent"></div>
-                            <div class="tooltip-content">
-                              <div
-                                class="ms-input--icon icon-after mi-search mi mi-16"
-                              ></div>
-                            </div>
-                          </div>
-                          <!----><!---->
-                        </div></span
-                      ><span></span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="list-button">
-                <div class="add-button ms-dropdown">
-                  <button
-                    @click="goToPaymentPage"
-                    name="button"
-                    class="ms-component ms-button ms-button-primary ms-button ms-radius-true ms-dropdown-style-default ms-radius-true"
-                  >
-                    <!---->
-                    <div class="ms-button--text flex align-center">
-                      <div class="con-ms-tooltip">
-                        <div class="msTooltipParent"></div>
-                        <div class="tooltip-content">Thêm</div>
-                      </div>
-                    </div></button
-                  ><button
-                    name="button"
-                    class="ms-component ms-button expand-more-button ms-button-primary ms-button ms-con-dropdown-radius-false-true ms-padding-is-single-false-size-default expand-more-button"
-                  >
-                    <!---->
-                    <div class="ms-button--text flex align-center">
-                      <div class="line"></div>
-                      <div class="mi mi-16 mi-arrow-up--white bg-green">
-                        &nbsp;
-                      </div>
-                    </div>
-                  </button>
-                </div>
-              </div>
-              <!---->
-              <div class="flex">
-                <div class="guide-tour list-button">
-                  <div class="con-ms-tooltip">
-                    <div class="msTooltipParent"></div>
-                    <div class="tooltip-content">
-                      <div class="mi mi-24 mi-tour"></div>
-                    </div>
-                  </div>
-                </div>
-                <div class="list-button">
-                  <div class="con-ms-tooltip">
-                    <div class="msTooltipParent"></div>
-                    <div class="tooltip-content">
-                      <div class="mi mi-24 mi-refresh"></div>
-                    </div>
-                  </div>
-                </div>
-                <div class="list-button">
-                  <div class="con-ms-tooltip">
-                    <div class="msTooltipParent"></div>
-                    <div class="tooltip-content">
-                      <div class="mi mi-24 mi-excel__nav"></div>
-                    </div>
-                  </div>
-                </div>
+            <!---->
+            <div class="flex">
+              <div class="guide-tour list-button">
                 <div class="con-ms-tooltip">
                   <div class="msTooltipParent"></div>
                   <div class="tooltip-content">
-                    <div class="list-button">
-                      <div class="mi mi-24 mi-setting__list"></div>
-                    </div>
+                    <div class="mi mi-24 mi-tour"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="list-button">
+                <div class="con-ms-tooltip">
+                  <div class="msTooltipParent"></div>
+                  <div class="tooltip-content">
+                    <div class="mi mi-24 mi-refresh"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="list-button">
+                <div class="con-ms-tooltip">
+                  <div class="msTooltipParent"></div>
+                  <div class="tooltip-content">
+                    <div class="mi mi-24 mi-excel__nav"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="con-ms-tooltip">
+                <div class="msTooltipParent"></div>
+                <div class="tooltip-content">
+                  <div class="list-button">
+                    <div class="mi mi-24 mi-setting__list"></div>
                   </div>
                 </div>
               </div>
@@ -127,19 +126,25 @@
           </div>
         </div>
       </div>
-      <div>
-        <!---->
-      </div>
+    </div>
+    <div>
+      <!---->
     </div>
   </div>
 </template>
 <script>
 export default {
-  name: "GridButtonList",
+  name: "ButtonList",
   data() {
-    return {};
+    return {
+      searchQuery: "",
+    };
   },
   methods: {
+    onInput(event) {
+      this.searchQuery = event.target.value;
+      this.$emit("search", this.searchQuery);
+    },
     goToPaymentPage() {
       this.$router.push("/payment");
     },
@@ -148,10 +153,6 @@ export default {
 </script>
 
 <style scoped>
-.main-container {
-  background-color: #fff;
-  /* height: 90%; */
-}
 .grid-list-data {
   margin-right: 16px;
   margin-top: 0;
@@ -217,12 +218,8 @@ export default {
 .pr-4 {
   padding-right: 4px !important;
 }
-.mi {
-  background: url(https://actaspcdng1.misacdn.net/assets/Sprites-11d892c3.svg)
-    no-repeat;
-  cursor: pointer;
-}
-.mi-arrow-up--black {
+
+.mi.mi-arrow-up--black {
   background-position: -560px -359px;
 }
 .mi-16 {
@@ -253,7 +250,7 @@ export default {
 .grid-list-data .grid-button-list .search-wrapper input {
   height: 32px;
 }
-.ms-input .ms-input--input:focus{
+.ms-input .ms-input--input:focus {
   border-color: #35bf22;
 }
 .ms-input .ms-input--input.icon-after-input {
@@ -315,7 +312,7 @@ input::placeholder {
   user-select: none;
   top: 6px;
 }
-.mi-search {
+.mi.mi-search {
   background-position: -992px -360px;
 }
 .mi-16 {
@@ -374,7 +371,7 @@ input::placeholder {
 .bg-green {
   background-color: transparent;
 }
-.mi-arrow-up--white {
+.mi.mi-arrow-up--white {
   background-position: -848px -359px;
 }
 .mi-16 {
@@ -392,8 +389,14 @@ input::placeholder {
   z-index: 2;
   opacity: 0.5;
 }
+.mi {
+  background: url(https://actaspcdng1.misacdn.net/assets/Sprites-11d892c3.svg)
+    no-repeat;
+  cursor: pointer;
+}
 .mi-tour {
   background-position: -984px -144px;
+  transition: color 0.3s ease;
 }
 .mi-24 {
   width: 24px;
@@ -401,6 +404,20 @@ input::placeholder {
   min-width: 24px;
   min-height: 24px;
 }
+.mi-tour:hover {
+  filter: brightness(0.01);
+}
+.mi-refresh:hover {
+  background-position: -1096px -88px;
+}
+
+.mi-excel__nav:hover {
+  background-position: -704px -256px;
+}
+.mi-setting__list:hover {
+  background-position: -88px -256px;
+}
+
 .mi-refresh {
   background-position: -424px -200px;
 }

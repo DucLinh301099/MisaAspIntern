@@ -65,6 +65,47 @@ namespace MisaAsp.Controllers
             }
             return Ok(_response);
         }
+        /// <summary>
+        /// Api xóa các payment withdraw 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+
+        [HttpDelete("payment/{id}")]
+        [Authorize(Roles = "Admin")] // Chỉ admin mới có quyền truy cập
+        public async Task<IActionResult> DeletePayment(int id)
+        {
+            var deleted = await _paymentService.DeletePaymentAsync(id);
+            if (deleted)
+            {
+                _response.HandleSuccess("Xóa thành công");
+            }
+            else
+            {
+                _response.HandleError("Xóa thất bại");
+            }
+
+            return Ok(_response);
+        }
+        /// <summary>
+        /// api lấy thông tin của  withrawlist theo id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("{id}/details")]
+        public async Task<IActionResult> GetPaymentWithDetails(int id)
+        {
+            var payment = await _paymentService.GetPaymentWithDetailsByIdAsync(id);
+            if (payment!=null)
+            {
+                _response.HandleSuccess("Lấy thông tin thành công", payment);
+            }
+            else
+            {
+                _response.HandleError("Lấy thông tin thất bại");
+            }
+            return Ok(_response);
+        }
 
 
     }

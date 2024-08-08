@@ -9,10 +9,12 @@
       <div class="main-content">
         <!-- router list goes here -->
         <RouterList />
-        <!-- Main content goes here -->
-        <GridButtonList />
-        <MSWithdrawList/>
 
+        <!-- Main content goes here -->
+        <div class="main-container">
+          <ButtonList @search="handleSearch" />
+          <MSWithdrawList :searchQuery="searchQuery" />
+        </div>
       </div>
     </div>
   </div>
@@ -21,18 +23,28 @@
 <script>
 import Header from "../components/WithdrawList/Header.vue";
 import SideBar from "../components/WithdrawList/SideBar.vue";
-import GridButtonList from "../components/WithdrawList/GridButtonList.vue";
+import ButtonList from "../components/WithdrawList/ButtonList.vue";
 import RouterList from "../components/WithdrawList/RouterList.vue";
-import MSWithdrawList from "../components/ControlComponent/MSWithdrawList.vue"
+import MSWithdrawList from "../components/ControlComponent/MSWithdrawList.vue";
 
 export default {
   name: "WithdrawList",
   components: {
     Header,
     SideBar,
-    GridButtonList,
+    ButtonList,
     RouterList,
     MSWithdrawList,
+  },
+  data() {
+    return {
+      searchQuery: "",
+    };
+  },
+  methods: {
+    handleSearch(query) {
+      this.searchQuery = query;
+    },
   },
 };
 </script>
@@ -41,6 +53,10 @@ export default {
 body {
   margin: 0;
   font-family: Arial, sans-serif;
+}
+.main-container {
+  background-color: #fff;
+  height: 90%;
 }
 
 header {

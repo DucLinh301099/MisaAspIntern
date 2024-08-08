@@ -11,7 +11,7 @@ namespace MisaAsp.Repositories
     public interface IAccountRepository : IBaseRepository
     {
         Task<bool> UpdateUserAsync(UpdateUserVM user);
-        Task<bool> DeleteUserAsync(int userId);
+        Task<bool> DeleteUserAsync(int id);
         Task<IEnumerable<UserRequestVM>> GetAllUsersAsync();
         
         Task<IEnumerable<EmployeeVM>> GetAllEmployeeAsync();
