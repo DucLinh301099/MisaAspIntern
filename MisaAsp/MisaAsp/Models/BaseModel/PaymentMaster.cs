@@ -51,7 +51,7 @@ namespace MisaAsp.Models.BaseModel
 
         [Column("objectname")]
         [StringLengthVI(50)]
-        public string ObjectName { get; set; }
+        public string CustomerName { get; set; }
 
         [Column("address")]
         [StringLengthVI(50)]

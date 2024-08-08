@@ -284,7 +284,7 @@ export default {
         accountNumber: null,
         bankAccountId: null,
 
-        objectName: null,
+        customerName: null,
         address: null,
         customerId: null,
 
@@ -421,7 +421,7 @@ export default {
 
           break;
         case "customer":
-          this.currentItem.objectName = item.objectName;
+          this.currentItem.customerName = item.objectName;
           this.currentItem.address = item.address;
           this.currentItem.billContent = item.objectName;
           this.inputBillContent = item.objectName;

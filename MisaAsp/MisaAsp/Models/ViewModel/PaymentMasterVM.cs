@@ -49,7 +49,7 @@ namespace MisaAsp.Models.ViewModel
 
         [StringLengthVI(50)]
         [DisplayName("Tên đối tượng")]
-        public string ObjectName { get; set; }
+        public string CustomerName { get; set; }
 
         [StringLengthVI(50)]
         [DisplayName("Địa chỉ")]

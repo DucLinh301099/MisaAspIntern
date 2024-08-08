@@ -34,7 +34,7 @@ namespace MisaAsp.Repositories
                 DocumentNumber = paymentMaster.DocumentNumber,
                 TotalAmount = paymentMaster.TotalAmount,
                 EmployeeName = paymentMaster.EmployeeName,
-                pm_ObjectName = paymentMaster.ObjectName,
+                CustomerName = paymentMaster.CustomerName,
                 Address = paymentMaster.Address,
                 BankName = paymentMaster.BankName,
                 AccountNumber = paymentMaster.AccountNumber,
@@ -70,7 +70,7 @@ namespace MisaAsp.Repositories
         }
         public async Task<PaymentMasterVM> GetPaymentWithDetailsByIdAsync(int id)
         {
-            var sql = "SELECT * FROM get_payment_with_details_by_id_01(@PaymentMasterId);";
+            var sql = "SELECT * FROM get_payment_with_details_by_id(@PaymentMasterId);";
             var parameters = new { PaymentMasterId = id };
             var paymentDictionary = new Dictionary<int, PaymentMasterVM>();
 

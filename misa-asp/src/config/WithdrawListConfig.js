@@ -13,7 +13,7 @@ let withdrawListConfig = {
     { columnName: "Số tiền", fieldName: "totalAmount", dataType: "currency" },
     {
       columnName: "Đối tượng",
-      fieldName: "objectName",
+      fieldName: "customerName",
       dataType: "text",
       
     },
