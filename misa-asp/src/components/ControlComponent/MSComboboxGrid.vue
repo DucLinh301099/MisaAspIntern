@@ -6,29 +6,29 @@
         :class="{
           invalid: isInputFocused && !inputValue,
           valid: inputValue && isInputFocused,
+          'has-error': errors && errors.length > 0,
         }"
       >
         <MSInput
           :value="inputValue"
-          :type="type"
           :noBorder="true"
+          :field="field"
           @input="updateInputValue"
           @focus="handleFocus"
           @blur="handleBlur"
+          :comboboxGridError="errors && errors.length > 0"
           class="base-input"
+          :disabled="disabled"
+          ref="inputComponent"
         />
         <div
           class="input-status-container"
           v-if="isInputFocused && !inputValue"
         >
           <span class="input-status">!</span>
-          <span class="tooltip">Tài khoản không được để trống.</span>
         </div>
         <multiselect
-          ref="multiselect"
           :style="{ visibility: isMultiselectVisible ? 'visible' : 'hidden' }"
-          :value="selectedOption"
-          @input="updateSelectedOption"
           :options="filteredOptions"
           :searchable="true"
           :close-on-select="true"
@@ -36,6 +36,7 @@
           class="multiselect"
           @open="onExpandCombox"
           @close="showTable = false"
+          :disabled="disabled"
         />
       </div>
     </div>
@@ -73,23 +74,35 @@
 <script>
 import Multiselect from "vue-multiselect";
 import "vue-multiselect/dist/vue-multiselect.css";
-import { base } from "../../api/base";
-import MSInput from "../Base/MSInput.vue";
+import { baseApi } from "../../api/baseApi";
+import BaseSubmit from "../Base/BaseSubmit.vue";
 
 export default {
   name: "MSComboboxGrid",
   components: {
     Multiselect,
-    MSInput,
   },
+  extends: BaseSubmit,
   props: {
     selectedRow: {
+      type: Object,
+      default: null,
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
+    value: {
       type: Object,
       default: null,
     },
     config: {
       type: Object,
       required: true,
+    },
+    field: {
+      type: String,
+      default: null,
     },
   },
   data() {
@@ -99,7 +112,8 @@ export default {
       isInputFocused: false,
       isMultiselectVisible: false,
       optionsData: this.config.options != null ? this.config.options : [],
-      optionSelected: false, // Thêm biến để kiểm tra xem có tùy chọn đã được chọn hay chưa
+      optionSelected: false,
+      errors: null,
     };
   },
   computed: {
@@ -120,22 +134,26 @@ export default {
       );
     },
   },
+  watch: {
+    errors(newVal) {
+      let refList = this.$refs;
+      if (refList["inputComponent"]) {
+        refList["inputComponent"].setError(newVal);
+      }
+    },
+  },
   methods: {
     async fetchData() {
       if (!this.config || !this.config.endpoint) {
         return;
       }
       try {
-        const response = await base.getAuthenApi(this.config.endpoint);
-        if (
-          response.data &&
-          Array.isArray(response.data) // Giả định API trả về danh sách các objects
-        ) {
+        const response = await baseApi.getAuthenApi(this.config.endpoint);
+        if (response.data && Array.isArray(response.data)) {
           this.optionsData = response.data;
-          console.log("optionsData:", this.optionsData);
         } else if (
           response.data &&
-          response.data.data && // Giả định API trả về danh sách arrays
+          response.data.data &&
           Array.isArray(response.data.data)
         ) {
           this.optionsData = response.data.data;
@@ -146,10 +164,12 @@ export default {
         this.optionsData = [];
       }
     },
+
     async onExpandCombox() {
       await this.fetchData();
       this.showTable = true;
     },
+
     updateInputValue(event) {
       this.inputValue = event.target.value;
     },
@@ -186,7 +206,14 @@ export default {
 
       this.showTable = false;
       this.isMultiselectVisible = false;
-      this.optionSelected = true; // Đánh dấu tùy chọn đã được chọn
+      this.optionSelected = true;
+      this.errors = null;
+      this.$refs.inputComponent.setError(null);
+    },
+
+    setError(item) {
+      this.errors = item;
+      this.showError = !!item;
     },
   },
 };
@@ -198,7 +225,13 @@ export default {
   flex-direction: column;
   margin-bottom: 8px;
 }
-
+thead {
+  position: sticky; /* Thêm thuộc tính này để thead luôn dính ở đầu */
+  top: 0; /* Đặt thead ở đầu của bảng khi scroll */
+  z-index: 2; /* Đảm bảo thead luôn nằm trên các hàng khác khi cuộn */
+  box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+}
 .input-container {
   display: flex;
   align-items: center;
@@ -209,10 +242,10 @@ export default {
   display: flex;
   align-items: center;
   border: 1px solid #ccc;
-  border-radius: 2px;
+  border-radius: 3px;
   overflow: hidden;
   flex-grow: 2;
-  height: 30px;
+  height: 27px;
   position: relative;
   box-sizing: border-box;
   width: 100%;
@@ -221,9 +254,8 @@ export default {
 
 .base-input {
   border: none;
-  padding: 8px;
   box-sizing: border-box;
-  height: 30px;
+  height: 28px;
   width: calc(100% - 40px);
   box-sizing: border-box;
 }
@@ -234,13 +266,15 @@ export default {
 }
 
 .invalid {
-  border-color: red;
+  border-color: #ff6666;
 }
 
 .valid {
   border-color: green;
 }
-
+.input-with-button.has-error {
+  border: 1px solid #ff6666;
+}
 .input-status-container {
   position: absolute;
   right: 50px;
@@ -249,13 +283,14 @@ export default {
 }
 
 .input-status {
-  color: red;
+  display: flex;
+  color: #ff6666;
   font-weight: bold;
   background: white;
-  border: 1px solid red;
+  border: 1px solid #ff6666;
   border-radius: 50%;
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -287,22 +322,24 @@ export default {
 }
 
 .multiselect {
-  width: 40px;
+  width: 35px;
   border: none;
 }
-
+.multiselect:hover {
+  background-color: #b0b0b0;
+}
 .dropdown-table-wrapper {
   position: absolute;
   z-index: 700;
   background-color: white;
   margin-top: 40px;
   margin-left: 35px;
-  transform: translateX(-40px); /* Shift to the left */
-  max-height: 200px; /* Set maximum height for the dropdown */
-  overflow-y: auto; /* Enable vertical scrolling */
-  width: auto; /* Adjust width to content */
-  white-space: nowrap; /* Prevent content from wrapping */
-  overflow-x: hidden; /* Prevent horizontal scroll bar */
+  transform: translateX(-40px);
+  max-height: 200px;
+  overflow-y: auto;
+  width: auto;
+  white-space: nowrap;
+  overflow-x: hidden;
 }
 
 .dropdown-table {
@@ -333,5 +370,11 @@ export default {
 .dropdown-enter,
 .dropdown-leave-to {
   opacity: 0;
+}
+
+.error-message {
+  color: red;
+  font-weight: bold;
+  margin-top: 5px;
 }
 </style>

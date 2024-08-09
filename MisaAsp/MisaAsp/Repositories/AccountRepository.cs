@@ -11,7 +11,7 @@ namespace MisaAsp.Repositories
     public interface IAccountRepository : IBaseRepository
     {
         Task<bool> UpdateUserAsync(UpdateUserVM user);
-        Task<bool> DeleteUserAsync(int userId);
+        Task<bool> DeleteUserAsync(int id);
         Task<IEnumerable<UserRequestVM>> GetAllUsersAsync();
         
         Task<IEnumerable<EmployeeVM>> GetAllEmployeeAsync();
@@ -93,8 +93,8 @@ namespace MisaAsp.Repositories
             {
                 EmployeeCode = request.EmployeeCode,
                 EmployeeName = request.EmployeeName,
-                Department = request.Department,             
-                MobilePhone = request.MobilePhone,
+                Department = request.Department,
+                PhoneNumber = request.PhoneNumber,
            
             };
             return await ExecuteProcScalarAsync<int>("createemployee", parameters);

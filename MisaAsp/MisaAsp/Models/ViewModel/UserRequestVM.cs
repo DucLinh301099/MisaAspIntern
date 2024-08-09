@@ -1,4 +1,5 @@
 ﻿using MisaAsp.Attribute.ModelAttribute;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace MisaAsp.Models.ViewModel
@@ -10,10 +11,12 @@ namespace MisaAsp.Models.ViewModel
 
         [RequiredVI]
         [StringLengthVI(100)]
+        [DisplayName("Họ và đệm")]
         public string FirstName { get; set; }
 
         [RequiredVI]
         [StringLengthVI(100)]
+        [DisplayName("Tên")]
         public string LastName { get; set; }
 
         [RequiredVI]
@@ -24,9 +27,10 @@ namespace MisaAsp.Models.ViewModel
         [RequiredVI]
         [Phone]
         [StringLengthVI(100)]
+        [DisplayName("Số điện thoại")]
         public string PhoneNumber { get; set; }
 
-        // New properties for RoleId and RoleName
+        
         [RequiredVI]
         public int RoleId { get; set; }
 

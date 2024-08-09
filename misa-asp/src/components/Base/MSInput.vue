@@ -1,7 +1,13 @@
 <template>
   <div
     class="ms-input"
-    :class="{ focused: isFocused, 'no-border': noBorder, 'has-error': error }"
+    :class="{
+      focused: isFocused,
+      'no-border': noBorder,
+      'has-error': errors,
+      'combobox-error': comboboxError,
+      'comboboxGrid-error': comboboxGridError,
+    }"
   >
     <input
       :type="type"
@@ -10,10 +16,11 @@
       @focus="handleFocus"
       @blur="handleBlur"
       :placeholder="placeholder"
-      :class="{ 'input-error': error }"
+      :disabled="disabled"
+      :class="{ 'input-error': errors && !comboboxError, comboboxGridError }"
     />
-    <span v-if="error" class="error-icon">!</span>
-    <span v-if="error" class="error-tooltip">{{ error }}</span>
+    <span v-if="errors && type !== 'date'" class="error-icon">!</span>
+    <span v-if="errors" class="error-tooltip">{{ errors }}</span>
   </div>
 </template>
 
@@ -33,10 +40,6 @@ export default {
       type: String,
       default: null,
     },
-    errors: {
-      type: Array,
-      default: () => [],
-    },
     placeholder: {
       type: String,
       default: "",
@@ -45,20 +48,33 @@ export default {
       type: Boolean,
       default: false,
     },
+    comboboxError: {
+      type: Boolean,
+      default: false,
+    },
+    comboboxGridError: {
+      type: Boolean,
+      default: false,
+    },
+    field: {
+      type: String,
+      default: null,
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
       isFocused: false,
+      errors: null,
     };
-  },
-  computed: {
-    error() {
-      return this.errors && this.errors.length ? this.errors.join(", ") : "";
-    },
   },
   methods: {
     updateValue(event) {
       this.$emit("update:value", event.target.value);
+      this.errors = null;
     },
     handleFocus(event) {
       this.isFocused = true;
@@ -67,6 +83,9 @@ export default {
     handleBlur(event) {
       this.isFocused = false;
       this.$emit("blur", event);
+    },
+    setError(item) {
+      this.errors = item;
     },
   },
 };
@@ -84,8 +103,9 @@ export default {
   width: 100%;
   border: 1px solid transparent;
   height: 20px;
-  font-size: 14px;
+  font-size: 12.5px;
   transition: border-color 0.3s;
+  padding-left: 10px;
 }
 
 .ms-input.focused {
@@ -97,7 +117,14 @@ export default {
 }
 
 .ms-input.has-error {
-  border: 1px solid #f85050;
+  border: 1px solid #ff6666;
+}
+
+.ms-input.combobox-error {
+  border: none;
+}
+.ms-input.comboboxGrid-error {
+  border: none;
 }
 
 .error-icon {
@@ -106,10 +133,10 @@ export default {
   justify-content: center;
   position: absolute;
   right: 10px;
-  width: 20px;
-  height: 20px;
-  border: 2px solid #f85050;
-  color: #f85050;
+  width: 18px;
+  height: 18px;
+  border: 1px solid #ff6666;
+  color: #ff6666;
   border-radius: 50%;
   font-size: 14px;
   line-height: 18px;
@@ -120,7 +147,7 @@ export default {
 .error-tooltip {
   display: block;
   position: absolute;
-  background-color: #f85050;
+  background-color: #ff6666;
   color: white;
   font-size: 12px;
   padding: 5px;

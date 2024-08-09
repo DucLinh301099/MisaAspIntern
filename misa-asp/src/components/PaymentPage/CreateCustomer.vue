@@ -11,12 +11,10 @@
           <MSInput
             type="text"
             ref="ObjectId"
-            data-field="objectId"
-            :errors="objectIdErrors" 
+            :errors="objectIdErrors"
             :value="objectId"
             @input="updateValue('objectId', $event.target.value)"
             class="input-field-a"
-            required
           />
         </div>
         <div class="input-container">
@@ -26,12 +24,10 @@
           <MSInput
             type="text"
             ref="ObjectName"
-            data-field="objectName"
-            :errors="objectNameErrors" 
+            :errors="objectNameErrors"
             :value="objectName"
             @input="updateValue('objectName', $event.target.value)"
             class="input-field-a"
-            required
           />
         </div>
       </div>
@@ -44,11 +40,9 @@
             type="text"
             :value="taxCode"
             ref="TaxCode"
-            data-field="taxCode"
-            :errors="taxCodeErrors" 
+            :errors="taxCodeErrors"
             @input="updateValue('taxCode', $event.target.value)"
             class="input-field-a"
-            required
           />
         </div>
         <div class="input-container">
@@ -56,13 +50,10 @@
           <MSInput
             type="text"
             :value="phoneNumber"
-            
             ref="PhoneNumber"
-            data-field="phoneNumber"
-            :errors="phoneNumberErrors"           
+            :errors="phoneNumberErrors"
             @input="updateValue('phoneNumber', $event.target.value)"
             class="input-field-a"
-            required
           />
         </div>
       </div>
@@ -73,12 +64,9 @@
             type="text"
             :value="address"
             ref="Address"
-            data-field="address"
             :errors="addressErrors"
-            
             @input="updateValue('address', $event.target.value)"
             class="input-field-b"
-            required
           />
         </div>
       </div>
@@ -102,15 +90,12 @@
 
 <script>
 import { customer } from "../../api/customer";
-import MSInput from "../Base/MSInput.vue";
-import BaseHandleSubmit from "../Base/BaseHandleSubmit.vue";
+import BaseForm from "../Base/BaseForm.vue";
 
 export default {
   name: "CreateCustomer",
-  extends: BaseHandleSubmit,
-  components: {
-    MSInput,
-  },
+  extends: BaseForm,
+
   data() {
     return {
       objectId: "",
@@ -118,13 +103,12 @@ export default {
       taxCode: "",
       address: "",
       phoneNumber: "",
- 
-      objectIdErrors : [],
-      objectNameErrors : [],
-      taxCodeErrors :[],
-      addressErrors :[],
-      phoneNumberErrors :[],
 
+      objectIdErrors: [],
+      objectNameErrors: [],
+      taxCodeErrors: [],
+      addressErrors: [],
+      phoneNumberErrors: [],
     };
   },
   methods: {
@@ -215,7 +199,7 @@ label {
 }
 
 .input-field-a {
-  padding: 3.7px;
+  padding: 1px;
   border: 1px solid #babec5;
   border-radius: 2.5px;
   font-size: 14px;
@@ -224,7 +208,7 @@ label {
   width: 200px;
 }
 .input-field-b {
-  padding: 3.7px;
+  padding: 1px;
   border: 1px solid #babec5;
   border-radius: 2.5px;
   font-size: 14px;

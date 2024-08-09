@@ -3,14 +3,6 @@
     <SideBarComponent />
     <div class="content">
       <div class="header">
-        <MSAlert
-          :message="alertMessage"
-          :type="alertType"
-          :visible="alertVisible"
-          :isConfirm="alertIsConfirm"
-          :isShow="alertIsShow"
-          @confirm="handleConfirm"
-        />
         <div class="create">
           <p class="links">
             <router-link class="router-link" to="/admin"
@@ -34,7 +26,6 @@
                 type="text"
                 class="edit-user-input"
                 ref="FirstName"
-                data-field="firstName"
                 :errors="firstNameErrors"
                 :value="editUser.firstName"
                 @input="updateValue('firstName', $event.target.value)"
@@ -50,7 +41,6 @@
                 type="text"
                 class="edit-user-input"
                 ref="LastName"
-                data-field="lastName"
                 :errors="lastNameErrors"
                 @input="updateValue('lastName', $event.target.value)"
                 :value="editUser.lastName"
@@ -68,7 +58,6 @@
                 type="email"
                 class="edit-user-input"
                 ref="Email"
-                data-field="email"
                 :errors="emailErrors"
                 @input="updateValue('email', $event.target.value)"
                 :value="editUser.email"
@@ -84,7 +73,6 @@
                 type="text"
                 class="edit-user-input"
                 ref="PhoneNumber"
-                data-field="phoneNumber"
                 :errors="phoneNumberErrors"
                 @input="updateValue('phoneNumber', $event.target.value)"
                 :value="editUser.phoneNumber"
@@ -108,17 +96,13 @@
 <script>
 import { account } from "../../api/account";
 import SideBarComponent from "../AdminPage/SideBarComponent.vue";
-import MSAlert from "../Base/MSAlert.vue";
-import MSInput from "../Base/MSInput.vue";
-import BaseHandleSubmit from "../Base/BaseHandleSubmit.vue";
+import BaseForm from "../Base/BaseForm.vue";
 
 export default {
   name: "EditUserPage",
-  extends: BaseHandleSubmit,
+  extends: BaseForm,
   components: {
     SideBarComponent,
-    MSAlert,
-    MSInput,
   },
   props: ["id"],
   data() {
@@ -128,11 +112,6 @@ export default {
       phoneNumberErrors: [],
       emailErrors: [],
       editUser: null,
-      alertMessage: "",
-      alertVisible: false,
-      alertIsConfirm: false,
-      confirmAction: null,
-      alertIsShow: true,
     };
   },
   async created() {
@@ -151,14 +130,14 @@ export default {
       return await account.updateUser(this.editUser);
     },
     afterCallSuccess(responseData) {
-      this.showConfirm("Sửa thông tin người dùng !", () => {
+      this.showAlert("Sửa thông tin người dùng !", () => {
         if (responseData) {
           this.$router.push("/admin");
         }
       });
     },
     afterCallErrorCustom(responseData) {
-      this.showConfirm(
+      this.showAlert(
         "Sửa thông tin thất bại thất bại - Thông tin nhập liệu không hợp lệ",
         () => {
           if (!responseData.isSuccess) {
@@ -172,19 +151,13 @@ export default {
       this.$router.push("/admin");
     },
 
-    showConfirm(message, action) {
-      this.alertMessage = message;
-      this.confirmAction = action;
-      this.alertVisible = true;
-      this.alertIsConfirm = true;
-      this.alertIsShow = false;
-    },
-    handleConfirm() {
-      if (this.confirmAction) {
-        this.confirmAction();
-      }
-      this.alertVisible = false;
-    },
+    /**
+     * function cập nhật giá trị khi muốn thay đổi thông
+     * tin trong các ô input và sẽ làm các tooltip hiển thị
+     * lỗi sẽ ẩn đi khi nhập thông tin thay đổi
+     * @param field
+     * @param value
+     */
     updateValue(field, value) {
       this.editUser[field] = value;
       switch (field) {

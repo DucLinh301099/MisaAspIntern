@@ -11,11 +11,9 @@
             type="text"
             :value="accountNumber"
             ref="AccountNumber"
-            data-field="accountNumber"
             :errors="accountNumberErrors"
             @input="updateValue('accountNumber', $event.target.value)"
             class="input-field"
-            required
           />
         </div>
         <div class="input-container">
@@ -26,11 +24,9 @@
             type="text"
             :value="bankName"
             ref="BankName"
-            data-field="bankName"
             :errors="bankNameErrors"
             @input="updateValue('bankName', $event.target.value)"
             class="input-field"
-            required
           />
         </div>
       </div>
@@ -44,17 +40,20 @@
             type="text"
             :value="branch"
             ref="Branch"
-            data-field="branch"
             :errors="branchErrors"
             @input="updateValue('branch', $event.target.value)"
             class="input-field"
-            required
           />
         </div>
         <div class="input-container full-width">
           <label for="account-type">Loại tài khoản</label>
           <div class="custom-select">
-            <select id="account-type" v-model="typeOfBank" class="input-field">
+            <select
+              id="account-type"
+              v-model="typeOfBank"
+              required
+              class="input-field"
+            >
               <option class="options" value="1">Tài khoản chi</option>
               <option class="options" value="2">Tài khoản nhận</option>
             </select>
@@ -82,15 +81,11 @@
 
 <script>
 import { bankAccount } from "../../api/bank";
-import MSInput from "../Base/MSInput.vue";
-import BaseHandleSubmit from "../Base/BaseHandleSubmit.vue";
+import BaseForm from "../Base/BaseForm.vue";
 
 export default {
   name: "CreateBankAccount",
-  extends: BaseHandleSubmit,
-  components: {
-    MSInput,
-  },
+  extends: BaseForm,
   data() {
     return {
       accountNumber: "",
@@ -184,7 +179,7 @@ label {
 }
 
 .input-field {
-  padding: 3.7px;
+  padding: 1px;
   border: 1px solid #babec5;
   border-radius: 2.5px;
   outline: none;

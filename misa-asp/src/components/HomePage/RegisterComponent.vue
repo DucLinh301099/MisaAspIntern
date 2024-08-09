@@ -1,14 +1,6 @@
 <template>
   <div class="register-page">
     <div class="register-container">
-      <MSAlert
-        :message="alertMessage"
-        :type="alertType"
-        :visible="alertVisible"
-        :isConfirm="alertIsConfirm"
-        :isShow="alertIsShow"
-        @confirm="handleConfirm"
-      />
       <div class="logo-section-register">
         <router-link to="/">
           <img
@@ -37,8 +29,6 @@
               ref="FirstName"
               class="register-input"
               :value="firstName"
-              data-field="firstName"
-              :errors="firstNameErrors"
               @input="updateValue('firstName', $event.target.value)"
               placeholder="Họ và đệm"
             />
@@ -49,8 +39,6 @@
               ref="LastName"
               class="register-input"
               :value="lastName"
-              data-field="lastName"
-              :errors="lastNameErrors"
               @input="updateValue('lastName', $event.target.value)"
               placeholder="Tên"
             />
@@ -62,8 +50,6 @@
             ref="Email"
             class="register-input"
             :value="email"
-            data-field="email"
-            :errors="emailErrors"
             @input="updateValue('email', $event.target.value)"
             placeholder="Email"
           />
@@ -74,8 +60,6 @@
             ref="PhoneNumber"
             class="register-input"
             :value="phoneNumber"
-            data-field="phoneNumber"
-            :errors="phoneNumberErrors"
             @input="updateValue('phoneNumber', $event.target.value)"
             placeholder="Số điện thoại"
           />
@@ -86,8 +70,6 @@
             ref="Password"
             class="register-input"
             :value="password"
-            data-field="password"
-            :errors="passwordErrors"
             @input="updateValue('password', $event.target.value)"
             placeholder="Mật khẩu"
           />
@@ -120,17 +102,12 @@
 
 <script>
 import { account } from "../../api/account";
-import MSInput from "../Base/MSInput.vue";
-import MSAlert from "../Base/MSAlert.vue";
-import BaseHandleSubmit from "../Base/BaseHandleSubmit.vue";
+import BaseForm from "../Base/BaseForm.vue";
 
 export default {
   name: "RegisterComponent",
-  extends: BaseHandleSubmit,
-  components: {
-    MSInput,
-    MSAlert,
-  },
+  extends: BaseForm,
+
   data() {
     return {
       firstName: "",
@@ -139,16 +116,6 @@ export default {
       phoneNumber: "",
       password: "",
       roleId: "",
-      firstNameErrors: [],
-      lastNameErrors: [],
-      phoneNumberErrors: [],
-      emailErrors: [],
-      passwordErrors: [],
-      alertMessage: "",
-      alertVisible: false,
-      alertIsConfirm: false,
-      confirmAction: null,
-      alertIsShow: true,
     };
   },
   methods: {
@@ -163,14 +130,14 @@ export default {
       );
     },
     afterCallSuccess(responseData) {
-      this.showConfirm("Đăng ký thành công tài khoản mới!", () => {
+      this.showAlert("Đăng ký thành công tài khoản mới!", () => {
         if (responseData) {
           this.$router.push("/login");
         }
       });
     },
     afterCallErrorCustom(responseData) {
-      this.showConfirm(
+      this.showAlert(
         "Đăng ký thất bại - Thông tin đăng ký không hợp lệ",
         () => {
           if (!responseData.isSuccess) {
@@ -180,40 +147,9 @@ export default {
       );
     },
 
-    showConfirm(message, action) {
-      this.alertMessage = message;
-      this.confirmAction = action;
-      this.alertVisible = true;
-      this.alertIsConfirm = true;
-      this.alertIsShow = false;
-    },
-    handleConfirm() {
-      if (this.confirmAction) {
-        this.confirmAction();
-      }
-      this.alertVisible = false;
-    },
     updateValue(field, value) {
       this[field] = value;
-      switch (field) {
-        case "firstName":
-          this.firstNameErrors = [];
-          break;
-        case "lastName":
-          this.lastNameErrors = [];
-          break;
-        case "email":
-          this.emailErrors = [];
-          break;
-        case "phoneNumber":
-          this.phoneNumberErrors = [];
-          break;
-        case "password":
-          this.passwordErrors = [];
-          break;
-        default:
-          break;
-      }
+      this.$refs[field].errors = null; // Xóa lỗi khi nhập lại dữ liệu
     },
   },
 };
@@ -310,6 +246,7 @@ img {
   display: flex;
   justify-content: space-between;
   padding-bottom: 5px;
+  gap: 10px;
 }
 .form-group-inline {
   flex: 0 0 48%;

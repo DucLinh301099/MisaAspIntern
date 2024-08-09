@@ -37,6 +37,6 @@ namespace MisaAsp.Repositories
             {
                 
                 return await QueryProcAsync<CustomerVM>("getallcustomers", null);
-        }
+            }
         } 
 }

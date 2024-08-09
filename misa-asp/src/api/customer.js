@@ -1,4 +1,4 @@
-import { base } from '../api/base.js';
+import { baseApi } from '../api/baseApi.js';
 import Api from '../api/apiConst.js';
 
 export const customer = {
@@ -20,7 +20,7 @@ export const customer = {
       Address: address,
       PhoneNumber: phoneNumber
     };
-    const responseData = await base.postAuthenApi(Api.customer.url, params);
+    const responseData = await baseApi.postAuthenApi(Api.customer.url, params);
     return responseData;
     
   }

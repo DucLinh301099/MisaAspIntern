@@ -1,14 +1,6 @@
 <template>
   <div class="forgot-password-page">
     <div class="forgot-password-container">
-      <MSAlert
-        :message="alertMessage"
-        :type="alertType"
-        :visible="alertVisible"
-        :isClose="alertIsClose"
-        @close="alertVisible = false"
-        @cancel="alertVisible = false"
-      />
       <div class="logo-section">
         <router-link to="/">
           <img
@@ -40,20 +32,12 @@
 
 <script>
 import { account } from "../../api/account";
-import MSAlert from "../Base/MSAlert.vue";
 
 export default {
   name: "ForgotPasswordComponent",
-  components: {
-    MSAlert,
-  },
   data() {
     return {
       email: "",
-      alertMessage: "",
-      alertType: "info",
-      alertVisible: false,
-      alertIsClose: false,
     };
   },
   methods: {

@@ -1,20 +1,32 @@
 <template>
-  <div class="combobox-account-input-wrapper">
+  <div class="combobox-account-input-wrapper" :class="{ disabled: disabled }">
     <label for="combobox-label">
       {{ label }} <span class="required" v-if="isRequired">*</span>
     </label>
     <div class="input-container">
-      <div class="input-with-button" :class="{ focus: isInputFocused }">
+      <div
+        class="input-with-button"
+        :class="{
+          focus: isInputFocused,
+          'has-error': errors && errors.length > 0,
+        }"
+      >
         <MSInput
           class="base-input"
-          :type="type"
           :value="inputValue"
+          :comboboxError="errors && errors.length > 0"
           :noBorder="true"
+          :disabled="disabled"
           @input="handleOnInput"
           @focus="handleFocus"
           @blur="handleBlur"
+          ref="inputComponent"
         />
-        <button v-if="showButton" @click="openCreateModal" class="add-button">
+        <button
+          v-if="showButton && !disabled"
+          @click="openCreateModal"
+          class="add-button"
+        >
           +
         </button>
         <multiselect
@@ -23,6 +35,7 @@
           :close-on-select="true"
           placeholder=""
           class="multiselect"
+          :disabled="disabled"
           @open="onExpandCombox"
           @close="showTable = false"
           @focusin="handleFocus"
@@ -62,34 +75,23 @@
         @afterCallSuccess="handleSubmitModal"
       />
     </Modal>
-    <MSAlert
-      :message="alertMessage"
-      :type="alertType"
-      :visible="alertVisible"
-      :isConfirm="alertIsConfirm"
-      :isShow="alertIsShow"
-      @confirm="handleConfirm"
-    />
   </div>
 </template>
 
 <script>
-import MSInput from "../Base/MSInput.vue";
 import Multiselect from "vue-multiselect";
 import "vue-multiselect/dist/vue-multiselect.css";
 import Modal from "../Base/Modal.vue";
-import MSAlert from "../Base/MSAlert.vue";
-import { base } from "../../api/base";
-import BaseHandleSubmit from "../Base/BaseHandleSubmit.vue";
+import { baseApi } from "../../api/baseApi";
+
+import BaseSubmit from "../Base/BaseSubmit.vue";
 
 export default {
   name: "MSCombobox",
-  extends: BaseHandleSubmit,
+  extends: BaseSubmit,
   components: {
-    MSInput,
     Multiselect,
     Modal,
-    MSAlert,
   },
   props: {
     selectedRow: {
@@ -97,6 +99,10 @@ export default {
       default: null,
     },
     label: {
+      type: String,
+      default: null,
+    },
+    field: {
       type: String,
       default: null,
     },
@@ -124,6 +130,10 @@ export default {
       type: Object,
       default: null,
     },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -134,12 +144,8 @@ export default {
       isInputFocused: false,
       isCreateModalVisible: false,
       optionsData: this.options != null ? this.options : [],
-      alertMessage: "",
-      alertVisible: false,
-      alertIsConfirm: false,
-      alertIsShow: false,
-      confirmAction: null,
       formData: {},
+      errors: null,
     };
   },
   watch: {
@@ -148,6 +154,12 @@ export default {
     },
     internalSelectedOption(newVal) {
       this.$emit("update:selectedOption", newVal);
+    },
+    errors(newVal) {
+      let refList = this.$refs;
+      if (refList["inputComponent"]) {
+        refList["inputComponent"].setError(newVal);
+      }
     },
   },
   computed: {
@@ -180,8 +192,8 @@ export default {
         return;
       }
       try {
-        base.buildUrlRequest(this.config);
-        const response = await base.getAuthenApi(this.config.url);
+        baseApi.buildUrlRequest(this.config);
+        const response = await baseApi.getAuthenApi(this.config.url);
         this.optionsData = this.extractData(response);
       } catch (error) {
         this.optionsData = [];
@@ -216,6 +228,8 @@ export default {
       }
       this.$emit("update:selectedRow", item);
       this.showTable = false;
+      this.errors = null;
+      this.$refs.inputComponent.setError(null);
     },
     handleOnInput(event) {
       this.inputValue = event.target.value;
@@ -229,34 +243,21 @@ export default {
     closeCreateModal() {
       this.isCreateModalVisible = false;
     },
-
     handleSubmitModal(responseData) {
       if (responseData && responseData.isSuccess) {
-        this.showConfirm("Tạo mới thành công tài khoản mới!", () => {
-          this.$emit("createSubmit", responseData);
-          this.closeCreateModal();
-        });
+        this.$emit("createSubmit", responseData);
+        this.closeCreateModal();
+        this.showAlert(responseData.message, () => {});
       }
-    },
-
-    showConfirm(message, action) {
-      this.alertMessage = message;
-      this.confirmAction = action;
-      this.alertVisible = true;
-      this.alertIsConfirm = true;
-      this.alertIsShow = false;
-    },
-    handleConfirm() {
-      if (this.confirmAction) {
-        this.confirmAction();
-      }
-      this.alertVisible = false;
     },
     handleFocus() {
       this.isInputFocused = true;
     },
     handleBlur() {
       this.isInputFocused = false;
+    },
+    setError(item) {
+      this.errors = item;
     },
   },
 };
@@ -272,10 +273,27 @@ export default {
 .input-with-button.focus {
   border-color: green;
 }
-
+.input-with-button.has-error {
+  border: 1px solid #f85050;
+}
 label {
-  margin-bottom: 8px;
+  margin-bottom: 5px;
   font-weight: bold;
+}
+.combobox-account-input-wrapper.disabled .input-with-button {
+  background-color: #d3d3d3;
+  cursor: not-allowed;
+}
+
+.combobox-account-input-wrapper.disabled .base-input,
+.combobox-account-input-wrapper.disabled .multiselect__input {
+  background-color: #d3d3d3;
+  cursor: not-allowed;
+}
+
+.combobox-account-input-wrapper.disabled .multiselect__tags {
+  background-color: #d3d3d3;
+  cursor: not-allowed;
 }
 
 .input-container {
@@ -289,7 +307,7 @@ label {
   border-radius: 2px;
   overflow: hidden;
   flex-grow: 2;
-  height: 30px;
+  height: 24.8px;
   position: relative;
 }
 
@@ -305,9 +323,8 @@ label {
 
 .base-input {
   width: 100%;
-  height: 30px;
+  height: 28px;
   border: none;
-  padding: 0 8px;
   box-sizing: border-box;
   outline: none;
   display: flex;
@@ -330,42 +347,20 @@ label {
 }
 
 .multiselect {
-  width: 39px;
+  width: 33px;
   border: none;
   border-left: 1px solid #999;
   margin-left: auto;
 }
-
-.second-input {
-  border: 1px solid #999;
-  border-radius: 2px;
-  padding: 8px;
-  box-sizing: border-box;
-  height: 32px;
-  flex-grow: 1;
-  margin-left: 15px;
-  outline: none;
-  margin-top: 17px;
+.multiselect .multiselect__option--highlight {
+  background-color: #b0b0b0; /* Màu xám đậm hơn */
 }
-.second-input:focus {
-  border-color: 1px solid #68c75b;
-}
-.second-input-e {
-  border-radius: 2px;
-  padding: 8px;
-  box-sizing: border-box;
-  height: 37px;
-  flex-grow: 1;
-  width: 50%;
-  margin-left: 15px;
-}
-
 .dropdown-table-wrapper {
   position: absolute;
-  z-index: 500;
+  z-index: 400;
   background-color: white;
-  width: 60%;
-  margin-top: 65px;
+  width: 50%;
+  margin-top: 50px;
   max-height: 130px;
   overflow-y: auto;
 }
@@ -381,7 +376,12 @@ label {
   padding: 8px;
   text-align: left;
 }
-
+thead {
+  position: sticky; /* Thêm thuộc tính này để thead luôn dính ở đầu */
+  top: 0; /* Đặt thead ở đầu của bảng khi scroll */
+  z-index: 2; /* Đảm bảo thead luôn nằm trên các hàng khác khi cuộn */
+  box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
+}
 .dropdown-table th {
   background-color: #f2f2f2;
   font-weight: bold;

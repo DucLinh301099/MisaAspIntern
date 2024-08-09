@@ -1,14 +1,20 @@
-<script>
+// src/mixins/formMixin.js
 export default {
-  name: "BaseHandleSubmit",
+  data() {
+    return {
+      alertMessage: "",
+      alertVisible: false,
+      alertIsConfirm: false,
+      alertIsShow: false,
+      confirmAction: null,
+      alertType: "", // Add type for alert
+    };
+  },
   methods: {
-    /**
-     * Hàm chính để xử lý quá trình gửi form
-     */
     async handleSubmit() {
-      this.customValidate(); // Bước 1: Tùy chỉnh Validate theo ý người dùng muốn
+      this.customValidate();
 
-      let responseData = await this.customHandleLogic(); // Bước 2: Thực hiện logic tùy chỉnh và lưu kết quả phản hồi
+      let responseData = await this.customHandleLogic();
 
       if (responseData.isSuccess) {
         await this.afterCallSuccess(responseData);
@@ -21,23 +27,16 @@ export default {
       }
     },
 
-    // Sẽ gọi hàm này trong tk kế thừa base này, sau đó tùy chỉnh tùy theo yêu cầu
     customValidate() {},
 
     async customHandleLogic() {},
 
     async afterCallSuccess() {},
 
-    /**
-     * hàm xử lý sau khi bị lỗi
-     * @param responseData
-     */
     async afterCallError(responseData) {
-      // Lấy các tham chiếu đến các phần tử form
       let refsForm = this.$refs;
       if (refsForm) {
         if (responseData.code && responseData.code.length) {
-          // Lặp qua các mã lỗi và hiển thị lỗi tương ứng trên các trường form
           for (let i = 0; i < responseData.code.length; i++) {
             var item = responseData.code[i];
             if (refsForm[item.FieldName]) {
@@ -47,16 +46,21 @@ export default {
         }
       }
     },
-    // gọi lại hàm này trong tk con và xử lý lỗi theo yêu cầu
     async afterCallErrorCustom() {},
     async handleCreateSubmit() {},
-    /**
-     * Hàm xử lý việc submit form của modal sau khi có phản hồi thành công
-     * @param formData
-     * @param responseData
-     */
+
+    showConfirm(message, action) {
+      this.alertMessage = message;
+      this.confirmAction = action;
+      this.alertVisible = true;
+      this.alertIsConfirm = true;
+      this.alertIsShow = true; // Ensure this is set to true
+    },
+    handleConfirm() {
+      if (this.confirmAction) {
+        this.confirmAction();
+      }
+      this.alertVisible = false;
+    },
   },
 };
-</script>
-
-<style scoped></style>

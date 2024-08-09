@@ -11,7 +11,6 @@
           <MSInput
             type="text"
             ref="EmployeeCode"
-            data-field="employeeCode"
             :errors="employeeCodeErrors"
             :value="employeeCode"
             @input="updateValue('employeeCode', $event.target.value)"
@@ -26,7 +25,6 @@
           <MSInput
             type="text"
             ref="EmployeeName"
-            data-field="employeeName"
             :errors="employeeNameErrors"
             :value="employeeName"
             @input="updateValue('employeeName', $event.target.value)"
@@ -37,14 +35,13 @@
       </div>
       <div class="form-row">
         <div class="input-container">
-          <label for="mobile-phone">Điện thoại</label>
+          <label for="phone-number">Điện thoại</label>
           <MSInput
             type="text"
-            ref="MobilePhone"
-            data-field="mobilePhone"
-            :errors="mobilePhoneErrors"
-            :value="mobilePhone"
-            @input="updateValue('mobilePhone', $event.target.value)"
+            ref="PhoneNumber"
+            :errors="phoneNumberErrors"
+            :value="phoneNumber"
+            @input="updateValue('phoneNumber', $event.target.value)"
             class="input-field"
           />
         </div>
@@ -53,7 +50,6 @@
           <MSInput
             type="text"
             ref="Department"
-            data-field="department"
             :errors="departmentErrors"
             :value="department"
             @input="updateValue('department', $event.target.value)"
@@ -81,38 +77,34 @@
 
 <script>
 import { account } from "../../api/account";
-import MSInput from "../Base/MSInput.vue";
-import BasehandleSubmit from "../Base/BaseHandleSubmit.vue";
+
+import BaseForm from "../Base/BaseForm.vue";
 
 export default {
   name: "CreateEmployee",
-  extends: BasehandleSubmit,
-  components: {
-    MSInput,
-  },
+  extends: BaseForm,
+
   data() {
     return {
       employeeCode: "",
       employeeName: "",
-      mobilePhone: "",
+      phoneNumber: "",
       department: "",
 
-      employeeCodeErrors:[],
-      employeeNameErrors:[],
-      mobilePhoneErrors:[],
-      departmentErrors:[],
-
+      employeeCodeErrors: [],
+      employeeNameErrors: [],
+      phoneNumberErrors: [],
+      departmentErrors: [],
     };
   },
   methods: {
     async customHandleLogic() {
-       return await account.createEmployee(
+      return await account.createEmployee(
         this.employeeCode,
         this.employeeName,
-        this.mobilePhone,
+        this.phoneNumber,
         this.department
       );
-
     },
     updateValue(field, value) {
       this[field] = value;
@@ -123,8 +115,8 @@ export default {
         case "employeeName":
           this.employeeNameErrors = [];
           break;
-        case "mobilePhone":
-          this.mobilePhoneErrors = [];
+        case "phoneNumber":
+          this.phoneNumberErrors = [];
           break;
         case "department":
           this.departmentErrors = [];
@@ -186,7 +178,7 @@ label {
 }
 
 .input-field {
-  padding: 3.7px;
+  padding: 1px;
   border: 1px solid #babec5;
   border-radius: 2.5px;
   font-size: 14px;
@@ -239,7 +231,9 @@ label {
 .submit-btn:hover {
   background-color: #218838;
 }
-
+button:hover {
+  background-color: #f4f5f8;
+}
 .error-message {
   color: red;
   margin-bottom: 20px;

@@ -3,15 +3,15 @@
 class RowModel {
   constructor(
     description = "",
-    debitAccount = null,
-    creditAccount = null,
+    debitAccountNumber = "",
+    creditAccountNumber = "",
     amount = "",
     objectId = null,
     objectName = ""
   ) {
     this.description = description;
-    this.debitAccount = debitAccount;
-    this.creditAccount = creditAccount;
+    this.debitAccountNumber = debitAccountNumber;
+    this.creditAccountNumber = creditAccountNumber;
     this.amount = amount;
     this.objectId = objectId;
     this.objectName = objectName;

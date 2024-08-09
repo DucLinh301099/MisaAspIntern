@@ -1,67 +1,59 @@
 <template>
-  <div class="login-page">
-    <div class="login-container">
-      <MSAlert
-        :message="alertMessage"
-        :type="alertType"
-        :visible="alertVisible"
-        :isConfirm="alertIsConfirm"
-        :isShow="alertIsShow"
-        @confirm="handleConfirm"
-      />
-      <div class="logo-section-login">
-        <router-link to="/">
-          <img
-            src="https://asp.misa.vn/Content/Images/SVG/Logo.svg"
-            alt="MISA ASP Logo"
-            class="main-logo1"
-          />
-        </router-link>
-      </div>
-      <div class="main-title">
-        <div>
-          <span class="bold">Đăng nhập</span>
+  <div>
+    <div class="login-page">
+      <div class="login-container">
+        <div class="logo-section-login">
+          <router-link to="/">
+            <img
+              src="https://asp.misa.vn/Content/Images/SVG/Logo.svg"
+              alt="MISA ASP Logo"
+              class="main-logo1"
+            />
+          </router-link>
         </div>
-        <div>
-          <img
-            src="https://asp.misa.vn/App/Content/images/Logo2.png"
-            class="float-right"
-          />
+        <div class="main-title">
+          <div>
+            <span class="bold">Đăng nhập</span>
+          </div>
+          <div>
+            <img
+              src="https://asp.misa.vn/App/Content/images/Logo2.png"
+              class="float-right"
+            />
+          </div>
         </div>
-      </div>
-      <form @submit.prevent="handleSubmit">
-        <div class="form-group">
-          <MSInput
-            type="text"
-            class="login-input"
-            :value="emailOrPhoneNumber"
-            ref="EmailOrPhoneNumber"
-            data-field="emailOrPhoneNumber"
-            :errors="emailOrPhoneNumberErrors"
-            @input="updateValue('emailOrPhoneNumber', $event.target.value)"
-            placeholder="Số điện thoại/Email"
-          />
+        <form @submit.prevent="handleSubmit">
+          <div class="form-group">
+            <MSInput
+              type="text"
+              class="login-input"
+              :value="emailOrPhoneNumber"
+              ref="EmailOrPhoneNumber"
+              @input="updateValue('emailOrPhoneNumber', $event.target.value)"
+              placeholder="Số điện thoại/Email"
+            />
+          </div>
+          <div class="form-group">
+            <MSInput
+              ref="Password"
+              type="password"
+              :value="password"
+              class="login-input"
+              @input="updateValue('password', $event.target.value)"
+              placeholder="Mật khẩu"
+            />
+          </div>
+          <button class="login-button" type="submit">Đăng nhập</button>
+        </form>
+        <div class="extra-links">
+          <p>
+            Bạn chưa có tài khoản?
+            <router-link to="/register">Đăng ký</router-link>
+          </p>
+          <p>
+            <router-link to="/forgot-password">Quên mật khẩu?</router-link>
+          </p>
         </div>
-        <div class="form-group">
-          <MSInput
-            ref="Password"
-            type="password"
-            :value="password"
-            class="login-input"
-            data-field="password"
-            @input="updateValue('password', $event.target.value)"
-            :errors="passwordErrors"
-            placeholder="Mật khẩu"
-          />
-        </div>
-        <button class="login-button" type="submit">Đăng nhập</button>
-      </form>
-      <div class="extra-links">
-        <p>
-          Bạn chưa có tài khoản?
-          <router-link to="/register">Đăng ký</router-link>
-        </p>
-        <p><router-link to="/forgot-password">Quên mật khẩu?</router-link></p>
       </div>
     </div>
   </div>
@@ -69,31 +61,19 @@
 
 <script>
 import { account } from "../../api/account";
-import MSInput from "../Base/MSInput.vue";
-import MSAlert from "../Base/MSAlert.vue";
-import BaseHandleSubmit from "../Base/BaseHandleSubmit.vue";
+import BaseForm from "../Base/BaseForm.vue";
 
 export default {
-  extends: BaseHandleSubmit,
+  extends: BaseForm,
   name: "LoginComponent",
-  components: {
-    MSInput,
-    MSAlert,
-  },
+
   data() {
     return {
       emailOrPhoneNumber: "",
       password: "",
-      emailOrPhoneNumberErrors: [],
-      passwordErrors: [],
-      alertMessage: "",
-      alertVisible: false,
-      alertIsConfirm: false,
-      confirmAction: null,
-      alertIsShow: true,
-      refs: [],
     };
   },
+
   methods: {
     /**
      * Các function này được kế thừa từ BaseHandleSubmit
@@ -103,16 +83,16 @@ export default {
     },
 
     afterCallSuccess(responseData) {
-      this.showConfirm("Đăng nhập thành công!", () => {
+      this.showAlert("Đăng nhập thành công!", () => {
         if (responseData.data.role === "Admin") {
-          this.$router.push("/admin");
+          this.$router.push("/withdraw-list");
         } else {
           this.$router.push("/userAccount");
         }
       });
     },
     afterCallErrorCustom(responseData) {
-      this.showConfirm(
+      this.showAlert(
         "Đăng nhập thất bại - Thông tin đăng nhập không hợp lệ",
         () => {
           if (!responseData.isSuccess) {
@@ -121,36 +101,10 @@ export default {
         }
       );
     },
-    /**
-     * function xử lý các alert thông báo
-     * @param message
-     * @param action
-     */
-    showConfirm(message, action) {
-      this.alertMessage = message;
-      this.confirmAction = action;
-      this.alertVisible = true;
-      this.alertIsConfirm = true;
-      this.alertIsShow = false;
-    },
-    handleConfirm() {
-      if (this.confirmAction) {
-        this.confirmAction();
-      }
-      this.alertVisible = false;
-    },
+
     updateValue(field, value) {
       this[field] = value;
-      switch (field) {
-        case "emailOrPhoneNumber":
-          this.emailOrPhoneNumberErrors = [];
-          break;
-        case "password":
-          this.passwordErrors = [];
-          break;
-        default:
-          break;
-      }
+      this.$refs[field].errors = null; // Xóa lỗi khi nhập lại dữ liệu
     },
   },
 };

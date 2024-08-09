@@ -19,7 +19,7 @@ namespace MisaAsp.Services
         Task<bool> ForgotPasswordAsync(ForgotPasswordRequestVM request);
         Task<IEnumerable<EmployeeVM>> GetAllEmployeeAsync();
         Task<int> CreateEmployeeAsync(EmployeeVM request);
-        Task<bool> DeleteUserAsync(int userId);
+        Task<bool> DeleteUserAsync(int id);
         Task<bool> UpdateUserAsync(UpdateUserVM user);
         Task<UpdateUserVM> GetUserByIdAsync(int id);
         Task<string> GetLastNameById(int id);
@@ -43,9 +43,9 @@ namespace MisaAsp.Services
             return await _accountRepo.UpdateUserAsync(user);
         }
 
-        public async Task<bool> DeleteUserAsync(int userId)
+        public async Task<bool> DeleteUserAsync(int id)
         {
-            return await _accountRepo.DeleteUserAsync(userId);
+            return await _accountRepo.DeleteUserAsync(id);
         }
 
         public async Task<IEnumerable<UserRequestVM>> GetAllUsersAsync()

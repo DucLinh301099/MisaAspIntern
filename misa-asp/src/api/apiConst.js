@@ -1,5 +1,4 @@
 // định nghãi các enpoint của api 
-
 const Api = {
     bankExpense: {
         url: 'BankAccount/bank-account',
@@ -58,6 +57,24 @@ const Api = {
         url: 'Accountant/list',
         method:'get'
     },
+    payment: {
+        url: 'Payment/create-payment',
+        method:'post'
+    },
+    withdrawList:{
+        url: 'Payment/withdraw-list',
+        method:'get'
+    },
+    deletePaymentById: {
+        url: 'Payment/payment',
+        method:'delete'
+    },
+    getWithdrawById: {
+        url: 'Payment/payment',
+        method:'get'
+        
+    },
+
 
 }
 export default Api;

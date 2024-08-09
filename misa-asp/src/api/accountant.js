@@ -1,5 +1,5 @@
 
-import { base } from '../api/base.js';
+import { baseApi } from '../api/baseApi.js';
 import Api from '../api/apiConst.js'
 
 export const accountant = {
@@ -8,7 +8,7 @@ export const accountant = {
    * @returns 
    */
   async getServices() {     
-      return await base.getApi(Api.accountant.url, null);
+      return await baseApi.getApi(Api.accountant.url, null);
       
     
   },

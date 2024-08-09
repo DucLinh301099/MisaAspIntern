@@ -2,9 +2,9 @@
   <div class="accounting-component">
     <label for="accounting" class="accounting">{{ label }}</label>
     <table class="accounting-table">
-      <thead>
+      <thead class="thead">
         <tr>
-          <th>#</th>
+          <th class="th-index">#</th>
           <th v-for="(column, index) in columnConfig" :key="index">
             {{ column.columnName }}
           </th>
@@ -12,51 +12,76 @@
         </tr>
       </thead>
       <tbody class="table-grid">
-        <tr v-for="(row, rowIndex) in modelValue" :key="rowIndex">
+        <tr
+          class="table-tbody"
+          v-for="(row, rowIndex) in modelValue"
+          :key="rowIndex"
+        >
           <td>{{ rowIndex + 1 }}</td>
           <td
             class="td-grid"
+            :class="getColumnClass(column.columnName)"
             v-for="(column, colIndex) in columnConfig"
             :key="colIndex"
           >
             <div v-if="column.dataType === 'dropdown'">
               <MSComboboxGrid
-                v-model="row[column.fieldName]"
+                v-show="!isEditMode"
+                :value="row[column.fieldName]"
                 :config="column.dropDownConfig"
+                @input="changeValueInput(rowIndex, column)"
                 @update:selectedRow="updateRowField(rowIndex, column, $event)"
+                :ref="`[${rowIndex}].${column.fieldName}`"
               />
+              <span v-show="isEditMode">{{ row[column.fieldName] }}</span>
             </div>
             <div v-else>
               <input
+                v-if="!disabled"
                 v-model="row[column.fieldName]"
                 @input="changeValueInput(rowIndex, column)"
                 :class="{
                   'right-align-input': true,
                   focus: isInputFocused(rowIndex, column.fieldName),
+                  'ten-doi-tuong-input': column.columnName === 'Tên đối tượng',
                 }"
                 @focus="handleFocus(rowIndex, column.fieldName)"
                 @blur="handleBlur"
+                ref="inputComponent"
               />
+              <span v-else>{{ row[column.fieldName] }}</span>
             </div>
           </td>
-          <td>
-            <button @click="removeRow(rowIndex)" v-if="hasRemoveRow">🗑️</button>
+          <td class="button-style">
+            <button
+              @click="removeRow(rowIndex)"
+              :disabled="disabled"
+              v-if="hasRemoveRow"
+            >
+              🗑️
+            </button>
           </td>
         </tr>
       </tbody>
     </table>
     <div class="accounting-footer">
-      <button class="btn-left" @click="addRow">Thêm dòng</button>
-      <button class="btn-right" @click="clearRows">Xóa hết dòng</button>
+      <button :disabled="disabled" class="btn-left" @click="addRow">
+        Thêm dòng
+      </button>
+      <button :disabled="disabled" class="btn-right" @click="clearRows">
+        Xóa hết dòng
+      </button>
     </div>
   </div>
 </template>
 
 <script>
 import MSComboboxGrid from "../ControlComponent/MSComboboxGrid.vue";
+import BaseSubmit from "../Base/BaseSubmit.vue";
 
 export default {
   name: "MSGrid",
+  extends: BaseSubmit,
   components: {
     MSComboboxGrid,
   },
@@ -66,6 +91,14 @@ export default {
     modelValue: {
       type: Array,
       default: null,
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
+    isEditMode: {
+      type: Boolean,
+      default: false,
     },
     hasRemoveRow: {
       type: Boolean,
@@ -83,12 +116,17 @@ export default {
       type: String,
       default: null,
     },
+    field: {
+      type: String,
+      default: null,
+    },
   },
   data() {
     return {
       columnConfig: this.configColumGrid.columnConfig,
       currentTotal: 0,
       focusedCell: { rowIndex: null, fieldName: null },
+      errors: null,
     };
   },
   mounted() {
@@ -103,18 +141,27 @@ export default {
         this.updateCurrentTotal();
       },
     },
+    errors(newVal) {
+      let refList = this.$refs;
+      if (refList["inputComponent"]) {
+        refList["inputComponent"].setError(newVal);
+      }
+    },
   },
   methods: {
     addRow() {
       let model = this.configColumGrid.model;
       const newRow = new model();
       this.modelValue.push(newRow);
+      this.updateCurrentTotal();
     },
     removeRow(index) {
       this.modelValue.splice(index, 1);
+      this.updateCurrentTotal();
     },
     clearRows() {
       this.modelValue = [];
+      this.updateCurrentTotal();
     },
     updateRowField(rowIndex, column, selectedOption) {
       let record = this.modelValue[rowIndex],
@@ -148,10 +195,10 @@ export default {
             break;
         }
       }
-
       if (record) {
         this.$emit("changeValueInput", record, column);
       }
+      this.updateCurrentTotal();
     },
     updateCurrentTotal() {
       this.currentTotal = this.modelValue.reduce(
@@ -159,38 +206,70 @@ export default {
           sum + Number(row.amount.toString().replace(/\./g, "") || 0),
         0
       );
+      this.$emit("updateTotalAmount", this.currentTotal);
+    },
+    setError(item) {
+      this.errors.push(item);
+    },
+    getColumnClass(columnName) {
+      if (
+        columnName === "TK Nợ" ||
+        columnName === "TK Có" ||
+        columnName === "Đối tượng"
+      ) {
+        return "medium-column";
+      } else if (columnName === "Số tiền") {
+        return "narrow-column";
+      }
+      return "";
     },
   },
 };
 </script>
-
 <style scoped>
 .accounting-component {
   padding-left: 20px;
   padding-right: 20px;
 }
-
+.table-tbody {
+  background-color: #e5f3ff;
+}
+.ten-doi-tuong-input {
+  border: none !important;
+  background-color: transparent;
+  color: #000; /* Match the text color */
+  cursor: default; /* Change cursor to default */
+  pointer-events: none; /* Prevent user interactions */
+}
 .td-grid {
   height: 40px;
 }
-
+.td-grid.medium-column {
+  width: 170px; /* Adjust as necessary */
+}
+.td-grid.narrow-column {
+  width: 170px; /* Adjust as necessary */
+}
+@media screen and (max-width: 320px) {
+  .td-grid.medium-column {
+    width: 60px; /* Adjust as necessary */
+  }
+  .td-grid.narrow-column {
+    width: 60px; /* Adjust as necessary */
+  }
+}
+.button-style {
+  width: 38px;
+}
+.th-index {
+  width: 28px;
+  align-items: center;
+}
+.thead {
+  background-color: #f4f5f8;
+}
 .right-align-input.focus {
   border-color: green;
-}
-
-.btn-left {
-  margin-right: 15px;
-  border: 0.5px solid #999;
-  width: 150px;
-  background-color: #fff;
-  font-weight: bold;
-}
-
-.btn-right {
-  border: 0.5px solid #999;
-  width: 150px;
-  background-color: #fff;
-  font-weight: bold;
 }
 
 .accounting {
@@ -206,13 +285,14 @@ export default {
   border-collapse: collapse;
   margin-bottom: 16px;
   margin-top: 8px;
-  font-size: 15px;
+  font-size: 12.5px;
 }
 
 .accounting-table th {
   border: 1px solid #ccc;
   padding: 8px;
   text-align: left;
+  font-size: 14;
 }
 
 .accounting-table td {
@@ -222,7 +302,6 @@ export default {
 }
 
 .accounting-table th {
-  background-color: #f5f5f5;
   font-weight: bold;
 }
 
@@ -232,8 +311,8 @@ export default {
   border: 1px solid #ccc;
   padding: 4px;
   box-sizing: border-box;
-  height: 30px;
-  border-radius: 2px;
+  height: 27px;
+  border-radius: 3px;
   outline: none;
 }
 
@@ -256,14 +335,28 @@ export default {
 }
 
 button {
-  padding: 8px 16px;
+  padding: 5px 8px;
   border: none;
   border-radius: 2.5px;
   cursor: pointer;
+  background-color: #e5f3ff;
+  font-size: 11.5px;
+}
+.btn-left {
+  margin-right: 10px;
+  border: 0.5px solid #999;
+  width: 120px;
   background-color: #fff;
+  font-weight: bold;
 }
 
+.btn-right {
+  border: 0.5px solid #999;
+  width: 120px;
+  background-color: #fff;
+  font-weight: bold;
+}
 button:hover {
-  background-color: #ddd;
+  background-color: #f4f5f8;
 }
 </style>

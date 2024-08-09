@@ -1,18 +1,43 @@
 <template>
   <div class="footer-payment">
-    <button class="cancel-btn" @click="cancel">Hủy</button>
+    <button class="cancel-btn" @click="emitSubmit('cancel')">Hủy</button>
 
     <div class="dropdown">
-      <button class="save-btn" @click="submitForm('save')">Cất</button>
+      <button v-if="!isEditMode" class="save-btn" @click="emitSubmit('save')">
+        Cất
+      </button>
+      <button v-else class="save-btn" @click="emitSubmit('edit')">Sửa</button>
+
       <div class="dropdown-container">
-        <button class="btn save-add-btn" @click="submitForm('saveAndPrint')">
-          Cất và In
+        <button
+          v-if="!isEditMode"
+          class="btn save-add-btn"
+          @click="emitSubmit('saveAndClose')"
+        >
+          Cất và Đóng
         </button>
-        <button class="dropdown-toggle" @click="toggleDropdown">&#9660;</button>
+        <button
+          v-else
+          class="btn save-add-btn"
+          @click="emitSubmit('unsaveAndEdit')"
+        >
+          Bỏ ghi và Sửa
+        </button>
+        <button
+          v-if="!isEditMode"
+          class="dropdown-toggle"
+          @click="toggleDropdown"
+        >
+          &#9660;
+        </button>
         <div class="dropdown-menu" v-if="isDropdownVisible">
-          <button @click="handleAction('add')">Cất và Thêm</button>
-          <button @click="handleAction('close')">Cất và Đóng</button>
-          <button @click="handleAction('print')">Cất và In</button>
+          <button v-if="!isEditMode" @click="emitSubmit('saveAndAdd')">
+            Cất và Thêm
+          </button>
+          <!-- <button v-else @click="emitSubmit('unrecord')">Bỏ ghi</button> -->
+          <button v-if="!isEditMode" @click="emitSubmit('saveAndPrint')">
+            Cất và In
+          </button>
         </div>
       </div>
     </div>
@@ -20,10 +45,11 @@
 </template>
 
 <script>
-import axios from "axios";
-
 export default {
   name: "FooterPayment",
+  props: {
+    isEditMode: Boolean,
+  },
   data() {
     return {
       isDropdownVisible: false,
@@ -33,36 +59,9 @@ export default {
     toggleDropdown() {
       this.isDropdownVisible = !this.isDropdownVisible;
     },
-    handleAction(action) {
-      console.log(`Action selected: ${action}`);
+    emitSubmit(action) {
+      this.$emit("submit", action);
       this.isDropdownVisible = false;
-      this.submitForm(action);
-    },
-    async submitForm(action) {
-      try {
-        const paymentData = this.$root.$data.payment; // đảm bảo payment có dữ liệu hoặc nó là 1 prop
-        console.log("Submitting payment data: ", paymentData);
-
-        // api call từ backend
-        const response = await axios.post("/api/payment", paymentData);
-
-        console.log("Payment submitted successfully", response);
-
-        // xử lý các submit khác nhau
-        if (action === "add") {
-          // Logic for "Cất và Thêm"
-        } else if (action === "close") {
-          // Logic for "Cất và Đóng"
-        } else if (action === "print") {
-          // Logic for "Cất và In"
-        }
-      } catch (error) {
-        console.error("Error submitting payment", error);
-      }
-    },
-    cancel() {
-      console.log("Cancel action");
-      // logic khi cancel
     },
   },
 };
@@ -84,17 +83,17 @@ export default {
 
 .btn {
   padding: 10px 20px;
-  font-size: 16px;
+  font-size: 14px;
   cursor: pointer;
 }
 
 .cancel-btn {
   background-color: #38393d;
   color: white;
-  padding: 10px 20px;
+  padding: 6px 18px;
   border: 1px solid #6b6c72;
   border-radius: 3px;
-  font-size: 16px;
+  font-size: 14px;
   cursor: pointer;
 }
 
@@ -102,10 +101,10 @@ export default {
   background-color: #38393d;
   color: white;
   margin-right: 10px;
-  padding: 10px 20px;
+  padding: 6px 18px;
   border: 1px solid #6b6c72;
   border-radius: 3px;
-  font-size: 16px;
+  font-size: 14px;
   cursor: pointer;
 }
 
@@ -114,6 +113,9 @@ export default {
   color: white;
   border: none;
   border-radius: 2.5px 0 0 2.5px;
+  height: 32px;
+  font-size: 14px;
+  padding: 5px 20px;
 }
 
 .dropdown {
@@ -138,12 +140,12 @@ export default {
   color: white;
   cursor: pointer;
   border-radius: 0 2.5px 2.5px 0;
-  font-size: 16px;
+  font-size: 11px;
 }
 
 .dropdown-menu {
   position: absolute;
-  bottom: 100%; /* Position above the dropdown container */
+  bottom: 100%;
   left: 0;
   background-color: white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -155,7 +157,7 @@ export default {
 
 .dropdown-menu button {
   padding: 10px 20px;
-  font-size: 16px;
+  font-size: 14px;
   background: none;
   border: none;
   cursor: pointer;

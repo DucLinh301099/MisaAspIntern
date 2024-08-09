@@ -1,134 +1,194 @@
 <template>
   <section class="payment">
     <HeaderPayment
-      :voucherType="voucherType"
-      :paymentMethod="paymentMethod"
-      @update:voucherType="voucherType = $event"
-      @update:paymentMethod="paymentMethod = $event"
+      :voucherType="currentItem.voucherType"
+      :paymentMethod="currentItem.paymentMethod"
+      :documentNumber="currentItem.documentNumber"
+      @update:voucherType="updateValue('voucherType', $event)"
+      @update:paymentMethod="updateValue('paymentMethod', $event)"
       class="header-payment"
+      :disabled="isDisabled"
     />
+
     <div class="input-information">
       <div class="input-information-right">
         <div class="account-input-container">
+          <!--html của input bankexpense -->
           <div class="account-input-wrapper">
             <MSCombobox
               label="Tài khoản chi"
               @update:selectedRow="updateSelectedRow('bankExpense', $event)"
               :config="paymentConfigCombo.comboxConfig.bankExpense"
-              :value="payment.accountExpenseNumber"
+              :value="currentItem.accountNumber"
               :ComponentAdd="createBankAccountComponent"
+              ref="BankAccountId"
+              :disabled="isDisabled"
             />
             <MSInput
               class="second-input"
-              :type="type"
-              :value="payment.bankExpenseName"
+              :value="currentItem.bankName"
+              @input="updateValue('bankExpenseName', $event.target.value)"
+              :disabled="isDisabled"
             />
           </div>
+          <!--html của input customer -->
           <div class="account-input-wrapper">
             <MSCombobox
               label="Đối Tượng"
               @update:selectedRow="updateSelectedRow('customer', $event)"
               :config="paymentConfigCombo.comboxConfig.customer"
-              :value="payment.customerName"
+              :value="currentItem.objectName"
               :ComponentAdd="createCustomerComponent"
+              ref="CustomerId"
+              :disabled="isDisabled"
             />
             <MSInput
               class="second-input"
-              :type="type"
-              :value="payment.customerAddress"
+              :value="currentItem.address"
+              @input="updateValue('customerAddress', $event.target.value)"
+              :disabled="isDisabled"
             />
           </div>
+          <!--html của input bankReceive -->
           <div class="account-input-wrapper">
             <MSCombobox
               v-if="!hideAccountReceive"
               label="Tài Khoản Nhận"
               :showButton="false"
               @update:selectedRow="updateSelectedRow('bankReceive', $event)"
-              :value="payment.accountReceiveNumber"
+              :value="currentItem.accountReceiveNumber"
               :config="paymentConfigCombo.comboxConfig.bankReceive"
+              :disabled="isDisabled"
             />
             <MSInput
               v-if="!hideAccountReceive"
               class="second-input"
-              :type="type"
-              :value="payment.bankReceiveName"
+              :value="currentItem.bankReceiveName"
+              @input="updateValue('bankReceiveName', $event.target.value)"
+              :disabled="isDisabled"
             />
           </div>
+          <!-- html của các input CMND, Ngày cấp, Nơi cấp -->
           <div v-if="!hideInformationInput" class="information-input-wrapper">
             <div class="input-container-info-1">
               <label for="so-cmnd">Số CMND</label>
               <MSInput
-                :value="payment.cmndNumber"
+                :value="currentItem.cmndNumber"
                 @input="updateValue('cmndNumber', $event.target.value)"
-                type="text"
                 class="base-input-info"
+                :disabled="isDisabled"
               />
             </div>
             <div class="input-container-info-2">
               <div class="input-field">
                 <label for="ngay-cap">Ngày cấp</label>
                 <MSInput
-                  :value="payment.licenseDate"
+                  :value="currentItem.licenseDate"
                   @input="updateValue('licenseDate', $event.target.value)"
                   type="date"
                   class="base-input-info"
+                  :disabled="isDisabled"
                 />
               </div>
               <div class="input-field">
                 <label for="noi-cap">Nơi cấp</label>
                 <MSInput
-                  type="text"
-                  :value="payment.licenseAddress"
+                  :value="currentItem.licenseAddress"
                   @input="updateValue('licenseAddress', $event.target.value)"
                   class="base-input-info"
+                  :disabled="isDisabled"
                 />
               </div>
             </div>
           </div>
-
+          <!--html của input nội dung thanh toán -->
           <div class="bill-content-input-wrapper">
             <label for="bill-content-input">Nội dung thanh toán</label>
             <div class="input-container">
               <MSInput
                 :value="defaultBillContent"
-                :validator="inputValidator"
                 class="base-input-content"
                 @input="updateBillContent"
+                :disabled="isDisabled"
               />
             </div>
           </div>
+          <!--html của input nhân viên -->
           <div class="account-input-wrapper">
             <MSCombobox
               v-if="!hideCreateEmployeeInput"
               label="Nhân viên"
               @update:selectedRow="updateSelectedRow('employee', $event)"
               :config="paymentConfigCombo.comboxConfig.employee"
-              :value="payment.employeeCode"
+              :value="currentItem.employeeName"
               :ComponentAdd="createEmployeeComponent"
+              ref="EmployeeId"
+              :disabled="isDisabled"
             />
           </div>
         </div>
 
         <div class="document">
-          <div class="document-content">
-            <label for="document-content">Tham chiếu chứng từ</label>
+          <div>
+            <label class="document-content" for="document-content"
+              >Tham chiếu chứng từ</label
+            >
           </div>
           <div class="document-link">
             <a href="#href"> ... </a>
           </div>
         </div>
       </div>
+      <!-- Các thành phần của Datetime Input -->
       <div class="input-information-center">
-        <DateTimeComponent
-          :voucherType="voucherType"
-          :value="{
-            ngayHachToan: payment.ngayHachToan,
-            ngayChungTu: payment.ngayChungTu,
-            soChungTu: payment.soChungTu,
-            hanQuyetToan: payment.hanQuyetToan,
-          }"
-          @update:value="updateDateTimeData"
-        />
+        <div class="datetime-wrapper">
+          <div class="form-group">
+            <label for="ngay-hach-toan">Ngày hạch toán</label>
+            <MSDatetime
+              type="date"
+              class="date-input"
+              ref="AccountingDate"
+              :value="currentItem.accountingDate"
+              @change="updateCurrentItem('accountingDate', $event)"
+              :disabled="isDisabled"
+            />
+          </div>
+          <div class="form-group">
+            <label for="ngay-chung-tu">Ngày chứng từ</label>
+            <MSDatetime
+              type="date"
+              class="date-input"
+              ref="DocumentDate"
+              :value="currentItem.documentDate"
+              @change="updateCurrentItem('documentDate', $event)"
+              :disabled="isDisabled"
+            />
+          </div>
+          <div class="form-group">
+            <label for="so-chung-tu">Số chứng từ</label>
+            <MSDatetime
+              class="date-input"
+              type="text"
+              ref="DocumentNumber"
+              :value="currentItem.documentNumber"
+              @change="updateCurrentItem('documentNumber', $event)"
+              :disabled="isDisabled"
+            />
+          </div>
+          <div
+            class="form-group"
+            v-if="currentItem.voucherType === '3. Tạm ứng cho nhân viên'"
+          >
+            <label for="han-quyet-toan">Hạn quyết toán</label>
+            <MSDatetime
+              type="date"
+              class="date-input"
+              :value="currentItem.hanQuyetToan"
+              @input="updateValue('hanQuyetToan', $event)"
+              :disabled="isDisabled"
+            />
+          </div>
+        </div>
       </div>
       <div class="input-information-left">
         <div class="summary-component">
@@ -137,21 +197,32 @@
         </div>
       </div>
     </div>
+
     <div class=" ">
+      <!--html của Grid  -->
       <MSGrid
         label="Hạch toán"
-        :modelValue="payment.paymentDetail"
+        :modelValue="currentItem.paymentDetails"
         @changeValueInput="changeValueInput"
         :configColumGrid="paymentConfigCombo.gridConfig"
         @selectedCombox="selectedGridCombox"
+        field="PaymentDetails"
+        ref="PaymentDetails"
+        :disabled="isDisabled"
+        :isEditMode="isEditMode"
       />
       <div>
-        <AttachFile />
+        <AttachFile :disabled="isDisabled" />
       </div>
     </div>
     <div>
       <div>
-        <FooterPayment class="footer-payment-a" />
+        <FooterPayment
+          :payment="currentItem"
+          class="footer-payment-a"
+          :isEditMode="isEditMode"
+          @submit="handleSubmit"
+        />
       </div>
     </div>
   </section>
@@ -160,8 +231,7 @@
 <script>
 import HeaderPayment from "../components/PaymentPage/HeaderPayment.vue";
 import MSCombobox from "../components/ControlComponent/MSCombobox.vue";
-import MSInput from "../components/Base/MSInput.vue";
-import DateTimeComponent from "../components/PaymentPage/DateTimeComponent.vue";
+
 import FooterPayment from "../components/PaymentPage/FooterPayment.vue";
 
 import MSGrid from "../components/ControlComponent/MSGrid.vue";
@@ -172,14 +242,18 @@ import CreateCustomer from "../components/PaymentPage/CreateCustomer.vue";
 import CreateEmployee from "../components/PaymentPage/CreateEmployee.vue";
 
 import paymentConfig from "../config/PaymentConfig";
+import BaseSubmit from "../components/Base/BaseSubmit.vue";
+import Api from "../api/apiConst";
+import MSDatetime from "../components/Base/MSDateTime.vue";
 
 export default {
   name: "Payment",
+  extends: BaseSubmit,
   components: {
     HeaderPayment,
     MSCombobox,
-    MSInput,
-    DateTimeComponent,
+    MSDatetime,
+
     FooterPayment,
 
     MSGrid,
@@ -189,111 +263,207 @@ export default {
     CreateCustomer,
     CreateEmployee,
   },
+
   data() {
     return {
-      voucherType: "1.Trả tiền nhà cung cấp",
-      paymentMethod: "Ủy nhiệm chi",
+      isDisabled: false,
+      isEditMode: false,
+      apiUrl: Api.payment.url,
       errorMessage: "",
       inputValue: "",
-      inputValueCustomer: "",
-      addressValue: "",
+      inputBillContent: "",
       totalAmount: 0,
-      bankNameInput: "",
-      accountReceiveValue: "",
+
       paymentConfigCombo: paymentConfig,
-      payment: {
-        accountExpenseNumber: null,
-        accountReceiveNumber: null,
-        bankExpenseName: null,
-        bankReceiveName: null,
+      currentItem: {
+        voucherType: "5. Chi khác",
+        paymentMethod: "Ủy nhiệm chi",
+        totalAmount: null,
+        billContent: null,
+
+        bankName: null,
+        accountNumber: null,
+        bankAccountId: null,
+
         customerName: null,
-        customerAddress: null,
-        employeeCode: null,
-        ngayHachToan: null,
-        ngayChungTu: null,
-        soChungTu: null,
-        hanQuyetToan: null,
-        cmndNumber: null,
-        licenseDate: null,
-        licenseAddress: null,
-        paymentDetail: [],
+        address: null,
+        customerId: null,
+
+        employeeName: null,
+        employeeId: null,
+
+        accountingDate: null,
+        documentDate: null,
+        documentNumber: "UNC001",
+        paymentDetails: [],
       },
+      documentNumberMapping: {
+        "Ủy nhiệm chi": "UNC001",
+        "Séc chuyển khoản": "SCK001",
+        "Séc tiền mặt": "STM001",
+      },
+
       createCustomerComponent: CreateCustomer,
       createBankAccountComponent: CreateBankAccount,
       createEmployeeComponent: CreateEmployee,
     };
   },
+
   computed: {
+    /**
+     * Các function này xử lý ẩn hiện các input theo nghiệp vụ đc yêu cầu
+     */
     hideInformationInput() {
       return (
-        this.paymentMethod === "Ủy nhiệm chi" ||
-        this.paymentMethod === "Séc chuyển khoản"
+        this.currentItem.paymentMethod === "Ủy nhiệm chi" ||
+        this.currentItem.paymentMethod === "Séc chuyển khoản"
       );
     },
     hideAccountReceive() {
-      return this.paymentMethod === "Séc tiền mặt";
+      return this.currentItem.paymentMethod === "Séc tiền mặt";
     },
     hideCreateEmployeeInput() {
       return (
-        this.voucherType === "2.Trả các khoản vay" ||
-        this.voucherType === "3.Tạm ứng cho nhân viên"
+        this.currentItem.voucherType === "2. Trả các khoản vay" ||
+        this.currentItem.voucherType === "3. Tạm ứng cho nhân viên"
       );
     },
+    /** */
+
     defaultBillContent() {
-      return `Chi tiền cho ${this.inputValueCustomer}`;
+      return `Chi tiền cho ${this.inputBillContent}`;
     },
+    /**
+     * xử lý format hiển thị của số tiền
+     */
     formattedTotalAmount() {
+      return this.totalAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    },
+    TotalAmount() {
       return this.totalAmount;
     },
   },
+  watch: {
+    "currentItem.paymentMethod"(newMethod) {
+      this.currentItem.documentNumber =
+        this.documentNumberMapping[newMethod] || "";
+    },
+  },
   methods: {
+    /**
+     * function gán giá trị vào record để lưu thông tin vào modelvalue
+     * trong MSGrid và sẽ lưu lại vào paymentDetails thông qua props
+     * @param record
+     * @param column
+     * @param selectedOption
+     */
     selectedGridCombox(record, column, selectedOption) {
-      if (column.fieldName === "customer") {
+      if (column.fieldName === "objectId") {
         record.objectId = selectedOption.objectId;
+
         record.objectName = selectedOption.objectName;
-        record.description = `Chi tiền cho ${selectedOption.objectName}`;
+      } else if (column.fieldName === "debitAccount") {
+        record.debitAccount = selectedOption.debitAccountNumber;
+      } else if (column.fieldName === "creditAccount") {
+        record.creditAccount = selectedOption.creditAccountNumber;
       }
     },
+    /**
+     * 2 function xử lý việc update số tiền khi có thêm một hàng mới được thêm
+     * trong grid.
+     * @param record
+     * @param column
+     */
     changeValueInput(record, column) {
       if (column.fieldName === "amount") {
-        this.updateTotalAmount(record);
+        this.updateTotalAmount();
       }
     },
-    updateTotalAmount(record) {
-      this.totalAmount = record.amount;
+
+    /**
+     * function cập nhật giá trị của totalamount
+     * ở đây sẽ quay lại MSGrid lấy giá trị của amount rồi tính tổng
+     * ra thành totalamount hiển thị ra màn hình.
+     */
+    updateTotalAmount() {
+      const total = this.currentItem.paymentDetails.reduce((sum, row) => {
+        return sum + Number(row.amount.toString().replace(/\./g, "") || 0);
+      }, 0);
+      this.totalAmount = total;
+      this.currentItem.totalAmount = this.formattedTotalAmount;
+      this.$emit("updateTotalAmount", this.totalAmount);
     },
+    //------------------------------------
+    /**
+     * function update value của các MSInput và các MSdatetime
+     * @param field
+     * @param value
+     */
+    updateValue(field, value) {
+      this.currentItem[field] = value;
+    },
+    updateCurrentItem(field, event) {
+      const value = event.target.value;
+      this.currentItem[field] = value;
+    },
+
+    /**
+     * fuction update giá trị khi chọn 1 option trong multiselect
+     * và gán nó vào object currentItem
+     * @param type
+     * @param item
+     */
     updateSelectedRow(type, item) {
       switch (type) {
         case "bankExpense":
-          this.bankNameInput = item.bankName;
-          this.payment.accountExpenseNumber = item.accountNumber;
-          this.payment.bankExpenseName = item.bankName;
+          this.currentItem.accountNumber = item.accountNumber;
+          this.currentItem.bankName = item.bankName;
+          this.currentItem.bankAccountId = item.id;
+
           break;
         case "customer":
-          this.payment.customerName = item.objectName;
-          this.payment.customerAddress = item.address;
-          this.payment.inputValueCustomer = item.objectName;
-          this.inputValueCustomer = item.objectName;
-          this.addressValue = item.address;
+          this.currentItem.customerName = item.objectName;
+          this.currentItem.address = item.address;
+          this.currentItem.billContent = item.objectName;
+          this.inputBillContent = item.objectName;
+          this.currentItem.customerId = item.id;
+          this.updateGridDescription(item.objectName);
+
           break;
         case "bankReceive":
-          this.accountReceiveValue = item.bankName;
-          this.payment.accountReceiveNumber = item.accountNumber;
-          this.payment.bankReceiveName = item.bankName;
+          this.currentItem.accountReceiveNumber = item.accountNumber;
+          this.currentItem.bankReceiveName = item.bankName;
           break;
         case "employee":
-          this.payment.employeeCode = item.employeeCode;
+          this.currentItem.employeeName = item.employeeName;
+          this.currentItem.employeeId = item.id;
+
           break;
       }
     },
-    updateDateTimeData(updatedValue) {
-      this.payment = updatedValue;
-    },
+
+    /**
+     * hàm gọi từ BaseSubmit thực hiện việc sau khi submit thành công
+     * sẽ thực hiện các yêu cầu tùy theo ng dùng mong muốn
+     * @param responseData
+     */
+
+    /**
+     * các function thực hiện gán data cho các input khác nhau
+     * @param
+     */
+
     updateBillContent(newValue) {
-      this.inputValueCustomer = newValue.replace("Chi tiền cho ", "");
+      this.inputBillContent = newValue.replace("Chi tiền cho ", "");
     },
-    updateDateTimeData(updatedValue) {
-      this.payment = { ...this.payment, ...updatedValue };
+
+    updateGridDescription(customerName) {
+      this.currentItem.paymentDetails.forEach((record) => {
+        record.description = `Chi tiền cho ${customerName}`;
+      });
+    },
+    generateGridRefs(rowIndex, fieldName) {
+      return `${rowIndex}-${fieldName}`;
     },
   },
 };
@@ -315,7 +485,7 @@ export default {
 
 .total-label {
   font-size: 16px;
-  font-weight: bold;
+
   margin-bottom: 8px;
 }
 
@@ -337,6 +507,7 @@ export default {
 .input-container {
   display: flex;
   align-items: center;
+  background-color: #fff;
 }
 
 .input-group {
@@ -345,7 +516,7 @@ export default {
 }
 
 label {
-  margin-bottom: 8px;
+  margin-bottom: 5px;
   font-weight: bold;
 }
 .accountingGrid {
@@ -381,32 +552,29 @@ label {
 .account-input-wrapper {
   display: flex;
   align-items: center;
-  margin-bottom: 4px;
+  margin-bottom: 5px;
 }
 
 .second-input {
   border: 1px solid #999;
   border-radius: 2px;
-  padding: 8px;
+
   box-sizing: border-box;
-  height: 32px;
+  height: 26px;
   flex-grow: 1;
   margin-left: 15px;
   width: 50%;
-  margin-top: 16px;
+  margin-top: 11px;
   display: flex;
   align-items: center;
 }
 
-label {
-  margin-bottom: 8px;
-  font-weight: bold;
-}
 .input-information {
   display: flex;
-  font-size: 14px;
-  margin-top: 20px;
+  font-size: 12.5px;
+  padding-top: 20px;
   margin-bottom: 15px;
+  background-color: #f4f5f8;
 }
 .input-information-right {
   width: 50%;
@@ -418,13 +586,49 @@ label {
   margin-bottom: auto;
 }
 .input-information-left {
-  width: 30%;
+  width: 35%;
 }
+.document-content {
+  font-weight: 300;
+  font-size: 13px;
+}
+/* css của datetimeinput */
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 13px;
+}
+.date-input {
+  box-sizing: border-box;
+  outline: none;
+  border: 1px solid #999;
+  border-radius: 2px;
+  overflow: hidden;
+  height: 26px;
+  width: 100%;
+
+  background-color: #fff;
+  font-size: 14px !important;
+}
+.datetime-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 200px;
+  margin: 0 auto;
+  border: 1px solid #999;
+  border-top: none;
+  border-bottom: none;
+  border-right: none;
+  padding-left: 25px;
+  padding-top: 5px;
+}
+/**----------- */
 
 .bill-content-input-wrapper {
   display: flex;
   flex-direction: column;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 .input-container {
@@ -469,7 +673,7 @@ label {
 }
 .base-input-info {
   width: 100%;
-  height: 32px;
+  height: 30px;
   border: 1px solid #999;
   border-radius: 2px;
   padding: 0 8px;
@@ -477,6 +681,7 @@ label {
   outline: none;
   display: flex;
   align-items: center;
+  background-color: #fff;
 }
 .base-input-info:focus-within {
   border-color: green;
@@ -506,7 +711,6 @@ label {
   border: 1px solid #999;
   display: flex;
   align-items: center;
-  height: 30px;
-  padding-left: 10px;
+  height: 24.8px;
 }
 </style>
