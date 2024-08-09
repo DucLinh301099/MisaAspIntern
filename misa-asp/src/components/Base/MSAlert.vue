@@ -60,6 +60,9 @@ export default {
   text-align: center;
   width: 100px;
 }
+.comfirm-buttons {
+  padding-top: 20px;
+}
 .alert-box {
   position: fixed;
   top: 50px;

@@ -44,7 +44,7 @@ export default {
 
 <style scoped>
 .ms-alert {
-  margin-top: 20px;
+  margin-top: 60px;
   font-family: AvertaStdCY, Helvetica, Arial, sans-serif;
   font-size: 15px;
 }

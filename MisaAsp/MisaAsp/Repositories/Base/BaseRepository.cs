@@ -215,5 +215,46 @@ namespace MisaAsp.Repositories.Base
                     _connection.Close();
             }
         }
+        public async Task<T> ExecuteProcQueryWithMappingAsync<T, U>(
+    string procedureName,
+    object parameters,
+    Func<T, U, T> map,
+    string splitOn = "Id")
+        {
+            var listParam = new List<string>();
+            var sql = string.Empty;
+            var listProp = parameters.GetType().GetProperties().ToList();
+
+            foreach (var item in listProp)
+            {
+                listParam.Add($"@{item.Name}");
+            }
+
+            if (listParam.Count > 0)
+            {
+                sql = $"SELECT * FROM {procedureName}({string.Join(',', listParam)})";
+            }
+            else
+            {
+                sql = $"SELECT * FROM {procedureName}()";
+            }
+
+            try
+            {
+                _connection.Open();
+                var result = await _connection.QueryAsync<T, U, T>(
+                    sql,
+                    map,
+                    parameters,
+                    splitOn: splitOn
+                );
+                return result.FirstOrDefault();
+            }
+            finally
+            {
+                if (_connection.State == ConnectionState.Open)
+                    _connection.Close();
+            }
+        }
     }
 }

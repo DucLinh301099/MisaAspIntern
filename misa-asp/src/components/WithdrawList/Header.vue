@@ -252,7 +252,7 @@ export default {
 .vx-navbar-wrapper {
   left: 0;
   top: 0;
-  position: absolute;
+  position: fixed;
   width: 100%;
   background: linear-gradient(to right, #2ca01c, #00c1bf);
   z-index: 100;

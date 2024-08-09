@@ -49,7 +49,7 @@ export default {
         if (action === "save" && responseData.isSuccess) {
           this.showAlert("Ghi sổ thành công", () => {
             this.isDisabled = true;
-            this.isEditMode = true; // Chuyển sang chế độ chỉnh sửa
+            this.isEditMode = true;
           });
         }
 

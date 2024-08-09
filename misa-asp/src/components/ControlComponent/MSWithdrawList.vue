@@ -1,76 +1,89 @@
 <template>
   <div class="withdraw-list-component">
-    <table class="withdraw-list-table">
-      <thead class="thead">
-        <tr>
-          <th class="th-index">#</th>
-          <th v-for="(column, index) in columnConfig" :key="index">
-            {{ column.columnName }}
-          </th>
-        </tr>
-      </thead>
-      <tbody class="table-grid">
-        <tr
-          class="table-tbody"
-          v-for="(row, rowIndex) in filteredOptionsData"
-          :key="rowIndex"
-        >
-          <td>{{ rowIndex + 1 }}</td>
-          <td
-            :class="[
-              'td-grid',
-              getColumnClass(column.columnName),
-              column.columnName === 'Số chứng từ' ? 'td-chung-tu' : '',
-            ]"
-            v-for="(column, colIndex) in columnConfig"
-            :key="colIndex"
+    <div class="withdraw-list-wrapper">
+      <table class="withdraw-list-table">
+        <thead class="thead">
+          <tr>
+            <th class="th-index">#</th>
+            <th v-for="(column, index) in columnConfig" :key="index">
+              {{ column.columnName }}
+            </th>
+          </tr>
+        </thead>
+        <tbody class="table-grid">
+          <tr
+            class="table-tbody"
+            v-for="(row, rowIndex) in filteredOptionsData"
+            :key="rowIndex"
           >
-            <span
-              v-if="
-                column.columnName !== 'Số chứng từ' &&
-                column.columnName !== 'Chức năng'
-              "
-              >{{ row[column.fieldName] }}</span
+            <td>{{ rowIndex + 1 }}</td>
+            <td
+              :class="[
+                'td-grid',
+                getColumnClass(column.columnName),
+                column.columnName === 'Số chứng từ' ? 'td-chung-tu' : '',
+              ]"
+              v-for="(column, colIndex) in columnConfig"
+              :key="colIndex"
             >
-            <a v-else-if="column.columnName === 'Số chứng từ'" href="#">{{
-              row[column.fieldName]
-            }}</a>
-            <div v-else class="actions-container">
-              <div class="flex justify-end">
-                <div class="ms-dropdown">
-                  <button
-                    class="ms-button ms-radius-false ms-dropdown-type-feature ms-dropdown-padding-custom-feature"
-                  >
-                    <div class="ms-button--text flex">
-                      <div class="con-ms-tooltip">
-                        <div class="tooltip-content">Xem</div>
-                      </div>
-                    </div>
-                  </button>
-                  <div class="dropdown">
+              <span
+                v-if="
+                  column.columnName !== 'Số chứng từ' &&
+                  column.columnName !== 'Chức năng'
+                "
+                >{{ row[column.fieldName] }}</span
+              >
+              <a v-else-if="column.columnName === 'Số chứng từ'" href="#">{{
+                row[column.fieldName]
+              }}</a>
+              <div v-else class="actions-container">
+                <div class="flex justify-end">
+                  <div class="ms-dropdown">
                     <button
-                      class="ms-button dropbtn ms-padding-is-single-false-size-default ms-dropdown-type-feature"
-                      @click="toggleDropdown(rowIndex)"
+                      class="ms-button ms-radius-false ms-dropdown-type-feature ms-dropdown-padding-custom-feature"
                     >
                       <div class="ms-button--text flex">
-                        <div class="mi mi-16 mi-arrow-up--blue">&nbsp;</div>
+                        <div class="con-ms-tooltip">
+                          <div class="tooltip-content">Xem</div>
+                        </div>
                       </div>
                     </button>
-                    <div
-                      v-if="dropdownVisible === rowIndex"
-                      class="dropdown-content"
-                    >
-                      <a href="#" @click="editRow(row)">Sửa</a>
-                      <a href="#" @click="deleteRow(row)">Xóa</a>
+                    <div class="dropdown">
+                      <button
+                        class="ms-button dropbtn ms-padding-is-single-false-size-default ms-dropdown-type-feature"
+                        @click="toggleDropdown(rowIndex)"
+                      >
+                        <div class="ms-button--text flex">
+                          <div class="mi mi-16 mi-arrow-up--blue">&nbsp;</div>
+                        </div>
+                      </button>
+                      <div
+                        v-if="dropdownVisible === rowIndex"
+                        class="dropdown-content"
+                      >
+                        <a href="#" @click="editRow(row)">Sửa</a>
+                        <a href="#" @click="deleteRow(row)">Xóa</a>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="total-amount">
+      <span class="span-amount"
+        >Tổng tiền:<strong>{{ formattedTotalAmount }}</strong></span
+      >
+    </div>
+
+    <div class="total-records">
+      Tổng số:
+      <strong class="bold-number">{{ filteredOptionsData.length }}</strong> bản
+      ghi
+    </div>
   </div>
 </template>
 
@@ -93,7 +106,7 @@ export default {
     return {
       columnConfig: withdrawListConfig.columnConfig,
       optionsData: [],
-      dropdownVisible: null, // Thêm biến để theo dõi dropdown đang hiển thị
+      dropdownVisible: null,
     };
   },
   computed: {
@@ -107,6 +120,15 @@ export default {
           String(val).toLowerCase().includes(query)
         );
       });
+    },
+    totalAmount() {
+      return this.filteredOptionsData.reduce((sum, item) => {
+        const amount = parseInt(item.totalAmount.replace(/[^\d]/g, ""), 10);
+        return sum + (amount || 0);
+      }, 0);
+    },
+    formattedTotalAmount() {
+      return this.totalAmount.toLocaleString("vi-VN");
     },
   },
   mounted() {
@@ -172,15 +194,73 @@ export default {
   padding-right: 20px;
   font-family: AvertaStdCY, Helvetica, Arial, sans-serif;
 }
+.bold-number {
+  font-weight: 800;
+}
+.span-amount {
+  font-size: 14px;
+  text-align: center;
+  padding-right: 150px;
+}
+.total-amount {
+  background-color: #e5f3ff;
+}
+.total-records {
+  font-size: 13px;
+  color: #333;
+  margin-top: 10px;
+  text-align: left;
+  padding-left: 10px;
+  font-family: AvertaStdCY, Helvetica, Arial, sans-serif;
+}
+/* Thêm lớp này để bao quanh bảng */
+.withdraw-list-wrapper {
+  max-height: 490px; /* Bạn có thể điều chỉnh chiều cao tối đa */
+  overflow-y: auto;
+  border-bottom: 2px solid #ccc; /* Thêm border bên dưới bảng */
+  box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.473);
+}
 
 .table-tbody {
   background-color: #fff;
 }
 
+table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.thead {
+  background-color: #f4f5f8;
+  white-space: nowrap;
+  height: 40px;
+  position: sticky; /* Thêm thuộc tính này để thead luôn dính ở đầu */
+  top: 0; /* Đặt thead ở đầu của bảng khi scroll */
+  z-index: 2; /* Đảm bảo thead luôn nằm trên các hàng khác khi cuộn */
+  box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
+  border-top: 1px solid #ccc !important;
+  border-bottom: 1px solid #ccc;
+}
+/* Style for the total amount row */
+
+.total-label {
+  text-align: left;
+  padding-left: 10px;
+}
+
+.withdraw-list-table th {
+  border-left: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+  padding: 8px;
+  text-align: center;
+  font-size: 14;
+  font-weight: bold;
+}
+
 .td-grid {
   height: 40px;
   text-align: center;
-  white-space: nowrap; /* Ngăn dòng xuống hàng */
+  white-space: nowrap;
 }
 
 .td-grid.narrow-column {
@@ -199,12 +279,6 @@ export default {
   text-align: center;
 }
 
-.thead {
-  background-color: #f4f5f8;
-  white-space: nowrap; /* Ngăn dòng xuống hàng */
-  height: 40px;
-}
-
 .withdraw-list {
   margin-bottom: 16px;
   font-weight: bold;
@@ -216,26 +290,14 @@ export default {
 .withdraw-list-table {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 16px;
-  margin-top: 8px;
-  font-size: 12.5px;
-}
 
-.withdraw-list-table th {
-  border: 1px solid #ccc;
-  padding: 8px;
-  text-align: center;
-  font-size: 14;
+  font-size: 12.5px;
 }
 
 .withdraw-list-table td {
   border: 1px solid #ccc;
   padding: 0px 10px 0px 10px;
   text-align: center;
-}
-
-.withdraw-list-table th {
-  font-weight: bold;
 }
 
 .withdraw-list-table tr:hover {
@@ -270,7 +332,7 @@ span {
   display: flex;
   justify-content: center;
   align-items: center;
-  white-space: nowrap; /* Ngăn dòng xuống hàng */
+  white-space: nowrap;
 }
 
 .actions-container button {

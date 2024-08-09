@@ -360,7 +360,7 @@ label {
   z-index: 400;
   background-color: white;
   width: 50%;
-  margin-top: 65px;
+  margin-top: 50px;
   max-height: 130px;
   overflow-y: auto;
 }
@@ -376,7 +376,12 @@ label {
   padding: 8px;
   text-align: left;
 }
-
+thead {
+  position: sticky; /* Thêm thuộc tính này để thead luôn dính ở đầu */
+  top: 0; /* Đặt thead ở đầu của bảng khi scroll */
+  z-index: 2; /* Đảm bảo thead luôn nằm trên các hàng khác khi cuộn */
+  box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
+}
 .dropdown-table th {
   background-color: #f2f2f2;
   font-weight: bold;

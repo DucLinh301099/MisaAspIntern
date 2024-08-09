@@ -70,12 +70,12 @@ namespace MisaAsp.Repositories
         }
         public async Task<PaymentMasterVM> GetPaymentWithDetailsByIdAsync(int id)
         {
-            var sql = "SELECT * FROM get_payment_with_details_by_id(@PaymentMasterId);";
             var parameters = new { PaymentMasterId = id };
             var paymentDictionary = new Dictionary<int, PaymentMasterVM>();
 
-            var result = await _connection.QueryAsync<PaymentMasterVM, PaymentDetailVM, PaymentMasterVM>(
-                sql,
+            var result = await ExecuteProcQueryWithMappingAsync<PaymentMasterVM, PaymentDetailVM>(
+                "get_payment_with_details_by_id",
+                parameters,
                 (payment, detail) =>
                 {
                     if (!paymentDictionary.TryGetValue(payment.Id, out var currentPayment))
@@ -90,11 +90,12 @@ namespace MisaAsp.Repositories
                     }
                     return currentPayment;
                 },
-                parameters,
-                splitOn: "detailid");  // Ensure that this matches the detail ID column name
+                splitOn: "detailid" // Đảm bảo rằng tên cột này khớp với tên cột detail ID trong bảng
+            );
 
             return paymentDictionary.Values.FirstOrDefault();
         }
+
 
 
 

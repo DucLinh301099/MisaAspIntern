@@ -209,6 +209,7 @@
         field="PaymentDetails"
         ref="PaymentDetails"
         :disabled="isDisabled"
+        :isEditMode="isEditMode"
       />
       <div>
         <AttachFile :disabled="isDisabled" />

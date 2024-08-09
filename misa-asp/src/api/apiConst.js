@@ -68,7 +68,12 @@ const Api = {
     deletePaymentById: {
         url: 'Payment/payment',
         method:'delete'
-    }
+    },
+    getWithdrawById: {
+        url: 'Payment/payment',
+        method:'get'
+        
+    },
 
 
 }

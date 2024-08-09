@@ -699,7 +699,7 @@ export default {
   width: calc(83% - 14px);
   height: 100%;
   border-radius: 8px;
-  left: 8px;
+
   background: #eceef1;
   position: absolute;
 }

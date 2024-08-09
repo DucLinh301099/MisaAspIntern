@@ -225,7 +225,13 @@ export default {
   flex-direction: column;
   margin-bottom: 8px;
 }
-
+thead {
+  position: sticky; /* Thêm thuộc tính này để thead luôn dính ở đầu */
+  top: 0; /* Đặt thead ở đầu của bảng khi scroll */
+  z-index: 2; /* Đảm bảo thead luôn nằm trên các hàng khác khi cuộn */
+  box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+}
 .input-container {
   display: flex;
   align-items: center;

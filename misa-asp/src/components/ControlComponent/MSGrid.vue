@@ -26,14 +26,14 @@
           >
             <div v-if="column.dataType === 'dropdown'">
               <MSComboboxGrid
-                v-if="!disabled"
+                v-show="!isEditMode"
                 :value="row[column.fieldName]"
                 :config="column.dropDownConfig"
                 @input="changeValueInput(rowIndex, column)"
                 @update:selectedRow="updateRowField(rowIndex, column, $event)"
                 :ref="`[${rowIndex}].${column.fieldName}`"
               />
-              <span v-else>{{ row[column.fieldName] }}</span>
+              <span v-show="isEditMode">{{ row[column.fieldName] }}</span>
             </div>
             <div v-else>
               <input
@@ -93,6 +93,10 @@ export default {
       default: null,
     },
     disabled: {
+      type: Boolean,
+      default: false,
+    },
+    isEditMode: {
       type: Boolean,
       default: false,
     },
