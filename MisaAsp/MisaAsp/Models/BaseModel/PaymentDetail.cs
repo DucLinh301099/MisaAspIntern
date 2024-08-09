@@ -10,7 +10,7 @@ namespace MisaAsp.Models.BaseModel
     {
         [Key]
         [Column("id")]
-        public int Id { get; set; }
+        public int DetailsId { get; set; }
 
         [Column("debit_account")]
         [StringLengthVI(20)]

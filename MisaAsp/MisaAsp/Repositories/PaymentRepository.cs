@@ -90,7 +90,7 @@ namespace MisaAsp.Repositories
                     }
                     return currentPayment;
                 },
-                splitOn: "detailid" // Đảm bảo rằng tên cột này khớp với tên cột detail ID trong bảng
+                splitOn: "detailsid" // Đảm bảo rằng tên cột này khớp với tên cột detail ID trong bảng
             );
 
             return paymentDictionary.Values.FirstOrDefault();

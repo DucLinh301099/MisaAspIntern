@@ -8,7 +8,7 @@ namespace MisaAsp.Models.ViewModel
     public class PaymentDetailVM
     {
         [RequiredVI]
-        public int Id { get; set; }
+        public int DetailsId { get; set; }
 
         [RequiredVI]
         [StringLengthVI(20)]
