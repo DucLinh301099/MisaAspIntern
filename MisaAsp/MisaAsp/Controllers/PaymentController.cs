@@ -93,6 +93,7 @@ namespace MisaAsp.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}/details")]
+        [Authorize(Roles = "Admin")] // Chỉ admin mới có quyền truy cập
         public async Task<IActionResult> GetPaymentWithDetails(int id)
         {
             var payment = await _paymentService.GetPaymentWithDetailsByIdAsync(id);

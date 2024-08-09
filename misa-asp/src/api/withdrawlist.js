@@ -10,7 +10,8 @@ async deletePaymentById(id) {
    }catch (error) {  
     throw error; 
    }
-    },
+  },
+  
     
 
 };

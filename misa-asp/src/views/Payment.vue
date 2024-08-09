@@ -208,8 +208,8 @@
         @selectedCombox="selectedGridCombox"
         field="PaymentDetails"
         ref="PaymentDetails"
-        :disabled="isDisabled"
         :isEditMode="isEditMode"
+        :disabled="isDisabled"
       />
       <div>
         <AttachFile :disabled="isDisabled" />
@@ -221,6 +221,7 @@
           :payment="currentItem"
           class="footer-payment-a"
           :isEditMode="isEditMode"
+          :disabled="isDisabled"
           @submit="handleSubmit"
         />
       </div>
@@ -244,6 +245,7 @@ import CreateEmployee from "../components/PaymentPage/CreateEmployee.vue";
 import paymentConfig from "../config/PaymentConfig";
 import BaseSubmit from "../components/Base/BaseSubmit.vue";
 import Api from "../api/apiConst";
+import { baseApi } from "../api/baseApi";
 import MSDatetime from "../components/Base/MSDateTime.vue";
 
 export default {
@@ -263,7 +265,16 @@ export default {
     CreateCustomer,
     CreateEmployee,
   },
-
+  props: {
+    id: {
+      type: String,
+      required: null,
+    },
+    isDisabled: {
+      type: Boolean,
+      default: false,
+    },
+  },
   data() {
     return {
       isDisabled: false,
@@ -349,6 +360,13 @@ export default {
         this.documentNumberMapping[newMethod] || "";
     },
   },
+  mounted() {
+    if (this.id) {
+      this.isDisabled = this.$route.params.isDisabled || true;
+      this.isEditMode = this.$route.params.isEditMode || true;
+      this.loadPaymentData();
+    }
+  },
   methods: {
     /**
      * function gán giá trị vào record để lưu thông tin vào modelvalue
@@ -406,7 +424,33 @@ export default {
       const value = event.target.value;
       this.currentItem[field] = value;
     },
+    async loadPaymentData() {
+      try {
+        const url = Api.getWithdrawById.url.replace("{id}", this.id);
+        const responseData = await baseApi.getAuthenApi(url);
 
+        if (responseData) {
+          this.currentItem = responseData.data;
+          this.inputBillContent =
+            this.currentItem.billContent || this.inputBillContent;
+          this.totalAmount = this.currentItem.totalAmount || this.totalAmount;
+          this.currentItem.objectName =
+            this.currentItem.customerName || this.currentItem.objectName;
+
+          this.currentItem.paymentDetails =
+            this.currentItem.paymentDetails?.map((detail) => ({
+              ...detail,
+              description:
+                detail.description ||
+                `Chi tiền cho ${this.currentItem.customerName}`,
+            })) || [];
+        } else {
+          this.errorMessage = "Không thể lấy thông tin chi tiết";
+        }
+      } catch (error) {
+        this.errorMessage = "Có lỗi xảy ra khi tải dữ liệu";
+      }
+    },
     /**
      * fuction update giá trị khi chọn 1 option trong multiselect
      * và gán nó vào object currentItem
@@ -458,9 +502,11 @@ export default {
     },
 
     updateGridDescription(customerName) {
-      this.currentItem.paymentDetails.forEach((record) => {
-        record.description = `Chi tiền cho ${customerName}`;
-      });
+      if (!this.isEditMode) {
+        this.currentItem.paymentDetails.forEach((record) => {
+          record.description = `Chi tiền cho ${customerName}`;
+        });
+      }
     },
     generateGridRefs(rowIndex, fieldName) {
       return `${rowIndex}-${fieldName}`;

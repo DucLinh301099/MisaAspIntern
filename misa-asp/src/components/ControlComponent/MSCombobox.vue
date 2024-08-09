@@ -155,6 +155,9 @@ export default {
     internalSelectedOption(newVal) {
       this.$emit("update:selectedOption", newVal);
     },
+    value(newVal) {
+      this.inputValue = newVal;
+    },
     errors(newVal) {
       let refList = this.$refs;
       if (refList["inputComponent"]) {

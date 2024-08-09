@@ -15,6 +15,7 @@
             class="table-tbody"
             v-for="(row, rowIndex) in filteredOptionsData"
             :key="rowIndex"
+            @dblclick="viewRow(row)"
           >
             <td>{{ rowIndex + 1 }}</td>
             <td
@@ -33,14 +34,18 @@
                 "
                 >{{ row[column.fieldName] }}</span
               >
-              <a v-else-if="column.columnName === 'Số chứng từ'" href="#">{{
-                row[column.fieldName]
-              }}</a>
+              <a
+                v-else-if="column.columnName === 'Số chứng từ'"
+                @click="viewRow(row)"
+                href="#"
+                >{{ row[column.fieldName] }}</a
+              >
               <div v-else class="actions-container">
                 <div class="flex justify-end">
                   <div class="ms-dropdown">
                     <button
                       class="ms-button ms-radius-false ms-dropdown-type-feature ms-dropdown-padding-custom-feature"
+                      @click="viewRow(row)"
                     >
                       <div class="ms-button--text flex">
                         <div class="con-ms-tooltip">
@@ -90,12 +95,12 @@
 <script>
 import { withdrawList } from "../../api/withdrawlist";
 import withdrawListConfig from "../../config/WithdrawListConfig";
-import BaseForm from "../Base/BaseForm.vue";
+import BaseSubmit from "../Base/BaseSubmit.vue";
 import { baseApi } from "../../api/baseApi";
 
 export default {
   name: "MSWithdrawList",
-  extends: BaseForm,
+  extends: BaseSubmit,
   props: {
     searchQuery: {
       type: String,
@@ -170,6 +175,13 @@ export default {
     editRow(row) {
       // Xử lý khi nhấn tùy chọn "Sửa"
     },
+    viewRow(row) {
+      this.$router.push({
+        name: "payment",
+        params: { id: row.id, isDisable: true, isEditMode: true },
+      });
+    },
+
     async deleteRow(row) {
       this.showConfirm("Bạn có chắc chắn muốn xóa bản ghi này?", async () => {
         try {
@@ -196,6 +208,9 @@ export default {
 }
 .bold-number {
   font-weight: 800;
+}
+.amout {
+  padding-left: 5px;
 }
 .span-amount {
   font-size: 14px;

@@ -37,7 +37,7 @@
             </div>
             <div v-else>
               <input
-                v-if="!disabled"
+                v-show="!isEditMode"
                 v-model="row[column.fieldName]"
                 @input="changeValueInput(rowIndex, column)"
                 :class="{
@@ -49,7 +49,7 @@
                 @blur="handleBlur"
                 ref="inputComponent"
               />
-              <span v-else>{{ row[column.fieldName] }}</span>
+              <span v-show="isEditMode">{{ row[column.fieldName] }}</span>
             </div>
           </td>
           <td class="button-style">

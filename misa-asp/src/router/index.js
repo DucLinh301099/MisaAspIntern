@@ -21,7 +21,10 @@ const routes = [
   { path: '/admin', component: AdminComponent, meta: { requiresAuth: true, role: 'Admin' } },  // Add route for AdminComponent
   { path: '/userAccount', component: UserAccount, meta: { requiresAuth: true, role: 'User' } },  // Add route for UserComponent
   { path: '/edit-user/:id', component: EditUserPage, meta: { requiresAuth: true, role: 'Admin' }, props: true },
+
+  { path: '/payment/:id', name: 'payment', component: Payment, meta: { requiresAuth: true, role: 'Admin' }, props: true },
   { path: '/payment', component: Payment, meta: { requiresAuth: true, role: 'Admin' } },
+  
   { path: '/withdraw-list', component: WithdrawList, meta: { requiresAuth: true, role: 'Admin' } },
   { path: '/forgot-password', component: ForgotPasswordComponent },
   { path: '/create-user', component: CreateUserComponent, meta: { requiresAuth: true, role: 'Admin' } },

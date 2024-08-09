@@ -70,7 +70,7 @@ const Api = {
         method:'delete'
     },
     getWithdrawById: {
-        url: 'Payment/payment',
+        url: 'Payment/{id}/details',
         method:'get'
         
     },

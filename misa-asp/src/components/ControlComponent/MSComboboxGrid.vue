@@ -141,6 +141,9 @@ export default {
         refList["inputComponent"].setError(newVal);
       }
     },
+    value(newVal) {
+      this.inputValue = newVal;
+    },
   },
   methods: {
     async fetchData() {
