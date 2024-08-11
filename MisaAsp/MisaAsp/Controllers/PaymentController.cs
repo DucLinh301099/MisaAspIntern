@@ -65,6 +65,29 @@ namespace MisaAsp.Controllers
             }
             return Ok(_response);
         }
+
+        /// <summary>
+        /// Api cập nhật một payment
+        /// </summary>
+        /// <param name="payment">Dữ liệu payment cần cập nhật</param>
+        /// <returns></returns>
+        [HttpPut("update-payment")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UpdatePayment(PaymentMasterVM payment)
+        {
+            var paymentMasterId = await _paymentService.UpdatePaymentAsync(payment, payment.PaymentDetails);
+
+            if (paymentMasterId > 0)
+            {
+                _response.HandleSuccess("Cập nhật thành công", new { PaymentMasterId = paymentMasterId });
+            }
+            else
+            {
+                _response.HandleError("Cập nhật thất bại");
+            }
+            return Ok(_response);
+        }
+
         /// <summary>
         /// Api xóa các payment withdraw 
         /// </summary>
@@ -107,6 +130,7 @@ namespace MisaAsp.Controllers
             }
             return Ok(_response);
         }
+
 
 
     }

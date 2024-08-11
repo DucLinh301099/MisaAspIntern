@@ -7,6 +7,8 @@ public interface IPaymentService
     Task<IEnumerable<PaymentMasterVM>> GetAllPaymentsAsync();
     Task<bool> DeletePaymentAsync(int id);
     Task<PaymentMasterVM> GetPaymentWithDetailsByIdAsync(int id);
+
+    Task<int> UpdatePaymentAsync(PaymentMasterVM paymentMaster, List<PaymentDetailVM> paymentDetails);
 }
 
 public class PaymentService : IPaymentService
@@ -36,5 +38,10 @@ public class PaymentService : IPaymentService
     public async Task<PaymentMasterVM> GetPaymentWithDetailsByIdAsync(int id)
     {
         return await _paymentRepository.GetPaymentWithDetailsByIdAsync(id);
+    }
+    public async Task<int> UpdatePaymentAsync(PaymentMasterVM paymentMaster, List<PaymentDetailVM> paymentDetails)
+    {
+        
+        return await _paymentRepository.UpdatePaymentAsync(paymentMaster, paymentDetails);
     }
 }
