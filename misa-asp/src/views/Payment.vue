@@ -209,6 +209,9 @@
         field="PaymentDetails"
         ref="PaymentDetails"
         :isEditMode="isEditMode"
+        :isAddMode="isAddMode"
+        :disabled="isDisabled"
+
       />
       <div>
         <AttachFile :disabled="isDisabled || (!isEditMode && !isAddMode)" />
@@ -389,8 +392,8 @@ export default {
             this.$router.push("/withdraw-list");
           }
         });
-      } else if (action === "save") {
-        this.handleSubmit();
+      } else if (action === "save" || action === "saveAndClose") {
+        this.handleSubmit(action);
       }
     },
     setMode(mode) {
@@ -529,7 +532,7 @@ export default {
     },
 
     updateGridDescription(customerName) {
-      if (this.isEditMode) {
+      if (this.mode) {
         this.currentItem.paymentDetails.forEach((record) => {
           record.description = `Chi tiền cho ${customerName}`;
         });

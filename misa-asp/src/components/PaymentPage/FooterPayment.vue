@@ -30,6 +30,9 @@
           <button v-if="isAddMode" @click="emitSubmit('saveAndPrint')">
             Cất và In
           </button>
+          <button v-if="isAddMode" @click="emitSubmit('saveAndPrint')">
+            Cất và Thêm
+          </button>
         </div>
       </div>
     </div>

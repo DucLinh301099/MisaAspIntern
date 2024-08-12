@@ -112,6 +112,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    isAddMode: {
+        type: Boolean,
+        default: false,
+    },
     hasRemoveRow: {
       type: Boolean,
       default: true,

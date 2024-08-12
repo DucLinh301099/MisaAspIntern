@@ -6,7 +6,7 @@ export default {
   extends: BaseForm,
   data() {
     return {
-      isDisabled: false, // Thêm biến trạng thái
+      isDisabled: false,
       mode: "view",
     };
   },
@@ -23,15 +23,25 @@ export default {
             this.createApiUrl,
             this.currentItem
           );
+          if (responseData.isSuccess) {
+            this.showAlert("Tạo mới thành công", () => {});
+          }
         } else if (this.isEditMode) {
           // Gọi API PUT để cập nhật
-
           responseData = await baseApi.putAuthenApi(
             this.updateApiUrl,
             this.currentItem
           );
           if (responseData.isSuccess) {
-            this.showAlert("Cập nhật thành công", () => {});
+            if (action === "save") {
+              this.showAlert("Cập nhật thành công", () => {
+                this.setMode("view");
+              });
+            } else if (action === "saveAndClose") {
+              this.showAlert("Cập nhật thành công", () => {
+                this.$router.push("/withdraw-list");
+              });
+            }
           }
         }
       } catch (error) {
@@ -48,6 +58,7 @@ export default {
         this.$emit("afterCallError", responseData);
       }
     },
+
     setMode(newMode) {
       this.mode = newMode;
       this.isDisabled = newMode === "view";
@@ -57,13 +68,16 @@ export default {
 
     async customHandleLogic() {},
 
-    async afterCallSuccess() {},
+    async afterCallSuccess(responseData) {
+      if (this.isEditMode) {
+        this.setMode("view");
+      }
+    },
 
     async afterCallError(responseData) {
       let refsForm = this.$refs;
 
       if (refsForm) {
-        // trải phẳng refs ra
         let refList = [];
         this.getRefByParent(refsForm, refList);
         if (
