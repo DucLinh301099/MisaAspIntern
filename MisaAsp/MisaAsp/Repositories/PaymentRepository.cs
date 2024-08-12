@@ -51,40 +51,42 @@ namespace MisaAsp.Repositories
 
             return paymentMasterId;
         }
-        
 
-            public async Task<int> UpdatePaymentAsync(PaymentMasterVM paymentMaster, List<PaymentDetailVM> paymentDetails)
+
+        public async Task<int> UpdatePaymentAsync( PaymentMasterVM paymentMaster, List<PaymentDetailVM> paymentDetails)
+        {
+            // Chuyển đổi danh sách paymentDetails thành chuỗi JSON
+            var paymentDetailJson = JsonConvert.SerializeObject(paymentDetails);
+
+            // Thiết lập các tham số cho hàm SQL
+            var paymentMasterParameters = new
             {
-                // Chuyển đổi danh sách paymentDetails thành chuỗi JSON
-                var paymentDetailJson = JsonConvert.SerializeObject(paymentDetails);
+                PaymentId = paymentMaster.Id,
+                VoucherType = paymentMaster.VoucherType,
+                PaymentMethod = paymentMaster.PaymentMethod,
+                BillContent = paymentMaster.BillContent,
+                AccountingDate = paymentMaster.AccountingDate,
+                DocumentDate = paymentMaster.DocumentDate,
+                DocumentNumber = paymentMaster.DocumentNumber,
+                TotalAmount = paymentMaster.TotalAmount,
+                EmployeeName = paymentMaster.EmployeeName,
+                CustomerName = paymentMaster.CustomerName,
+                Address = paymentMaster.Address,
+                BankName = paymentMaster.BankName,
+                AccountNumber = paymentMaster.AccountNumber,
+                BankAccountId = paymentMaster.BankAccountId,
+                CustomerId = paymentMaster.CustomerId,
+                EmployeeId = paymentMaster.EmployeeId,
+                PaymentDetailsJson = paymentDetailJson
+            };
 
-                // Thiết lập các tham số cho hàm SQL
-                var paymentMasterParameters = new
-                {
-                    VoucherType = paymentMaster.VoucherType,
-                    PaymentMethod = paymentMaster.PaymentMethod,
-                    BillContent = paymentMaster.BillContent,
-                    AccountingDate = paymentMaster.AccountingDate,
-                    DocumentDate = paymentMaster.DocumentDate,
-                    DocumentNumber = paymentMaster.DocumentNumber,
-                    TotalAmount = paymentMaster.TotalAmount,
-                    EmployeeName = paymentMaster.EmployeeName,
-                    CustomerName = paymentMaster.CustomerName,
-                    Address = paymentMaster.Address,
-                    BankName = paymentMaster.BankName,
-                    AccountNumber = paymentMaster.AccountNumber,
-                    BankAccountId = paymentMaster.BankAccountId,
-                    CustomerId = paymentMaster.CustomerId,
-                    EmployeeId = paymentMaster.EmployeeId,
-                    PaymentDetailsJson = paymentDetailJson
-                };
+            // Gọi hàm SQL update_paymentmaster và lấy id của bản ghi vừa cập nhật
+            var paymentMasterId = await ExecuteProcScalarAsync<int>("update_paymentmaster", paymentMasterParameters);
 
-                // Gọi hàm SQL update_paymentmaster và lấy id của bản ghi vừa cập nhật
-                var paymentMasterId = await ExecuteProcScalarAsync<int>("update_paymentmaster", paymentMasterParameters);
+            return paymentMasterId;
+        }
 
-                return paymentMasterId;
-            }
-        
+
 
 
         public async Task<IEnumerable<PaymentMasterVM>> GetAllPaymentsAsync()

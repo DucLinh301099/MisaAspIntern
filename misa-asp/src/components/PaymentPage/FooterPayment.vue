@@ -3,26 +3,22 @@
     <button class="cancel-btn" @click="emitSubmit('cancel')">Hủy</button>
 
     <div class="dropdown">
-      <button v-if="!isEditMode" class="save-btn" @click="emitSubmit('save')">
+      <button
+        v-if="isAddMode || isEditMode"
+        class="save-btn"
+        @click="emitSubmit('save')"
+      >
         Cất
       </button>
-      <button v-else class="save-btn" @click="emitSubmit('edit')">Sửa</button>
+      <button v-if="isViewMode" class="save-btn" @click="emitSubmit('edit')">
+        Sửa
+      </button>
 
-      <div class="dropdown-container">
-        <button
-          v-if="!isEditMode"
-          class="btn save-add-btn"
-          @click="emitSubmit('saveAndClose')"
-        >
+      <div v-if="isAddMode || isEditMode" class="dropdown-container">
+        <button class="btn save-add-btn" @click="emitSubmit('saveAndClose')">
           Cất và Đóng
         </button>
-        <button
-          v-else
-          class="btn save-add-btn"
-          @click="emitSubmit('unsaveAndEdit')"
-        >
-          Bỏ ghi và Sửa
-        </button>
+
         <button
           v-if="!isEditMode"
           class="dropdown-toggle"
@@ -31,11 +27,7 @@
           &#9660;
         </button>
         <div class="dropdown-menu" v-if="isDropdownVisible">
-          <button v-if="!isEditMode" @click="emitSubmit('saveAndAdd')">
-            Cất và Thêm
-          </button>
-          <!-- <button v-else @click="emitSubmit('unrecord')">Bỏ ghi</button> -->
-          <button v-if="!isEditMode" @click="emitSubmit('saveAndPrint')">
+          <button v-if="isAddMode" @click="emitSubmit('saveAndPrint')">
             Cất và In
           </button>
         </div>
@@ -48,6 +40,8 @@
 export default {
   name: "FooterPayment",
   props: {
+    isAddMode: Boolean,
+    isViewMode: Boolean,
     isEditMode: Boolean,
   },
   data() {

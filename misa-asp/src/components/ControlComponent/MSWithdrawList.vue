@@ -178,7 +178,8 @@ export default {
     viewRow(row) {
       this.$router.push({
         name: "payment",
-        params: { id: row.id, isDisable: true, isEditMode: true },
+        params: { id: row.id },
+        query: { mode: "view" },
       });
     },
 

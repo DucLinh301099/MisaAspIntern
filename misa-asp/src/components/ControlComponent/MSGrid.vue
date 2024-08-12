@@ -26,18 +26,20 @@
           >
             <div v-if="column.dataType === 'dropdown'">
               <MSComboboxGrid
-                v-show="!isEditMode"
+                v-show="isEditMode || isAddMode"
                 :value="row[column.fieldName]"
                 :config="column.dropDownConfig"
                 @input="changeValueInput(rowIndex, column)"
                 @update:selectedRow="updateRowField(rowIndex, column, $event)"
                 :ref="`[${rowIndex}].${column.fieldName}`"
               />
-              <span v-show="isEditMode">{{ row[column.fieldName] }}</span>
+              <span v-show="!isEditMode && !isAddMode">{{
+                row[column.fieldName]
+              }}</span>
             </div>
             <div v-else>
               <input
-                v-show="!isEditMode"
+                v-show="isEditMode || isAddMode"
                 v-model="row[column.fieldName]"
                 @input="changeValueInput(rowIndex, column)"
                 :class="{
@@ -49,13 +51,15 @@
                 @blur="handleBlur"
                 ref="inputComponent"
               />
-              <span v-show="isEditMode">{{ row[column.fieldName] }}</span>
+              <span v-show="!isEditMode && !isAddMode">{{
+                row[column.fieldName]
+              }}</span>
             </div>
           </td>
           <td class="button-style">
             <button
               @click="removeRow(rowIndex)"
-              :disabled="disabled"
+              :disabled="disabled || (!isEditMode && !isAddMode)"
               v-if="hasRemoveRow"
             >
               🗑️
@@ -65,10 +69,18 @@
       </tbody>
     </table>
     <div class="accounting-footer">
-      <button :disabled="disabled" class="btn-left" @click="addRow">
+      <button
+        :disabled="disabled || (!isEditMode && !isAddMode)"
+        class="btn-left"
+        @click="addRow"
+      >
         Thêm dòng
       </button>
-      <button :disabled="disabled" class="btn-right" @click="clearRows">
+      <button
+        :disabled="disabled || (!isEditMode && !isAddMode)"
+        class="btn-right"
+        @click="clearRows"
+      >
         Xóa hết dòng
       </button>
     </div>

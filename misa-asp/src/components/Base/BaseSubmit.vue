@@ -7,58 +7,50 @@ export default {
   data() {
     return {
       isDisabled: false, // Thêm biến trạng thái
-      isEditMode: false, // Trạng thái chế độ chỉnh sửa
+      mode: "view",
     };
   },
   methods: {
     async handleSubmit(action) {
-      if (action === "cancel" || action === "close") {
-        // xử lý cho đóng hoặc hủy
-        this.showConfirm("Bạn chắc chắn muốn hủy!", () => {
-          if (action === "cancel") {
-            this.$router.push("/withdraw-list");
-          }
-        });
-      } else if (action === "edit" || action === "unsaveAndEdit") {
-        this.isDisabled = false; // Cho phép chỉnh sửa
-        this.isEditMode = false; // Chuyển lại về chế độ lưu
-      } else {
-        this.customValidate();
+      this.customValidate();
 
-        let responseData;
+      let responseData;
 
-        try {
+      try {
+        if (this.isAddMode) {
+          // Gọi API POST để tạo mới
           responseData = await baseApi.postAuthenApi(
-            this.apiUrl,
+            this.createApiUrl,
             this.currentItem
           );
-        } catch (error) {
-          responseData = { isSuccess: false, error };
-        }
+        } else if (this.isEditMode) {
+          // Gọi API PUT để cập nhật
 
-        if (responseData.isSuccess) {
-          await this.afterCallSuccess(responseData);
-          await this.handleCreateSubmit(responseData);
-          this.$emit("afterCallSuccess", action, responseData);
-        } else {
-          await this.afterCallError(responseData);
-          await this.afterCallErrorCustom(responseData);
-          this.$emit("afterCallError", responseData);
+          responseData = await baseApi.putAuthenApi(
+            this.updateApiUrl,
+            this.currentItem
+          );
+          if (responseData.isSuccess) {
+            this.showAlert("Cập nhật thành công", () => {});
+          }
         }
-
-        if (action === "save" && responseData.isSuccess) {
-          this.showAlert("Ghi sổ thành công", () => {
-            this.isDisabled = true;
-            this.isEditMode = true;
-          });
-        }
-
-        if (action === "saveAndClose" && responseData.isSuccess) {
-          this.showAlert("Ghi sổ thành công", () => {
-            this.$router.push("/withdraw-list");
-          });
-        }
+      } catch (error) {
+        responseData = { isSuccess: false, error };
       }
+
+      if (responseData.isSuccess) {
+        await this.afterCallSuccess(responseData);
+        await this.handleCreateSubmit(responseData);
+        this.$emit("afterCallSuccess", action, responseData);
+      } else {
+        await this.afterCallError(responseData);
+        await this.afterCallErrorCustom(responseData);
+        this.$emit("afterCallError", responseData);
+      }
+    },
+    setMode(newMode) {
+      this.mode = newMode;
+      this.isDisabled = newMode === "view";
     },
 
     customValidate() {},

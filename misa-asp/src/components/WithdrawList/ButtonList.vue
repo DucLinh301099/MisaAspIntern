@@ -146,7 +146,10 @@ export default {
       this.$emit("search", this.searchQuery);
     },
     goToPaymentPage() {
-      this.$router.push("/payment");
+      this.$router.push({
+        name: "payment",
+        query: { mode: "add" },
+      });
     },
   },
 };

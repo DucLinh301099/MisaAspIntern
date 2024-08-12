@@ -71,10 +71,11 @@ const Api = {
     },
     getWithdrawById: {
         url: 'Payment/{id}/details',
-        method:'get'
-        
+        method:'get'     
     },
-
+    updatePayment: {
+      url: 'Payment/update-payment',
+    },
 
 }
 export default Api;

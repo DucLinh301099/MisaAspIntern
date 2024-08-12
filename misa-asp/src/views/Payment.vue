@@ -7,7 +7,7 @@
       @update:voucherType="updateValue('voucherType', $event)"
       @update:paymentMethod="updateValue('paymentMethod', $event)"
       class="header-payment"
-      :disabled="isDisabled"
+      :disabled="isDisabled || (!isEditMode && !isAddMode)"
     />
 
     <div class="input-information">
@@ -22,13 +22,13 @@
               :value="currentItem.accountNumber"
               :ComponentAdd="createBankAccountComponent"
               ref="BankAccountId"
-              :disabled="isDisabled"
+              :disabled="isDisabled || (!isEditMode && !isAddMode)"
             />
             <MSInput
               class="second-input"
               :value="currentItem.bankName"
               @input="updateValue('bankExpenseName', $event.target.value)"
-              :disabled="isDisabled"
+              :disabled="isDisabled || (!isEditMode && !isAddMode)"
             />
           </div>
           <!--html của input customer -->
@@ -40,13 +40,13 @@
               :value="currentItem.objectName"
               :ComponentAdd="createCustomerComponent"
               ref="CustomerId"
-              :disabled="isDisabled"
+              :disabled="isDisabled || (!isEditMode && !isAddMode)"
             />
             <MSInput
               class="second-input"
               :value="currentItem.address"
               @input="updateValue('customerAddress', $event.target.value)"
-              :disabled="isDisabled"
+              :disabled="isDisabled || (!isEditMode && !isAddMode)"
             />
           </div>
           <!--html của input bankReceive -->
@@ -58,14 +58,14 @@
               @update:selectedRow="updateSelectedRow('bankReceive', $event)"
               :value="currentItem.accountReceiveNumber"
               :config="paymentConfigCombo.comboxConfig.bankReceive"
-              :disabled="isDisabled"
+              :disabled="isDisabled || (!isEditMode && !isAddMode)"
             />
             <MSInput
               v-if="!hideAccountReceive"
               class="second-input"
               :value="currentItem.bankReceiveName"
               @input="updateValue('bankReceiveName', $event.target.value)"
-              :disabled="isDisabled"
+              :disabled="isDisabled || (!isEditMode && !isAddMode)"
             />
           </div>
           <!-- html của các input CMND, Ngày cấp, Nơi cấp -->
@@ -109,7 +109,7 @@
                 :value="defaultBillContent"
                 class="base-input-content"
                 @input="updateBillContent"
-                :disabled="isDisabled"
+                :disabled="isDisabled || (!isEditMode && !isAddMode)"
               />
             </div>
           </div>
@@ -123,7 +123,7 @@
               :value="currentItem.employeeName"
               :ComponentAdd="createEmployeeComponent"
               ref="EmployeeId"
-              :disabled="isDisabled"
+              :disabled="isDisabled || (!isEditMode && !isAddMode)"
             />
           </div>
         </div>
@@ -150,7 +150,7 @@
               ref="AccountingDate"
               :value="currentItem.accountingDate"
               @change="updateCurrentItem('accountingDate', $event)"
-              :disabled="isDisabled"
+              :disabled="isDisabled || (!isEditMode && !isAddMode)"
             />
           </div>
           <div class="form-group">
@@ -161,7 +161,7 @@
               ref="DocumentDate"
               :value="currentItem.documentDate"
               @change="updateCurrentItem('documentDate', $event)"
-              :disabled="isDisabled"
+              :disabled="isDisabled || (!isEditMode && !isAddMode)"
             />
           </div>
           <div class="form-group">
@@ -172,7 +172,7 @@
               ref="DocumentNumber"
               :value="currentItem.documentNumber"
               @change="updateCurrentItem('documentNumber', $event)"
-              :disabled="isDisabled"
+              :disabled="isDisabled || (!isEditMode && !isAddMode)"
             />
           </div>
           <div
@@ -185,7 +185,7 @@
               class="date-input"
               :value="currentItem.hanQuyetToan"
               @input="updateValue('hanQuyetToan', $event)"
-              :disabled="isDisabled"
+              :disabled="isDisabled || (!isEditMode && !isAddMode)"
             />
           </div>
         </div>
@@ -203,16 +203,15 @@
       <MSGrid
         label="Hạch toán"
         :modelValue="currentItem.paymentDetails"
-        @changeValueInput="changeValueInput"
+        @changeValueInput="updateGridField"
         :configColumGrid="paymentConfigCombo.gridConfig"
         @selectedCombox="selectedGridCombox"
         field="PaymentDetails"
         ref="PaymentDetails"
         :isEditMode="isEditMode"
-        :disabled="isDisabled"
       />
       <div>
-        <AttachFile :disabled="isDisabled" />
+        <AttachFile :disabled="isDisabled || (!isEditMode && !isAddMode)" />
       </div>
     </div>
     <div>
@@ -220,9 +219,10 @@
         <FooterPayment
           :payment="currentItem"
           class="footer-payment-a"
+          :isAddMode="isAddMode"
+          :isViewMode="isViewMode"
           :isEditMode="isEditMode"
-          :disabled="isDisabled"
-          @submit="handleSubmit"
+          @submit="handleFooterAction"
         />
       </div>
     </div>
@@ -245,8 +245,9 @@ import CreateEmployee from "../components/PaymentPage/CreateEmployee.vue";
 import paymentConfig from "../config/PaymentConfig";
 import BaseSubmit from "../components/Base/BaseSubmit.vue";
 import Api from "../api/apiConst";
-import { baseApi } from "../api/baseApi";
+
 import MSDatetime from "../components/Base/MSDateTime.vue";
+import { withdrawList } from "../api/withdrawlist";
 
 export default {
   name: "Payment",
@@ -279,7 +280,8 @@ export default {
     return {
       isDisabled: false,
       isEditMode: false,
-      apiUrl: Api.payment.url,
+      createApiUrl: Api.payment.url,
+      updateApiUrl: Api.updatePayment.url,
       errorMessage: "",
       inputValue: "",
       inputBillContent: "",
@@ -321,6 +323,15 @@ export default {
   },
 
   computed: {
+    isAddMode() {
+      return this.mode === "add";
+    },
+    isViewMode() {
+      return this.mode === "view";
+    },
+    isEditMode() {
+      return this.mode === "edit";
+    },
     /**
      * Các function này xử lý ẩn hiện các input theo nghiệp vụ đc yêu cầu
      */
@@ -361,13 +372,33 @@ export default {
     },
   },
   mounted() {
-    if (this.id) {
-      this.isDisabled = this.$route.params.isDisabled || true;
-      this.isEditMode = this.$route.params.isEditMode || true;
+    this.mode = this.$route.query.mode; // Set mode based on router param
+    if (this.mode === "add") {
+      this.setMode("add");
+    } else if (this.$route.params.id) {
       this.loadPaymentData();
     }
   },
   methods: {
+    handleFooterAction(action) {
+      if (action === "edit") {
+        this.setMode("edit");
+      } else if (action === "cancel") {
+        this.showConfirm("Bạn chắc chắn muốn hủy!", () => {
+          if (action === "cancel") {
+            this.$router.push("/withdraw-list");
+          }
+        });
+      } else if (action === "save") {
+        this.handleSubmit();
+      }
+    },
+    setMode(mode) {
+      this.mode = mode;
+      this.isDisabled = mode === "view";
+      this.isEditMode = mode === "edit";
+      this.isAddMode = mode === "add";
+    },
     /**
      * function gán giá trị vào record để lưu thông tin vào modelvalue
      * trong MSGrid và sẽ lưu lại vào paymentDetails thông qua props
@@ -384,17 +415,6 @@ export default {
         record.debitAccount = selectedOption.debitAccountNumber;
       } else if (column.fieldName === "creditAccount") {
         record.creditAccount = selectedOption.creditAccountNumber;
-      }
-    },
-    /**
-     * 2 function xử lý việc update số tiền khi có thêm một hàng mới được thêm
-     * trong grid.
-     * @param record
-     * @param column
-     */
-    changeValueInput(record, column) {
-      if (column.fieldName === "amount") {
-        this.updateTotalAmount();
       }
     },
 
@@ -424,13 +444,20 @@ export default {
       const value = event.target.value;
       this.currentItem[field] = value;
     },
+
+    updateGridField(record, column) {
+      // Cập nhật giá trị của ô trong grid
+      if (column.fieldName === "amount") {
+        this.updateTotalAmount(); // Gọi hàm cập nhật totalAmount
+      }
+    },
+
     async loadPaymentData() {
       try {
-        const url = Api.getWithdrawById.url.replace("{id}", this.id);
-        const responseData = await baseApi.getAuthenApi(url);
+        const responseData = await withdrawList.getPaymentById(this.id);
 
         if (responseData) {
-          this.currentItem = responseData.data;
+          this.currentItem = responseData;
           this.inputBillContent =
             this.currentItem.billContent || this.inputBillContent;
           this.totalAmount = this.currentItem.totalAmount || this.totalAmount;
@@ -502,7 +529,7 @@ export default {
     },
 
     updateGridDescription(customerName) {
-      if (!this.isEditMode) {
+      if (this.isEditMode) {
         this.currentItem.paymentDetails.forEach((record) => {
           record.description = `Chi tiền cho ${customerName}`;
         });

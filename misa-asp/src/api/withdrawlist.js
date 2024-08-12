@@ -11,7 +11,24 @@ async deletePaymentById(id) {
     throw error; 
    }
   },
+
+  async updatePayment() { 
+  try {
+    const response = await baseApi.putAuthenApi(Api.updatePayment.url, id);
+    return response.data;
+   }catch (error) {  
+    throw error; 
+   }
+  },
   
-    
+  async getPaymentById(id) { 
+  try {
+    const url = Api.getWithdrawById.url.replace("{id}", id);
+    const responseData = await baseApi.getAuthenApi(url);
+    return responseData.data;
+   }catch (error) {  
+    throw error; 
+   }
+  }, 
 
 };

@@ -110,19 +110,7 @@ export const account = {
     return responseData;
   },
 
-  /**
-   * Hàm tìm kiếm user theo id
-   * @param {*} id 
-   * @returns 
-   */
-  async getUserById(id) {
-    try {
-      const response = await baseApi.getAuthenApi(Api.getUserById.url,id);
-      return response.data;
-    } catch (error) {
-      throw error.response ? error.response.data : error.message;
-    }
-  },
+ 
 
   /**
    * Hàm quên mật khẩu
@@ -140,6 +128,20 @@ export const account = {
     }catch (error) {  
     throw error; // Ném lỗi ra để các hàm gọi bên ngoài có thể xử lý
    }
+  },
+
+   /**
+   * Hàm tìm kiếm user theo id
+   * @param {*} id 
+   * @returns 
+   */
+  async getUserById(id) {
+    try {
+      const response = await baseApi.getAuthenApi(Api.getUserById.url,id);
+      return response.data;
+    } catch (error) {
+      throw error.response ? error.response.data : error.message;
+    }
   },
 
   /**
