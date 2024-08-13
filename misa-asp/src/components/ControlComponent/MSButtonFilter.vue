@@ -128,7 +128,7 @@ export default {
 /* Dropdown CSS */
 #filter-dropdown {
   position: relative;
-  z-index: 1000;
+  z-index: 10;
 }
 
 .dropdown-content {

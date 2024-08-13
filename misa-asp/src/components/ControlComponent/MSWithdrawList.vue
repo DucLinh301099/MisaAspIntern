@@ -91,7 +91,7 @@
         >Tổng tiền:<strong>{{ formattedTotalAmount }}</strong></span
       >
     </div>
-    <div class="pagination">
+    <!-- <div class="pagination">
       <div class="total-records">
         Tổng số:
         <strong class="bold-number">{{ filteredOptionsData.length }}</strong>
@@ -103,6 +103,7 @@
             v-for="option in itemsPerPageOptions"
             :key="option"
             :value="option"
+            class="option-dropdown"
           >
             {{ option }} bản ghi trên 1 trang
           </option>
@@ -117,12 +118,23 @@
           min="1"
           :max="totalPages"
         />
-        <span>/ {{ totalPages }}</span>
+       
         <button :disabled="currentPage === totalPages" @click="goToNextPage">
           Sau
         </button>
       </div>
-    </div>
+    </div> -->
+    <MSPagination
+      :total-records="filteredOptionsData.length"
+      :items-per-page="itemsPerPage"
+      :current-page="currentPage"
+      :total-pages="totalPages"
+      :items-per-page-options="itemsPerPageOptions"
+      @update:itemsPerPage="updatePage"
+      @update:currentPage="goToPage"
+      @previous-page="goToPreviousPage"
+      @next-page="goToNextPage"
+    />
   </div>
 </template>
 
@@ -131,10 +143,14 @@ import { withdrawList } from "../../api/withdrawlist";
 import withdrawListConfig from "../../config/WithdrawListConfig";
 import BaseSubmit from "../Base/BaseSubmit.vue";
 import { baseApi } from "../../api/baseApi";
+import MSPagination from "../Base/MSPagination.vue"
 
 export default {
   name: "MSWithdrawList",
   extends: BaseSubmit,
+  components:{
+    MSPagination,
+  },
   props: {
     searchQuery: {
       type: String,
@@ -149,7 +165,7 @@ export default {
       sortAscending: true,
       itemsPerPage: 10, // Số bản ghi trên mỗi trang mặc định
       currentPage: 1,
-      currentPageInput: 1,
+      currentPageInput: 1,  
       itemsPerPageOptions: [10, 20, 30, 50, 100, 200],
     };
   },
@@ -283,6 +299,25 @@ export default {
         params: { id: row.id },
         query: { mode: "view" },
       });
+    },
+    updatePage(itemsPerPage) {
+      this.itemsPerPage = itemsPerPage;
+      this.currentPage = 1;
+    },
+    goToPreviousPage() {
+      if (this.currentPage > 1) {
+        this.currentPage -= 1;
+      }
+    },
+    goToNextPage() {
+      if (this.currentPage < this.totalPages) {
+        this.currentPage += 1;
+      }
+    },
+    goToPage(page) {
+      if (page >= 1 && page <= this.totalPages) {
+        this.currentPage = page;
+      }
     },
 
     async deleteRow(row) {
@@ -561,81 +596,5 @@ span {
     no-repeat;
   cursor: pointer;
 }
-.pagination {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 0;
-  font-family: AvertaStdCY, Helvetica, Arial, sans-serif;
-}
 
-.page-controls {
-  display: flex;
-  align-items: center;
-}
-
-.page-controls select {
-  margin-right: 10px;
-  padding: 5px;
-  border-radius: 4px;
-  border: 1px solid #ced4da;
-  background-color: #ffffff;
-  font-size: 14px;
-  color: #333;
-  appearance: none; /* Loại bỏ giao diện mặc định của trình duyệt */
-  -webkit-appearance: none;
-  -moz-appearance: none;
-
-  background-repeat: no-repeat;
-  background-position: right 10px center;
-  background-size: 10px;
-}
-
-.page-controls select:focus {
-  border-color: #333;
-  outline: none;
-}
-
-.page-controls select option {
-  padding: 8px;
-  font-size: 14px;
-  color: #333;
-}
-
-.page-controls select option:checked {
-  background-color: #28a745;
-  color: #ffffff;
-}
-
-.page-controls select option:hover {
-  background-color: #28a745;
-  color: #ffffff;
-}
-
-.page-controls button {
-  margin: 0 5px;
-  padding: 5px 10px;
-  border-radius: 4px;
-  border: 1px solid #ced4da;
-  background-color: #f8f9fa;
-  cursor: pointer;
-}
-
-.page-controls button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.page-controls input[type="number"] {
-  width: 50px;
-  padding: 5px;
-  border: 1px solid #ced4da;
-  border-radius: 4px;
-  text-align: center;
-  margin-right: 5px;
-}
-
-.bold-number {
-  font-weight: 800;
-}
 </style>
