@@ -76,7 +76,7 @@
                 :value="currentItem.cmndNumber"
                 @input="updateValue('cmndNumber', $event.target.value)"
                 class="base-input-info"
-                :disabled="isDisabled"
+                :disabled="isDisabled || (!isEditMode && !isAddMode)"
               />
             </div>
             <div class="input-container-info-2">
@@ -87,7 +87,7 @@
                   @input="updateValue('licenseDate', $event.target.value)"
                   type="date"
                   class="base-input-info"
-                  :disabled="isDisabled"
+                  :disabled="isDisabled || (!isEditMode && !isAddMode)"
                 />
               </div>
               <div class="input-field">
@@ -96,7 +96,7 @@
                   :value="currentItem.licenseAddress"
                   @input="updateValue('licenseAddress', $event.target.value)"
                   class="base-input-info"
-                  :disabled="isDisabled"
+                  :disabled="isDisabled || (!isEditMode && !isAddMode)"
                 />
               </div>
             </div>
@@ -211,7 +211,6 @@
         :isEditMode="isEditMode"
         :isAddMode="isAddMode"
         :disabled="isDisabled"
-
       />
       <div>
         <AttachFile :disabled="isDisabled || (!isEditMode && !isAddMode)" />
@@ -251,6 +250,7 @@ import Api from "../api/apiConst";
 
 import MSDatetime from "../components/Base/MSDateTime.vue";
 import { withdrawList } from "../api/withdrawlist";
+import { baseApi } from "../api/baseApi";
 
 export default {
   name: "Payment",
@@ -281,6 +281,7 @@ export default {
   },
   data() {
     return {
+      id: null,
       isDisabled: false,
       isEditMode: false,
       createApiUrl: Api.payment.url,
@@ -375,10 +376,11 @@ export default {
     },
   },
   mounted() {
-    this.mode = this.$route.query.mode; // Set mode based on router param
+    this.mode = this.$route.query.mode; // tùy chỉnh mode theo router
     if (this.mode === "add") {
       this.setMode("add");
     } else if (this.$route.params.id) {
+      this.id = this.$route.params.id;
       this.loadPaymentData();
     }
   },
@@ -396,6 +398,11 @@ export default {
         this.handleSubmit(action);
       }
     },
+    /**
+     * function set các mode cho các cờ để thực
+     * hiện logic ẩn hiện input
+     * @param mode
+     */
     setMode(mode) {
       this.mode = mode;
       this.isDisabled = mode === "view";
@@ -455,6 +462,71 @@ export default {
       }
     },
 
+    /**
+     *function extends từ baseSubmit xử lý việc gọi api theo mode
+     và điều hướng truy cập theo action
+     * @param action
+     */
+    async customHandleLogic(action) {
+      let responseData;
+      try {
+        if (this.isAddMode) {
+          // Gọi API POST để tạo mới
+          responseData = await baseApi.postAuthenApi(
+            this.createApiUrl,
+            this.currentItem
+          );
+          if (responseData.isSuccess) {
+            if (action === "saveAndClose") {
+              this.showAlert("Tạo mới thành công", () => {
+                this.$router.push("/withdraw-list");
+              });
+            } else if (action === "save") {
+              // Gán id từ responseData cho this.id để load dữ liệu
+              const newRecordId = responseData.data.paymentMasterId;
+              this.id = newRecordId;
+
+              // Gọi API để lấy thông tin chi tiết của bản ghi vừa tạo
+              const fetchResponse = await this.loadPaymentData();
+
+              if (fetchResponse) {
+                // Chuyển sang chế độ view sau khi dữ liệu đã được load thành công
+                this.showAlert("Tạo mới thành công", () => {
+                  this.setMode("view");
+                });
+              } else {
+                this.showAlert("Không thể tải dữ liệu chi tiết");
+              }
+            }
+          }
+        } else if (this.isEditMode) {
+          // Gọi API PUT để cập nhật
+          responseData = await baseApi.putAuthenApi(
+            this.updateApiUrl,
+            this.currentItem
+          );
+          if (responseData.isSuccess) {
+            if (action === "save") {
+              this.showAlert("Cập nhật thành công", () => {
+                this.setMode("view");
+              });
+            } else if (action === "saveAndClose") {
+              this.showAlert("Cập nhật thành công", () => {
+                this.$router.push("/withdraw-list");
+              });
+            }
+          }
+        }
+      } catch (error) {
+        responseData = { isSuccess: false, error };
+      }
+      return responseData;
+    },
+
+    /**
+     *function hiển thị các thông tin của 1 withdrawPayment theo id
+     và gắn các giá trị vào các MSCombobox và MSGrid
+     */
     async loadPaymentData() {
       try {
         const responseData = await withdrawList.getPaymentById(this.id);
@@ -474,13 +546,16 @@ export default {
                 detail.description ||
                 `Chi tiền cho ${this.currentItem.customerName}`,
             })) || [];
+          return true;
         } else {
           this.errorMessage = "Không thể lấy thông tin chi tiết";
         }
       } catch (error) {
         this.errorMessage = "Có lỗi xảy ra khi tải dữ liệu";
+        return false;
       }
     },
+
     /**
      * fuction update giá trị khi chọn 1 option trong multiselect
      * và gán nó vào object currentItem
@@ -515,12 +590,6 @@ export default {
           break;
       }
     },
-
-    /**
-     * hàm gọi từ BaseSubmit thực hiện việc sau khi submit thành công
-     * sẽ thực hiện các yêu cầu tùy theo ng dùng mong muốn
-     * @param responseData
-     */
 
     /**
      * các function thực hiện gán data cho các input khác nhau
@@ -749,15 +818,14 @@ label {
 }
 .base-input-info {
   width: 100%;
-  height: 30px;
+  height: 26px;
   border: 1px solid #999;
   border-radius: 2px;
-  padding: 0 8px;
+
   box-sizing: border-box;
   outline: none;
   display: flex;
   align-items: center;
-  background-color: #fff;
 }
 .base-input-info:focus-within {
   border-color: green;

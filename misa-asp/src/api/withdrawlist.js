@@ -12,14 +12,7 @@ async deletePaymentById(id) {
    }
   },
 
-  async updatePayment() { 
-  try {
-    const response = await baseApi.putAuthenApi(Api.updatePayment.url, id);
-    return response.data;
-   }catch (error) {  
-    throw error; 
-   }
-  },
+  
   
   async getPaymentById(id) { 
   try {

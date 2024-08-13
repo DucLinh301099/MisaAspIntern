@@ -106,6 +106,7 @@ export default {
   font-size: 12.5px;
   transition: border-color 0.3s;
   padding-left: 10px;
+  padding-right: 10px;
 }
 
 .ms-input.focused {

@@ -1,5 +1,4 @@
 <script>
-import { baseApi } from "../../api/baseApi";
 import BaseForm from "./BaseForm.vue";
 
 export default {
@@ -14,39 +13,7 @@ export default {
     async handleSubmit(action) {
       this.customValidate();
 
-      let responseData;
-
-      try {
-        if (this.isAddMode) {
-          // Gọi API POST để tạo mới
-          responseData = await baseApi.postAuthenApi(
-            this.createApiUrl,
-            this.currentItem
-          );
-          if (responseData.isSuccess) {
-            this.showAlert("Tạo mới thành công", () => {});
-          }
-        } else if (this.isEditMode) {
-          // Gọi API PUT để cập nhật
-          responseData = await baseApi.putAuthenApi(
-            this.updateApiUrl,
-            this.currentItem
-          );
-          if (responseData.isSuccess) {
-            if (action === "save") {
-              this.showAlert("Cập nhật thành công", () => {
-                this.setMode("view");
-              });
-            } else if (action === "saveAndClose") {
-              this.showAlert("Cập nhật thành công", () => {
-                this.$router.push("/withdraw-list");
-              });
-            }
-          }
-        }
-      } catch (error) {
-        responseData = { isSuccess: false, error };
-      }
+      let responseData = await this.customHandleLogic(action);
 
       if (responseData.isSuccess) {
         await this.afterCallSuccess(responseData);
@@ -74,6 +41,11 @@ export default {
       }
     },
 
+    /**
+ * Hàm xử lý lỗi sau khi gọi API, tìm và hiển thị lỗi lên các form field tương ứng
+
+ * @param responseData 
+ */
     async afterCallError(responseData) {
       let refsForm = this.$refs;
 
@@ -101,6 +73,12 @@ export default {
       }
     },
 
+    /**
+     * Đệ quy tìm và lưu tất cả các refs từ component hiện tại và các component con
+     * @param refsComponent
+     * @param refList
+     * @param parentKey
+     */
     getRefByParent(refsComponent, refList, parentKey = "") {
       for (let key in refsComponent) {
         if (refsComponent.hasOwnProperty(key)) {

@@ -26,20 +26,19 @@
           >
             <div v-if="column.dataType === 'dropdown'">
               <MSComboboxGrid
-                v-show="isEditMode || isAddMode"
+                v-if="isEditMode || isAddMode"
+                :key="`${rowIndex}-${column.fieldName}`"
                 :value="row[column.fieldName]"
                 :config="column.dropDownConfig"
                 @input="changeValueInput(rowIndex, column)"
                 @update:selectedRow="updateRowField(rowIndex, column, $event)"
                 :ref="`[${rowIndex}].${column.fieldName}`"
               />
-              <span v-show="!isEditMode && !isAddMode">{{
-                row[column.fieldName]
-              }}</span>
+              <span v-else>{{ row[column.fieldName] }}</span>
             </div>
             <div v-else>
               <input
-                v-show="isEditMode || isAddMode"
+                v-if="isEditMode || isAddMode"
                 v-model="row[column.fieldName]"
                 @input="changeValueInput(rowIndex, column)"
                 :class="{
@@ -51,9 +50,7 @@
                 @blur="handleBlur"
                 ref="inputComponent"
               />
-              <span v-show="!isEditMode && !isAddMode">{{
-                row[column.fieldName]
-              }}</span>
+              <span v-else>{{ row[column.fieldName] }}</span>
             </div>
           </td>
           <td class="button-style">
@@ -113,8 +110,8 @@ export default {
       default: false,
     },
     isAddMode: {
-        type: Boolean,
-        default: false,
+      type: Boolean,
+      default: false,
     },
     hasRemoveRow: {
       type: Boolean,

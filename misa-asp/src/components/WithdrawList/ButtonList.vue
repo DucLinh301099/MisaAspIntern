@@ -6,23 +6,7 @@
           <div class="check-all-arrow">
             <div class="mi mi-24"></div>
           </div>
-
-          <div id="filter-dropdown">
-            <div class="dropdown-secondary ms-dropdown">
-              <!----><button
-                name="button"
-                shortkey-target=""
-                class="ms-component ms-button ms-button-secondary ms-button ms-con-dropdown-radius-true-true expand-more-button"
-              >
-                <!---->
-                <div class="ms-button--text flex align-center">
-                  <span class="pr-4">Lọc</span
-                  ><!---->
-                  <div class="mi mi-16 mi-arrow-up--black">&nbsp;</div>
-                </div>
-              </button>
-            </div>
-          </div>
+          <MSButtonFilter />
           <div class="filter-conditions">
             <div class="filter-item--default">Đầu năm tới hiện tại</div>
           </div>
@@ -133,8 +117,12 @@
   </div>
 </template>
 <script>
+import MSButtonFilter from "../ControlComponent/MSButtonFilter.vue";
 export default {
   name: "ButtonList",
+  components: {
+    MSButtonFilter,
+  },
   data() {
     return {
       searchQuery: "",
@@ -169,9 +157,7 @@ export default {
 .left-0 {
   left: 0;
 }
-.sticky {
-  position: sticky !important;
-}
+
 .grid-list-data .grid-button-list div.flex {
   align-items: center;
 }
@@ -190,7 +176,7 @@ export default {
 .dropdown-secondary .ms-button.ms-button-secondary {
   border: 2px solid #3b3c3f;
 }
-[data-v-934d572c] .dropdown-secondary .ms-button.ms-button-secondary {
+.dropdown-secondary .ms-button.ms-button-secondary {
   border: 2px solid #3b3c3f;
 }
 .dropdown-secondary .ms-component.ms-button {

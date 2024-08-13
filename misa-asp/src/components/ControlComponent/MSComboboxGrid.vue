@@ -107,7 +107,7 @@ export default {
   },
   data() {
     return {
-      inputValue: "",
+      inputValue: this.value || "",
       showTable: false,
       isInputFocused: false,
       isMultiselectVisible: false,

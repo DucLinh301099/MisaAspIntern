@@ -1,93 +1,127 @@
 <template>
   <div class="withdraw-list-component">
     <div class="withdraw-list-wrapper">
-      <table class="withdraw-list-table">
-        <thead class="thead">
-          <tr>
-            <th class="th-index">#</th>
-            <th v-for="(column, index) in columnConfig" :key="index">
-              {{ column.columnName }}
-            </th>
-          </tr>
-        </thead>
-        <tbody class="table-grid">
-          <tr
-            class="table-tbody"
-            v-for="(row, rowIndex) in filteredOptionsData"
-            :key="rowIndex"
-            @dblclick="viewRow(row)"
-          >
-            <td>{{ rowIndex + 1 }}</td>
-            <td
-              :class="[
-                'td-grid',
-                getColumnClass(column.columnName),
-                column.columnName === 'Số chứng từ' ? 'td-chung-tu' : '',
-              ]"
-              v-for="(column, colIndex) in columnConfig"
-              :key="colIndex"
+      <div class="table-container">
+        <!-- Bọc table trong một div mới -->
+        <table class="withdraw-list-table">
+          <thead class="thead">
+            <tr>
+              <th class="th-index">#</th>
+              <th
+                v-for="(column, index) in columnConfig"
+                :key="index"
+                @dblclick="sortRecordsByDate(column.fieldName)"
+              >
+                {{ column.columnName }}
+              </th>
+            </tr>
+          </thead>
+          <tbody class="table-grid">
+            <tr
+              class="table-tbody"
+              v-for="(row, rowIndex) in filteredOptionsData"
+              :key="rowIndex"
+              @dblclick="viewRow(row)"
             >
-              <span
-                v-if="
-                  column.columnName !== 'Số chứng từ' &&
-                  column.columnName !== 'Chức năng'
-                "
-                >{{ row[column.fieldName] }}</span
+              <td>{{ rowIndex + 1 }}</td>
+              <td
+                :class="[
+                  'td-grid',
+                  getColumnClass(column.columnName),
+                  column.columnName === 'Số chứng từ' ? 'td-chung-tu' : '',
+                ]"
+                v-for="(column, colIndex) in columnConfig"
+                :key="colIndex"
               >
-              <a
-                v-else-if="column.columnName === 'Số chứng từ'"
-                @click="viewRow(row)"
-                href="#"
-                >{{ row[column.fieldName] }}</a
-              >
-              <div v-else class="actions-container">
-                <div class="flex justify-end">
-                  <div class="ms-dropdown">
-                    <button
-                      class="ms-button ms-radius-false ms-dropdown-type-feature ms-dropdown-padding-custom-feature"
-                      @click="viewRow(row)"
-                    >
-                      <div class="ms-button--text flex">
-                        <div class="con-ms-tooltip">
-                          <div class="tooltip-content">Xem</div>
-                        </div>
-                      </div>
-                    </button>
-                    <div class="dropdown">
+                <span
+                  v-if="
+                    column.columnName !== 'Số chứng từ' &&
+                    column.columnName !== 'Chức năng'
+                  "
+                  >{{ row[column.fieldName] }}</span
+                >
+                <a
+                  v-else-if="column.columnName === 'Số chứng từ'"
+                  @click="viewRow(row)"
+                  href="#"
+                  >{{ row[column.fieldName] }}</a
+                >
+                <div v-else class="actions-container">
+                  <div class="flex justify-end">
+                    <div class="ms-dropdown">
                       <button
-                        class="ms-button dropbtn ms-padding-is-single-false-size-default ms-dropdown-type-feature"
-                        @click="toggleDropdown(rowIndex)"
+                        class="ms-button ms-radius-false ms-dropdown-type-feature ms-dropdown-padding-custom-feature"
+                        @click="viewRow(row)"
                       >
                         <div class="ms-button--text flex">
-                          <div class="mi mi-16 mi-arrow-up--blue">&nbsp;</div>
+                          <div class="con-ms-tooltip">
+                            <div class="tooltip-content">Xem</div>
+                          </div>
                         </div>
                       </button>
-                      <div
-                        v-if="dropdownVisible === rowIndex"
-                        class="dropdown-content"
-                      >
-                        <a href="#" @click="editRow(row)">Sửa</a>
-                        <a href="#" @click="deleteRow(row)">Xóa</a>
+                      <div class="dropdown">
+                        <button
+                          class="ms-button dropbtn ms-padding-is-single-false-size-default ms-dropdown-type-feature"
+                          @click="toggleDropdown(rowIndex)"
+                        >
+                          <div class="ms-button--text flex">
+                            <div class="mi mi-16 mi-arrow-up--blue">&nbsp;</div>
+                          </div>
+                        </button>
+                        <div
+                          v-if="dropdownVisible === rowIndex"
+                          class="dropdown-content"
+                        >
+                          <a href="#" @click="editRow(row)">Sửa</a>
+                          <a href="#" @click="deleteRow(row)">Xóa</a>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- Kết thúc div table-container -->
     </div>
     <div class="total-amount">
       <span class="span-amount"
         >Tổng tiền:<strong>{{ formattedTotalAmount }}</strong></span
       >
     </div>
-
-    <div class="total-records">
-      Tổng số:
-      <strong class="bold-number">{{ filteredOptionsData.length }}</strong> bản
-      ghi
+    <div class="pagination">
+      <div class="total-records">
+        Tổng số:
+        <strong class="bold-number">{{ filteredOptionsData.length }}</strong>
+        bản ghi
+      </div>
+      <div class="page-controls">
+        <select v-model="itemsPerPage" @change="updatePage">
+          <option
+            v-for="option in itemsPerPageOptions"
+            :key="option"
+            :value="option"
+          >
+            {{ option }} bản ghi trên 1 trang
+          </option>
+        </select>
+        <button :disabled="currentPage === 1" @click="goToPreviousPage">
+          Trước
+        </button>
+        <input
+          type="number"
+          v-model.number="currentPageInput"
+          @change="goToPage(currentPageInput)"
+          min="1"
+          :max="totalPages"
+        />
+        <span>/ {{ totalPages }}</span>
+        <button :disabled="currentPage === totalPages" @click="goToNextPage">
+          Sau
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -112,20 +146,47 @@ export default {
       columnConfig: withdrawListConfig.columnConfig,
       optionsData: [],
       dropdownVisible: null,
+      sortAscending: true,
+      itemsPerPage: 10, // Số bản ghi trên mỗi trang mặc định
+      currentPage: 1,
+      currentPageInput: 1,
+      itemsPerPageOptions: [10, 20, 30, 50, 100, 200],
     };
   },
   computed: {
     filteredOptionsData() {
+      let sortedData = [...this.optionsData];
+
+      // Sắp xếp dữ liệu theo thứ tự giảm dần của thời gian tạo (mới nhất trước)
+      sortedData.sort((a, b) => {
+        const dateA = new Date(a.createdAt);
+        const dateB = new Date(b.createdAt);
+
+        return dateB - dateA; // Đảo ngược thứ tự để bản ghi mới nhất đứng đầu
+      });
+
+      // Nếu không có searchQuery, trả về dữ liệu đã sắp xếp
       if (!this.searchQuery) {
-        return this.optionsData;
+        return sortedData;
       }
+
+      // Lọc dữ liệu theo searchQuery và trả về kết quả đã sắp xếp
       const query = this.searchQuery.toLowerCase();
-      return this.optionsData.filter((item) => {
+      return sortedData.filter((item) => {
         return Object.values(item).some((val) =>
           String(val).toLowerCase().includes(query)
         );
       });
     },
+    totalPages() {
+      return Math.ceil(this.filteredOptionsData.length / this.itemsPerPage);
+    },
+    paginatedData() {
+      const start = (this.currentPage - 1) * this.itemsPerPage;
+      const end = start + this.itemsPerPage;
+      return this.filteredOptionsData.slice(start, end);
+    },
+
     totalAmount() {
       return this.filteredOptionsData.reduce((sum, item) => {
         const amount = parseInt(item.totalAmount.replace(/[^\d]/g, ""), 10);
@@ -163,6 +224,43 @@ export default {
         this.optionsData = [];
       }
     },
+    addNewRecord(newRecord) {
+      this.optionsData.push(newRecord);
+      this.$forceUpdate(); // Buộc cập nhật giao diện
+    },
+    sortRecordsByDate(fieldName) {
+      this.sortAscending = !this.sortAscending; // Đảo ngược thứ tự sắp xếp
+
+      this.optionsData.sort((a, b) => {
+        const valueA = a[fieldName];
+        const valueB = b[fieldName];
+
+        if (fieldName === "createdAt") {
+          // Nếu là cột thời gian tạo, chuyển đổi giá trị thành đối tượng Date
+          return this.sortAscending
+            ? new Date(valueA) - new Date(valueB)
+            : new Date(valueB) - new Date(valueA);
+        }
+
+        if (fieldName === "totalAmount") {
+          // Nếu là cột Số tiền, chuyển đổi giá trị thành số nguyên để sắp xếp
+          const amountA = parseInt(valueA.replace(/[^\d]/g, ""), 10) || 0;
+          const amountB = parseInt(valueB.replace(/[^\d]/g, ""), 10) || 0;
+
+          return this.sortAscending ? amountA - amountB : amountB - amountA;
+        }
+
+        // So sánh các giá trị khác
+        return this.sortAscending
+          ? valueA > valueB
+            ? 1
+            : -1
+          : valueA < valueB
+          ? 1
+          : -1;
+      });
+    },
+
     getColumnClass(columnName) {
       if (columnName === "Số tiền" || columnName === "Số tài khoản NH") {
         return "narrow-column";
@@ -173,7 +271,11 @@ export default {
       this.dropdownVisible = this.dropdownVisible === index ? null : index;
     },
     editRow(row) {
-      // Xử lý khi nhấn tùy chọn "Sửa"
+      this.$router.push({
+        name: "payment",
+        params: { id: row.id },
+        query: { mode: "edit" },
+      });
     },
     viewRow(row) {
       this.$router.push({
@@ -231,10 +333,13 @@ export default {
 }
 /* Thêm lớp này để bao quanh bảng */
 .withdraw-list-wrapper {
-  max-height: 490px; /* Bạn có thể điều chỉnh chiều cao tối đa */
-  overflow-y: auto;
   border-bottom: 2px solid #ccc; /* Thêm border bên dưới bảng */
   box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.473);
+}
+
+.table-container {
+  max-height: 490px; /* Chiều cao tối đa của container */
+  overflow-y: auto; /* Tạo thanh cuộn dọc */
 }
 
 .table-tbody {
@@ -250,13 +355,14 @@ table {
   background-color: #f4f5f8;
   white-space: nowrap;
   height: 40px;
-  position: sticky; /* Thêm thuộc tính này để thead luôn dính ở đầu */
-  top: 0; /* Đặt thead ở đầu của bảng khi scroll */
-  z-index: 2; /* Đảm bảo thead luôn nằm trên các hàng khác khi cuộn */
+  top: 0;
+  z-index: 1;
+  position: sticky;
   box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
   border-top: 1px solid #ccc !important;
   border-bottom: 1px solid #ccc;
 }
+
 /* Style for the total amount row */
 
 .total-label {
@@ -454,5 +560,82 @@ span {
   background: url(https://actaspcdng1.misacdn.net/assets/Sprites-11d892c3.svg)
     no-repeat;
   cursor: pointer;
+}
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  font-family: AvertaStdCY, Helvetica, Arial, sans-serif;
+}
+
+.page-controls {
+  display: flex;
+  align-items: center;
+}
+
+.page-controls select {
+  margin-right: 10px;
+  padding: 5px;
+  border-radius: 4px;
+  border: 1px solid #ced4da;
+  background-color: #ffffff;
+  font-size: 14px;
+  color: #333;
+  appearance: none; /* Loại bỏ giao diện mặc định của trình duyệt */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 10px;
+}
+
+.page-controls select:focus {
+  border-color: #333;
+  outline: none;
+}
+
+.page-controls select option {
+  padding: 8px;
+  font-size: 14px;
+  color: #333;
+}
+
+.page-controls select option:checked {
+  background-color: #28a745;
+  color: #ffffff;
+}
+
+.page-controls select option:hover {
+  background-color: #28a745;
+  color: #ffffff;
+}
+
+.page-controls button {
+  margin: 0 5px;
+  padding: 5px 10px;
+  border-radius: 4px;
+  border: 1px solid #ced4da;
+  background-color: #f8f9fa;
+  cursor: pointer;
+}
+
+.page-controls button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.page-controls input[type="number"] {
+  width: 50px;
+  padding: 5px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  text-align: center;
+  margin-right: 5px;
+}
+
+.bold-number {
+  font-weight: 800;
 }
 </style>

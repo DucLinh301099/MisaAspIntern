@@ -350,7 +350,7 @@ label {
 }
 
 .multiselect {
-  width: 33px;
+  width: 33.5px;
   border: none;
   border-left: 1px solid #999;
   margin-left: auto;
