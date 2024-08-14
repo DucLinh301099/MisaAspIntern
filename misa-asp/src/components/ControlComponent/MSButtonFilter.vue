@@ -9,54 +9,152 @@
       >
         <div class="ms-button--text flex align-center">
           <span class="pr-4">Lọc</span>
-          <div class="mi mi-16 mi-arrow-up--black">&nbsp;</div>
+          <div class="mi mi-16 mi-arrow-down--black">&nbsp;</div>
         </div>
       </button>
     </div>
     <!-- Dropdown content -->
     <div v-if="isDropdownVisible" class="dropdown-content">
-      <div class="dropdown-item">
-        <label>Thời gian *</label>
-        <select>
-          <option>Đầu năm đến hiện tại</option>
-          <option>6 tháng đầu năm</option>
-          <option>6 tháng cuối năm</option>
-        </select>
-      </div>
-      <div class="flex-row">
+      <div v-if="dateField">
         <div class="dropdown-item">
-          <label>Từ ngày</label>
-          <input type="date" value="2024-01-01" />
+          <label>Thời gian *</label>
+          <div class="select-container">
+            <div
+              class="select-box"
+              tabindex="0"
+              @click.stop="toggleSelectDropdown"
+            >
+              {{ selectedTime }}
+              <div class="mi mi-16 mi-arrow-down--black"></div>
+            </div>
+            <div v-if="isSelectDropdownVisible" class="select-options">
+              <div
+                v-for="option in timeOptions"
+                :key="option"
+                :class="[
+                  'option-dropdown',
+                  { 'selected-option': option === selectedTime },
+                ]"
+                @click="onSelectOption(option)"
+              >
+                {{ option }}
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="dropdown-item">
-          <label>Đến ngày</label>
-          <input type="date" value="2024-08-13" />
+        <div class="flex-row">
+          <div class="dropdown-item">
+            <label>Từ ngày</label>
+            <input
+              type="date"
+              :value="startDate"
+              @input="startDate = $event.target.value"
+            />
+          </div>
+          <div class="dropdown-item">
+            <label>Đến ngày</label>
+            <input
+              type="date"
+              :value="endDate"
+              @input="endDate = $event.target.value"
+            />
+          </div>
         </div>
       </div>
+
       <div class="dropdown-item-checkbox">
         <input type="checkbox" />
         <label>Áp dụng tham số thời gian cho tất cả các danh sách</label>
       </div>
       <div class="dropdown-actions">
-        <button class="reset-button">Đặt lại</button>
-        <button class="apply-button">Lọc</button>
+        <button class="reset-button" @click="resetFilter">Đặt lại</button>
+        <button class="apply-button" @click="applyFilter">Lọc</button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import withdrawListConfig from "../../config/WithdrawListConfig";
+
 export default {
   name: "MSButtonFilter",
+  props: {
+    dateField: {
+      type: Array,
+      default: () => [],
+    },
+  },
   data() {
     return {
       isDropdownVisible: false,
+      isSelectDropdownVisible: false,
+      selectedTime: "Đầu năm đến hiện tại",
+      timeOptions: Object.keys(withdrawListConfig.timeOptionsConfig), // Lấy danh sách tùy chọn từ config
+      startDate: "", // Ngày bắt đầu
+      endDate: "", // Ngày kết thúc
+      filters: [], // Mảng filter
     };
   },
   methods: {
     toggleDropdown() {
       this.isDropdownVisible = !this.isDropdownVisible;
     },
+    toggleSelectDropdown(event) {
+      event.stopPropagation(); // Ngăn sự kiện click lan truyền
+      this.isSelectDropdownVisible = !this.isSelectDropdownVisible;
+    },
+    onSelectOption(option) {
+      this.selectedTime = option;
+      this.isSelectDropdownVisible = false;
+
+      const selectedConfig = withdrawListConfig.timeOptionsConfig[option];
+      if (selectedConfig) {
+        this.startDate = selectedConfig.startDate;
+        this.endDate = selectedConfig.endDate;
+      } else {
+        this.startDate = "";
+        this.endDate = "";
+      }
+    },
+    resetFilter() {
+      this.selectedTime = "Đầu năm đến hiện tại";
+      this.onSelectOption(this.selectedTime);
+    },
+    applyFilter() {
+      if (this.dateField && this.dateField.length) {
+        this.filters = [];
+        let filterDate = []; // Khởi tạo biến cục bộ filterDate
+        for (let index = 0; index < this.dateField.length; index++) {
+          const item = this.dateField[index];
+          if (item) {
+            filterDate.push([item, ">=", this.startDate]);
+            filterDate.push("and");
+            filterDate.push([item, "<=", this.endDate]);
+          }
+          if (index < this.dateField.length - 1) {
+            filterDate.push("or");
+          }
+        }
+
+        // Gán giá trị vào mảng filters
+        this.addFilter(filterDate); // Truyền biến cục bộ filterDate vào hàm addFilter
+
+        this.$emit("filters-updated", this.filters); // Phát ra sự kiện filters-updated với giá trị this.filters
+      }
+    },
+
+    addFilter(data, command = "and") {
+      if (this.filters.length) {
+        this.filters.push(command);
+        this.filters.push(data);
+      } else {
+        this.filters = [data];
+      }
+    },
+  },
+  mounted() {
+    this.onSelectOption(this.selectedTime); // Cập nhật ngày khởi tạo khi component mount
   },
 };
 </script>
@@ -104,10 +202,6 @@ export default {
   padding-right: 4px !important;
 }
 
-.mi.mi-arrow-up--black {
-  background-position: -560px -359px;
-}
-
 .mi-16 {
   width: 16px;
   height: 16px;
@@ -119,10 +213,18 @@ export default {
   height: 100%;
   position: relative;
 }
+.mi.mi-arrow-down--black {
+  background-position: -560px -359px;
+}
 .mi {
   background: url(https://actaspcdng1.misacdn.net/assets/Sprites-11d892c3.svg)
     no-repeat;
   cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.arrow-up {
+  transform: rotate(180deg);
 }
 
 /* Dropdown CSS */
@@ -146,14 +248,18 @@ export default {
   margin-top: 5px;
   font-family: AvertaStdCY, Helvetica, Arial, sans-serif;
 }
+
 label {
   font-size: 12px;
   margin-top: 3px;
   margin-left: 5px;
 }
+
 .dropdown-item {
   margin-bottom: 16px;
+  font-size: 13px;
 }
+
 .dropdown-item-checkbox {
   margin-bottom: 16px;
   display: flex;
@@ -166,19 +272,60 @@ label {
   font-size: 12px;
 }
 
-.dropdown-item select {
+.select-container {
+  position: relative;
+  display: inline-block;
   width: 100%;
-  padding: 5px;
-  border: 1px solid #ced4da;
-  border-radius: 2.5px;
-  background-color: #ffffff;
-  font-size: 14px;
-  color: #495057;
-  outline: none;
+  cursor: pointer;
 }
 
-.dropdown-item input[type="checkbox"] {
-  margin-right: 8px;
+.select-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 10px 5px 10px;
+  border-radius: 2.5px;
+  border: 1px solid #ced4da;
+  background-color: #ffffff;
+  transition: border-color 0.3s ease;
+}
+.select-box:focus,
+.select-box:focus-within {
+  border-color: #28a745; /* Green border on focus */
+}
+.select-box.active {
+  border-color: #28a745; /* Màu xanh lá khi tùy chọn được mở */
+}
+.select-options {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: #ffffff;
+  border: 1px solid #ced4da;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  margin-top: 2px;
+  max-height: 150px; /* Giới hạn chiều cao để hiển thị tối đa 4 hàng */
+  overflow-y: auto; /* Thêm thanh cuộn dọc nếu vượt quá 4 hàng */
+}
+
+.option-dropdown {
+  padding: 8px 10px;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.option-dropdown:hover:not(.selected-option) {
+  background-color: #e0e0e0; /* Nền xám khi hover */
+  color: #28a745; /* Chữ màu xanh lá khi hover */
+}
+
+.selected-option {
+  background-color: #28a745; /* Nền xanh lá khi được chọn */
+  color: #ffffff; /* Chữ màu trắng khi được chọn */
 }
 
 .dropdown-actions {
@@ -215,9 +362,11 @@ label {
   gap: 15px;
   margin-bottom: 10px;
 }
+
 .reset-button {
   border: 1px solid #8d9096;
 }
+
 .apply-button {
   border: none;
 }
@@ -241,7 +390,7 @@ label {
   border-radius: 2.5px;
   background-color: #ffffff;
   font-size: 14px;
-  color: #495057;
+
   outline: none;
 }
 </style>

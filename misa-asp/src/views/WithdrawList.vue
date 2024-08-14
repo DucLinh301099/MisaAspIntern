@@ -12,8 +12,18 @@
 
         <!-- Main content goes here -->
         <div class="main-container">
-          <ButtonList @search="handleSearch" />
-          <MSWithdrawList :searchQuery="searchQuery" />
+          <ButtonList
+            @search="handleSearch"
+            @filters-updated="updateFilters"
+            :dateField="dateField"
+          />
+          <MSWithdrawList
+            :searchQuery="searchQuery"
+            :totalRecords="pageData.totalRecords"
+            @updatePageData="updatePageData"
+            @updateTotalRecords="updateTotalRecords"
+            @sort-updated="updateSort"
+          />
         </div>
       </div>
     </div>
@@ -36,14 +46,40 @@ export default {
     RouterList,
     MSWithdrawList,
   },
+
   data() {
     return {
+      dateField: ["posted_date"],
       searchQuery: "",
+      pageData: {
+        filters: null,
+        sort: null,
+        currentPage: null,
+        itemsPerPage: null,
+
+        totalPages: null,
+        totalRecords: null,
+      },
     };
   },
   methods: {
     handleSearch(query) {
       this.searchQuery = query;
+    },
+    updatePageData(pageData) {
+      this.pageData = {
+        ...this.pageData,
+        ...pageData,
+      };
+    },
+    updateTotalRecords(totalRecords) {
+      this.pageData.totalRecords = totalRecords;
+    },
+    updateFilters(filters) {
+      this.pageData.filters = filters;
+    },
+    updateSort(sort) {
+      this.pageData.sort = sort;
     },
   },
 };

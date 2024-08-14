@@ -2,7 +2,6 @@
   <div class="withdraw-list-component">
     <div class="withdraw-list-wrapper">
       <div class="table-container">
-        <!-- Bọc table trong một div mới -->
         <table class="withdraw-list-table">
           <thead class="thead">
             <tr>
@@ -10,7 +9,7 @@
               <th
                 v-for="(column, index) in columnConfig"
                 :key="index"
-                @dblclick="sortRecordsByDate(column.fieldName)"
+                @dblclick="sortRecords(column.fieldName)"
               >
                 {{ column.columnName }}
               </th>
@@ -84,54 +83,22 @@
           </tbody>
         </table>
       </div>
-      <!-- Kết thúc div table-container -->
     </div>
     <div class="total-amount">
       <span class="span-amount"
         >Tổng tiền:<strong>{{ formattedTotalAmount }}</strong></span
       >
     </div>
-    <!-- <div class="pagination">
-      <div class="total-records">
-        Tổng số:
-        <strong class="bold-number">{{ filteredOptionsData.length }}</strong>
-        bản ghi
-      </div>
-      <div class="page-controls">
-        <select v-model="itemsPerPage" @change="updatePage">
-          <option
-            v-for="option in itemsPerPageOptions"
-            :key="option"
-            :value="option"
-            class="option-dropdown"
-          >
-            {{ option }} bản ghi trên 1 trang
-          </option>
-        </select>
-        <button :disabled="currentPage === 1" @click="goToPreviousPage">
-          Trước
-        </button>
-        <input
-          type="number"
-          v-model.number="currentPageInput"
-          @change="goToPage(currentPageInput)"
-          min="1"
-          :max="totalPages"
-        />
-       
-        <button :disabled="currentPage === totalPages" @click="goToNextPage">
-          Sau
-        </button>
-      </div>
-    </div> -->
+
     <MSPagination
-      :total-records="filteredOptionsData.length"
+      :total-records="totalRecords"
       :items-per-page="itemsPerPage"
       :current-page="currentPage"
       :total-pages="totalPages"
       :items-per-page-options="itemsPerPageOptions"
       @update:itemsPerPage="updatePage"
       @update:currentPage="goToPage"
+      @updatePageData="updatePageData"
       @previous-page="goToPreviousPage"
       @next-page="goToNextPage"
     />
@@ -139,16 +106,16 @@
 </template>
 
 <script>
+import MSPagination from "../Base/MSPagination.vue";
+import BaseSubmit from "../Base/BaseSubmit.vue";
 import { withdrawList } from "../../api/withdrawlist";
 import withdrawListConfig from "../../config/WithdrawListConfig";
-import BaseSubmit from "../Base/BaseSubmit.vue";
 import { baseApi } from "../../api/baseApi";
-import MSPagination from "../Base/MSPagination.vue"
 
 export default {
   name: "MSWithdrawList",
   extends: BaseSubmit,
-  components:{
+  components: {
     MSPagination,
   },
   props: {
@@ -161,32 +128,30 @@ export default {
     return {
       columnConfig: withdrawListConfig.columnConfig,
       optionsData: [],
+      sort: [],
       dropdownVisible: null,
       sortAscending: true,
-      itemsPerPage: 10, // Số bản ghi trên mỗi trang mặc định
+      totalRecords: null,
+      itemsPerPage: 10,
       currentPage: 1,
-      currentPageInput: 1,  
-      itemsPerPageOptions: [10, 20, 30, 50, 100, 200],
+      currentPageInput: 1,
+      itemsPerPageOptions: [10, 20, 30, 50],
     };
   },
   computed: {
     filteredOptionsData() {
       let sortedData = [...this.optionsData];
 
-      // Sắp xếp dữ liệu theo thứ tự giảm dần của thời gian tạo (mới nhất trước)
-      sortedData.sort((a, b) => {
-        const dateA = new Date(a.createdAt);
-        const dateB = new Date(b.createdAt);
+      // sortedData.sort((a, b) => {
+      //   const dateA = new Date(a.createdAt);
+      //   const dateB = new Date(b.createdAt);
+      //   return dateB - dateA;
+      // });
 
-        return dateB - dateA; // Đảo ngược thứ tự để bản ghi mới nhất đứng đầu
-      });
-
-      // Nếu không có searchQuery, trả về dữ liệu đã sắp xếp
       if (!this.searchQuery) {
         return sortedData;
       }
 
-      // Lọc dữ liệu theo searchQuery và trả về kết quả đã sắp xếp
       const query = this.searchQuery.toLowerCase();
       return sortedData.filter((item) => {
         return Object.values(item).some((val) =>
@@ -197,12 +162,14 @@ export default {
     totalPages() {
       return Math.ceil(this.filteredOptionsData.length / this.itemsPerPage);
     },
+    totalRecords() {
+      return this.filteredOptionsData.length;
+    },
     paginatedData() {
       const start = (this.currentPage - 1) * this.itemsPerPage;
       const end = start + this.itemsPerPage;
       return this.filteredOptionsData.slice(start, end);
     },
-
     totalAmount() {
       return this.filteredOptionsData.reduce((sum, item) => {
         const amount = parseInt(item.totalAmount.replace(/[^\d]/g, ""), 10);
@@ -215,66 +182,30 @@ export default {
   },
   mounted() {
     this.getWithdrawList();
+    this.$emit("updatePageData", {
+      currentPage: this.currentPage,
+      itemsPerPage: this.itemsPerPage,
+      totalPages: this.totalPages,
+    });
+  },
+  watch: {
+    filteredOptionsData: {
+      handler(newData) {
+        this.$emit("updateTotalRecords", newData.length);
+        this.$emit("updatePageData", {
+          currentPage: this.currentPage,
+          itemsPerPage: this.itemsPerPage,
+          totalPages: this.totalPages,
+        });
+      },
+      deep: true,
+      immediate: true,
+    },
   },
   methods: {
-    async getWithdrawList() {
-      if (!withdrawListConfig.endpoint) {
-        return;
-      }
-      try {
-        const response = await baseApi.getAuthenApi(
-          withdrawListConfig.endpoint
-        );
-        if (response.data && Array.isArray(response.data)) {
-          this.optionsData = response.data;
-        } else if (
-          response.data &&
-          response.data.data &&
-          Array.isArray(response.data.data)
-        ) {
-          this.optionsData = response.data.data;
-        } else {
-          this.optionsData = [];
-        }
-      } catch (error) {
-        this.optionsData = [];
-      }
-    },
     addNewRecord(newRecord) {
       this.optionsData.push(newRecord);
-      this.$forceUpdate(); // Buộc cập nhật giao diện
-    },
-    sortRecordsByDate(fieldName) {
-      this.sortAscending = !this.sortAscending; // Đảo ngược thứ tự sắp xếp
-
-      this.optionsData.sort((a, b) => {
-        const valueA = a[fieldName];
-        const valueB = b[fieldName];
-
-        if (fieldName === "createdAt") {
-          // Nếu là cột thời gian tạo, chuyển đổi giá trị thành đối tượng Date
-          return this.sortAscending
-            ? new Date(valueA) - new Date(valueB)
-            : new Date(valueB) - new Date(valueA);
-        }
-
-        if (fieldName === "totalAmount") {
-          // Nếu là cột Số tiền, chuyển đổi giá trị thành số nguyên để sắp xếp
-          const amountA = parseInt(valueA.replace(/[^\d]/g, ""), 10) || 0;
-          const amountB = parseInt(valueB.replace(/[^\d]/g, ""), 10) || 0;
-
-          return this.sortAscending ? amountA - amountB : amountB - amountA;
-        }
-
-        // So sánh các giá trị khác
-        return this.sortAscending
-          ? valueA > valueB
-            ? 1
-            : -1
-          : valueA < valueB
-          ? 1
-          : -1;
-      });
+      this.$forceUpdate();
     },
 
     getColumnClass(columnName) {
@@ -300,9 +231,15 @@ export default {
         query: { mode: "view" },
       });
     },
+
     updatePage(itemsPerPage) {
       this.itemsPerPage = itemsPerPage;
       this.currentPage = 1;
+      this.$emit("updatePageData", {
+        currentPage: this.currentPage,
+        itemsPerPage: this.itemsPerPage,
+        totalPages: this.totalPages,
+      });
     },
     goToPreviousPage() {
       if (this.currentPage > 1) {
@@ -317,9 +254,44 @@ export default {
     goToPage(page) {
       if (page >= 1 && page <= this.totalPages) {
         this.currentPage = page;
+        this.$emit("updatePageData", {
+          currentPage: this.currentPage,
+          itemsPerPage: this.itemsPerPage,
+          totalPages: this.totalPages,
+        });
       }
     },
+    updatePageData(pageData) {
+      this.$emit("updatePageData", pageData);
+    },
 
+    /**
+     * function sắp xếp các bản ghi theo yêu cầu
+     * @param fieldName
+     */
+    sortRecords(fieldName) {
+      // Kiểm tra xem fieldName có tồn tại trong sort không
+      const existingSortIndex = this.sort.findIndex(
+        (sortItem) => sortItem.property === fieldName
+      );
+
+      if (existingSortIndex !== -1) {
+        // Nếu đã tồn tại, đảo ngược giá trị của `desc`
+        this.sort[existingSortIndex].desc = !this.sort[existingSortIndex].desc;
+      } else {
+        // Nếu chưa tồn tại, thêm một đối tượng sort mới vào mảng
+        this.sort.push({
+          property: fieldName,
+          desc: true, // Mặc định sắp xếp giảm dần
+        });
+      }
+      this.$emit("sort-updated", this.sort);
+    },
+
+    /**
+     * api xóa 1 bản ghi
+     * @param row
+     */
     async deleteRow(row) {
       this.showConfirm("Bạn có chắc chắn muốn xóa bản ghi này?", async () => {
         try {
@@ -333,6 +305,32 @@ export default {
           this.showAlert("Xóa thất bại. Vui lòng thử lại.");
         }
       });
+    },
+    /**
+     * api hiển thị thông tin
+     */
+    async getWithdrawList() {
+      if (!withdrawListConfig.endpoint) {
+        return;
+      }
+      try {
+        const response = await baseApi.getAuthenApi(
+          withdrawListConfig.endpoint
+        );
+        if (response.data && Array.isArray(response.data)) {
+          this.optionsData = response.data;
+        } else if (
+          response.data &&
+          response.data.data &&
+          Array.isArray(response.data.data)
+        ) {
+          this.optionsData = response.data.data;
+        } else {
+          this.optionsData = [];
+        }
+      } catch (error) {
+        this.optionsData = [];
+      }
     },
   },
 };
@@ -596,5 +594,4 @@ span {
     no-repeat;
   cursor: pointer;
 }
-
 </style>

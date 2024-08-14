@@ -6,7 +6,10 @@
           <div class="check-all-arrow">
             <div class="mi mi-24"></div>
           </div>
-          <MSButtonFilter />
+          <MSButtonFilter
+            @filters-updated="updateFilters"
+            :dateField="dateField"
+          />
           <div class="filter-conditions">
             <div class="filter-item--default">Đầu năm tới hiện tại</div>
           </div>
@@ -123,6 +126,12 @@ export default {
   components: {
     MSButtonFilter,
   },
+  props: {
+    dateField: {
+      type: Array,
+      default: () => [],
+    },
+  },
   data() {
     return {
       searchQuery: "",
@@ -138,6 +147,10 @@ export default {
         name: "payment",
         query: { mode: "add" },
       });
+    },
+    updateFilters(filters) {
+      // Phát ra sự kiện để truyền filters lên WithdrawList
+      this.$emit("filters-updated", filters);
     },
   },
 };
