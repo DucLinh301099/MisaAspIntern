@@ -1,47 +1,50 @@
 ﻿using MisaAsp.Models.ViewModel;
 using MisaAsp.Repositories;
 
-public interface IPaymentService
+namespace MisaAsp.Services
 {
-    Task<int> AddPaymentAsync(PaymentMasterVM paymentMaster, List<PaymentDetailVM> paymentDetails);
-    Task<IEnumerable<PaymentMasterVM>> GetAllPaymentsAsync();
-    Task<bool> DeletePaymentAsync(int id);
-    Task<PaymentMasterVM> GetPaymentWithDetailsByIdAsync(int id);
-
-    Task<int> UpdatePaymentAsync(PaymentMasterVM paymentMaster, List<PaymentDetailVM> paymentDetails);
-}
-
-public class PaymentService : IPaymentService
-{
-    private readonly IPaymentRepository _paymentRepository;
-
-    public PaymentService(IPaymentRepository paymentRepository)
+    public interface IPaymentService
     {
-        _paymentRepository = paymentRepository;
+        Task<int> AddPaymentAsync(PaymentMasterVM paymentMaster, List<PaymentDetailVM> paymentDetails);
+        Task<IEnumerable<PaymentMasterVM>> GetAllPaymentsAsync();
+        Task<bool> DeletePaymentAsync(int id);
+        Task<PaymentMasterVM> GetPaymentWithDetailsByIdAsync(int id);
+
+        Task<int> UpdatePaymentAsync(PaymentMasterVM paymentMaster, List<PaymentDetailVM> paymentDetails);
     }
 
-    public async Task<int> AddPaymentAsync(PaymentMasterVM paymentMaster, List<PaymentDetailVM> paymentDetails)
+    public class PaymentService : IPaymentService
     {
-        return await _paymentRepository.AddPaymentAsync(paymentMaster, paymentDetails);
-    }
+        private readonly IPaymentRepository _paymentRepository;
 
-    public async Task<IEnumerable<PaymentMasterVM>> GetAllPaymentsAsync()
-    {
-        return await _paymentRepository.GetAllPaymentsAsync();
-    }
+        public PaymentService(IPaymentRepository paymentRepository)
+        {
+            _paymentRepository = paymentRepository;
+        }
 
-    public async Task<bool> DeletePaymentAsync(int id)
-    {
-        return await _paymentRepository.DeletePaymentAsync(id);
-    }
+        public async Task<int> AddPaymentAsync(PaymentMasterVM paymentMaster, List<PaymentDetailVM> paymentDetails)
+        {
+            return await _paymentRepository.AddPaymentAsync(paymentMaster, paymentDetails);
+        }
 
-    public async Task<PaymentMasterVM> GetPaymentWithDetailsByIdAsync(int id)
-    {
-        return await _paymentRepository.GetPaymentWithDetailsByIdAsync(id);
-    }
-    public async Task<int> UpdatePaymentAsync(PaymentMasterVM paymentMaster, List<PaymentDetailVM> paymentDetails)
-    {
-        
-        return await _paymentRepository.UpdatePaymentAsync(paymentMaster, paymentDetails);
+        public async Task<IEnumerable<PaymentMasterVM>> GetAllPaymentsAsync()
+        {
+            return await _paymentRepository.GetAllPaymentsAsync();
+        }
+
+        public async Task<bool> DeletePaymentAsync(int id)
+        {
+            return await _paymentRepository.DeletePaymentAsync(id);
+        }
+
+        public async Task<PaymentMasterVM> GetPaymentWithDetailsByIdAsync(int id)
+        {
+            return await _paymentRepository.GetPaymentWithDetailsByIdAsync(id);
+        }
+        public async Task<int> UpdatePaymentAsync(PaymentMasterVM paymentMaster, List<PaymentDetailVM> paymentDetails)
+        {
+
+            return await _paymentRepository.UpdatePaymentAsync(paymentMaster, paymentDetails);
+        }
     }
 }
