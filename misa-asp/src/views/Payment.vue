@@ -573,7 +573,7 @@ export default {
         case "customer":
           this.currentItem.customerName = item.objectName;
           this.currentItem.address = item.address;
-          this.currentItem.billContent = item.objectName;
+          this.currentItem.billContent = `Chi tiền cho ${item.objectName}`;
           this.inputBillContent = item.objectName;
           this.currentItem.customerId = item.id;
           this.updateGridDescription(item.objectName);

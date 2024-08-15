@@ -310,7 +310,7 @@ export default {
       });
     },
     /**
-     * api hiển thị thông tin
+     * api hiển thị tất cả các withdraw payment 
      */
     async getWithdrawList() {
       if (!withdrawListConfig.endpoint) {
@@ -385,7 +385,7 @@ export default {
 }
 
 .table-container {
-  max-height: 490px; /* Chiều cao tối đa của container */
+  max-height: 470px; /* Chiều cao tối đa của container */
   overflow-y: auto; /* Tạo thanh cuộn dọc */
 }
 
@@ -437,12 +437,14 @@ table {
   width: 100px;
 }
 
+
 .withdraw-list-table td span {
   display: flex;
   text-align: left; /* Align the text to the left within the block */
   align-items: center;
   width: 100%;
   word-break: break-word; /* Ensure long words break to the next line */
+  justify-content: center;
 }
 
 /* Style for the total amount row */
@@ -553,7 +555,7 @@ span {
   z-index: 1000;
   right: 0;
   top: 100%;
-  border-radius: 4px;
+  border-radius: 2.5px;
 }
 
 .dropdown-content a {

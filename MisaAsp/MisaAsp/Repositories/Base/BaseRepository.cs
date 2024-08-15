@@ -282,20 +282,20 @@ namespace MisaAsp.Repositories.Base
                 var resultList = new List<object>();
                 var result = await _connection.QueryMultipleAsync(sql.ToString(), parameters);
                 
-                while (!result.IsConsumed)
-                {
-                    // Now fetch all data from the cursor
-                    var fetchSql = $"FETCH ALL IN \"{cursorName}\";";
-                    var result = await _connection.QueryMultipleAsync(fetchSql);
-                    var resultList = new List<object>();
-                    while (!result.IsConsumed)
-                    {
-                        var currentResult = await result.ReadAsync<object>();
-                        resultList.Add(currentResult);
-                    }
-                    var currentResult = await result.ReadAsync<object>();
-                    resultList.Add(currentResult);
-                }
+                //while (!result.IsConsumed)
+                //{
+                //    // Now fetch all data from the cursor
+                //    var fetchSql = $"FETCH ALL IN \"{cursorName}\";";
+                //    var result = await _connection.QueryMultipleAsync(fetchSql);
+                //    var resultList = new List<object>();
+                //    while (!result.IsConsumed)
+                //    {
+                //        var currentResult = await result.ReadAsync<object>();
+                //        resultList.Add(currentResult);
+                //    }
+                //    var currentResult = await result.ReadAsync<object>();
+                //    resultList.Add(currentResult);
+                //}
 
                 return resultList;
             }

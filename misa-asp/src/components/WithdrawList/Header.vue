@@ -282,6 +282,8 @@ export default {
   z-index: 20;
 }
 .logo {
+  width: 110px; /* Đặt chiều rộng cố định cho logo */
+
   height: 24px;
   display: block;
   z-index: 1;
@@ -297,7 +299,7 @@ export default {
 .logo-container {
   display: flex;
   padding: 12px;
-  margin-right: 35px;
+  margin-right: 30px;
   align-items: center;
   justify-content: center;
   justify-content: flex-start;
