@@ -7,11 +7,16 @@
     </div>
     <div class="page-controls">
       <div class="select-container">
-        <div class="select-box" tabindex="0" @click="toggleDropdown">
+        <div
+          ref="dropdownButton"
+          class="select-box"
+          tabindex="0"
+          @click="toggleDropdown"
+        >
           {{ itemsPerPage }} bản ghi trên 1 trang
           <div class="mi mi-16 mi-arrow-down--black"></div>
         </div>
-        <div v-if="dropdownOpen" class="select-options">
+        <div v-if="dropdownOpen" ref="dropdownContent" class="select-options">
           <div
             v-for="option in itemsPerPageOptions"
             :key="option"
@@ -114,7 +119,8 @@ export default {
     onPageInputChange(event) {
       this.currentPageInput = Number(event.target.value);
     },
-    toggleDropdown() {
+    toggleDropdown(event) {
+      event.stopPropagation(); // Ngăn sự kiện click lan truyền
       this.dropdownOpen = !this.dropdownOpen;
     },
     onSelectOption(option) {
@@ -126,6 +132,21 @@ export default {
       });
       this.dropdownOpen = false; // Ẩn dropdown sau khi chọn
     },
+    clickOutside(event) {
+      if (
+        this.$refs.dropdownContent &&
+        !this.$refs.dropdownContent.contains(event.target) &&
+        !this.$refs.dropdownButton.contains(event.target)
+      ) {
+        this.dropdownOpen = false;
+      }
+    },
+  },
+  mounted() {
+    document.addEventListener("click", this.clickOutside);
+  },
+  beforeDestroy() {
+    document.removeEventListener("click", this.clickOutside);
   },
 };
 </script>

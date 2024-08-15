@@ -1,6 +1,6 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using MisaAsp.Common;
-using MisaAsp.Models.BaseModel;
+using MisaAsp.Models.DTO;
 using MisaAsp.Models.ViewModel;
 using MisaAsp.Repositories;
 using System.IdentityModel.Tokens.Jwt;
@@ -14,7 +14,7 @@ namespace MisaAsp.Services
     {
         
         Task<int> RegisterUserAsync(RegistrationRequestVM request);
-        Task<AuthResult> AuthenticateUserAsync(LoginRequestVM request);
+        Task<AuthResultDTO> AuthenticateUserAsync(LoginRequestVM request);
         Task<IEnumerable<UserRequestVM>> GetAllUsersAsync();
         Task<bool> ForgotPasswordAsync(ForgotPasswordRequestVM request);
         Task<IEnumerable<EmployeeVM>> GetAllEmployeeAsync();
@@ -116,7 +116,7 @@ namespace MisaAsp.Services
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
         /// <exception cref="ArgumentNullException"></exception>
-        public async Task<AuthResult> AuthenticateUserAsync(LoginRequestVM request)
+        public async Task<AuthResultDTO> AuthenticateUserAsync(LoginRequestVM request)
         {
             if (request != null)
             {
@@ -160,11 +160,11 @@ namespace MisaAsp.Services
                     };
                     _httpContextAccessor.HttpContext.Response.Cookies.Append("AuthToken", tokenString, cookieOptions);
 
-                    return new AuthResult
+                    return new AuthResultDTO
                     {
                         Token = tokenString,
                         Role = userRole.RoleName,
-                        UserId = userRole.UserId // Thêm UserId vào AuthResult
+                        UserId = userRole.UserId // Thêm UserId vào AuthResultDTO
                     };
                 }
             }

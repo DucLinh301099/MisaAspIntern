@@ -4,6 +4,7 @@ using MisaAsp.Controllers.Base;
 using MisaAsp.Models.Ulti;
 using MisaAsp.Models.ViewModel;
 using MisaAsp.Services;
+using MisaAsp.Services.Base;
 
 namespace MisaAsp.Controllers
 {
@@ -13,7 +14,7 @@ namespace MisaAsp.Controllers
     {
         private readonly IBankAccountService _bankaccountService;
 
-        public BankAccountController(IBankAccountService bankaccountService, ResOutput _response) : base(_response)
+        public BankAccountController(IBankAccountService bankaccountService, ResOutput _response, IBaseService baseService) : base(_response, baseService)
         {
             _bankaccountService = bankaccountService;
         }

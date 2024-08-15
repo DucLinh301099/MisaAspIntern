@@ -4,6 +4,7 @@ using MisaAsp.Controllers.Base;
 using MisaAsp.Models.Ulti;
 using MisaAsp.Models.ViewModel;
 using MisaAsp.Services;
+using MisaAsp.Services.Base;
 
 
 
@@ -15,7 +16,7 @@ namespace MisaAsp.Controllers
     {
         private readonly IPaymentService _paymentService;
 
-        public PaymentController(IPaymentService paymentService, ResOutput response) : base(response)
+        public PaymentController(IPaymentService paymentService, ResOutput response, IBaseService baseService) : base(response, baseService)
         {
             _paymentService = paymentService;
         }
@@ -128,10 +129,7 @@ namespace MisaAsp.Controllers
             }
             return Ok(_response);
         }
-
-
-
     }
 
-    
+
 }

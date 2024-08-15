@@ -1,5 +1,10 @@
 ﻿using MisaAsp.Models.ViewModel;
 using MisaAsp.Repositories;
+using MisaAsp.Models.Ulti;
+using MisaAsp.Services.Base;
+using Newtonsoft.Json;
+using static MisaAsp.Services.Base.BaseService;
+using MisaAsp.Repositories.Base;
 
 namespace MisaAsp.Services
 {
@@ -9,15 +14,14 @@ namespace MisaAsp.Services
         Task<IEnumerable<PaymentMasterVM>> GetAllPaymentsAsync();
         Task<bool> DeletePaymentAsync(int id);
         Task<PaymentMasterVM> GetPaymentWithDetailsByIdAsync(int id);
-
         Task<int> UpdatePaymentAsync(PaymentMasterVM paymentMaster, List<PaymentDetailVM> paymentDetails);
     }
 
-    public class PaymentService : IPaymentService
+    public class PaymentService : BaseService, IPaymentService
     {
         private readonly IPaymentRepository _paymentRepository;
 
-        public PaymentService(IPaymentRepository paymentRepository)
+        public PaymentService(IPaymentRepository paymentRepository, IBaseRepository baseRepository) :base(baseRepository)
         {
             _paymentRepository = paymentRepository;
         }
@@ -41,9 +45,9 @@ namespace MisaAsp.Services
         {
             return await _paymentRepository.GetPaymentWithDetailsByIdAsync(id);
         }
+
         public async Task<int> UpdatePaymentAsync(PaymentMasterVM paymentMaster, List<PaymentDetailVM> paymentDetails)
         {
-
             return await _paymentRepository.UpdatePaymentAsync(paymentMaster, paymentDetails);
         }
     }

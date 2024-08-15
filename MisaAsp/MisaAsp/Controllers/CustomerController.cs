@@ -4,6 +4,7 @@ using MisaAsp.Controllers.Base;
 using MisaAsp.Models.Ulti;
 using MisaAsp.Models.ViewModel;
 using MisaAsp.Services;
+using MisaAsp.Services.Base;
 
 namespace MisaAsp.Controllers
 {
@@ -12,7 +13,7 @@ namespace MisaAsp.Controllers
     public class CustomerController : BaseController
     {
         private readonly ICustomerService _customerService;
-        public CustomerController(ICustomerService customerService, ResOutput _response) : base(_response)
+        public CustomerController(ICustomerService customerService, ResOutput _response, IBaseService baseService) : base(_response, baseService)
         {
             _customerService = customerService;
         }

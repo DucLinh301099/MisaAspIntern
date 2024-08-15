@@ -56,9 +56,6 @@ export default {
         sort: null,
         currentPage: null,
         itemsPerPage: null,
-
-        totalPages: null,
-        totalRecords: null,
       },
     };
   },

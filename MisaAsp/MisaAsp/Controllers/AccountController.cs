@@ -4,6 +4,7 @@ using MisaAsp.Controllers.Base;
 using MisaAsp.Models.Ulti;
 using MisaAsp.Models.ViewModel;
 using MisaAsp.Services;
+using MisaAsp.Services.Base;
 
 namespace MisaAsp.Controllers
 {
@@ -13,7 +14,7 @@ namespace MisaAsp.Controllers
     {
         private readonly IAccountService _accountService;
 
-        public AccountController(IAccountService accountService, ResOutput _response) : base(_response)
+        public AccountController(IAccountService accountService, ResOutput _response, IBaseService baseService) : base(_response, baseService)
         {
             _accountService = accountService;
         }
@@ -171,7 +172,7 @@ namespace MisaAsp.Controllers
         public async Task<IActionResult> UpdateUser(UpdateUserVM user)
         {
             var result = await _accountService.UpdateUserAsync(user);
-            if (result!=null)
+            if (result)
             {
                 _response.HandleSuccess("Cập nhật người dùng thành công",user);
             }

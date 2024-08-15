@@ -3,9 +3,9 @@ using MisaAsp.Attribute.ModelAttribute;
 using System.ComponentModel.DataAnnotations;
 
 
-namespace MisaAsp.Models.BaseModel
+namespace MisaAsp.Models.DTO
 {
-    public class AuthResult
+    public class AuthResultDTO
     {
         [RequiredVI]
         public int UserId { get; set; }

@@ -2,6 +2,7 @@
   <div id="filter-dropdown">
     <div class="dropdown-secondary ms-dropdown">
       <button
+        ref="dropdownButton"
         name="button"
         shortkey-target=""
         class="ms-component ms-button ms-button-secondary ms-button ms-con-dropdown-radius-true-true expand-more-button"
@@ -14,7 +15,12 @@
       </button>
     </div>
     <!-- Dropdown content -->
-    <div v-if="isDropdownVisible" class="dropdown-content">
+    <div
+      ref="dropdownContent"
+      v-if="isDropdownVisible"
+      class="dropdown-content"
+    >
+      <!-- Dropdown content as before -->
       <div v-if="dateField">
         <div class="dropdown-item">
           <label>Thời gian *</label>
@@ -97,7 +103,8 @@ export default {
     };
   },
   methods: {
-    toggleDropdown() {
+    toggleDropdown(event) {
+      event.stopPropagation(); // Ngăn sự kiện click lan truyền
       this.isDropdownVisible = !this.isDropdownVisible;
     },
     toggleSelectDropdown(event) {
@@ -105,8 +112,11 @@ export default {
       this.isSelectDropdownVisible = !this.isSelectDropdownVisible;
     },
     onSelectOption(option) {
+      if (event) {
+        event.stopPropagation(); // Ngăn sự kiện click lan truyền khi chọn option
+      } // Ngăn sự kiện click lan truyền khi chọn option
       this.selectedTime = option;
-      this.isSelectDropdownVisible = false;
+      this.isSelectDropdownVisible = false; // Ẩn dropdown con, không ảnh hưởng đến dropdown chính
 
       const selectedConfig = withdrawListConfig.timeOptionsConfig[option];
       if (selectedConfig) {
@@ -142,8 +152,8 @@ export default {
 
         this.$emit("filters-updated", this.filters); // Phát ra sự kiện filters-updated với giá trị this.filters
       }
+      this.isDropdownVisible = false;
     },
-
     addFilter(data, command = "and") {
       if (this.filters.length) {
         this.filters.push(command);
@@ -152,9 +162,23 @@ export default {
         this.filters = [data];
       }
     },
+    clickOutside(event) {
+      if (
+        this.$refs.dropdownContent &&
+        !this.$refs.dropdownContent.contains(event.target) &&
+        !this.$refs.dropdownButton.contains(event.target)
+      ) {
+        this.isDropdownVisible = false;
+        this.isSelectDropdownVisible = false; // Đảm bảo đóng cả dropdown bên trong khi nhấp ra ngoài
+      }
+    },
   },
   mounted() {
     this.onSelectOption(this.selectedTime); // Cập nhật ngày khởi tạo khi component mount
+    document.addEventListener("click", this.clickOutside);
+  },
+  beforeDestroy() {
+    document.removeEventListener("click", this.clickOutside);
   },
 };
 </script>

@@ -209,8 +209,11 @@ export default {
     },
 
     getColumnClass(columnName) {
-      if (columnName === "Số tiền" || columnName === "Số tài khoản NH") {
+      if (columnName === "Số tiền") {
         return "narrow-column";
+      }
+      if (columnName === "Số tài khoản NH") {
+        return "account-number-column"; // Add a specific class for this column
       }
       return "";
     },
@@ -342,19 +345,29 @@ export default {
   padding-right: 20px;
   font-family: AvertaStdCY, Helvetica, Arial, sans-serif;
 }
+
 .bold-number {
   font-weight: 800;
 }
+
 .amout {
   padding-left: 5px;
 }
+
 .span-amount {
   font-size: 14px;
   text-align: center;
   padding-right: 150px;
 }
+
 .total-amount {
   background-color: #e5f3ff;
+}
+.account-number-column {
+  max-width: 100px;
+
+  overflow: hidden; /* Hide overflow */
+  text-overflow: ellipsis; /* Display ellipsis (...) for overflowed text */
 }
 .total-records {
   font-size: 13px;
@@ -364,6 +377,7 @@ export default {
   padding-left: 10px;
   font-family: AvertaStdCY, Helvetica, Arial, sans-serif;
 }
+
 /* Thêm lớp này để bao quanh bảng */
 .withdraw-list-wrapper {
   border-bottom: 2px solid #ccc; /* Thêm border bên dưới bảng */
@@ -384,9 +398,10 @@ table {
   table-layout: fixed;
 }
 
+/* CSS cho thẻ thead */
 .thead {
   background-color: #f4f5f8;
-  white-space: nowrap;
+  text-align: left;
   height: 40px;
   top: 0;
   z-index: 1;
@@ -396,8 +411,41 @@ table {
   border-bottom: 1px solid #ccc;
 }
 
-/* Style for the total amount row */
+.thead th {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 8px;
+  border-left: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+  font-size: 14px;
+  font-weight: bold;
+  text-align: left;
+}
 
+/* CSS cho các ô td */
+.withdraw-list-table td {
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: center;
+  vertical-align: middle;
+  overflow: visible;
+  text-overflow: ellipsis;
+  word-break: break-word;
+
+  height: auto;
+  width: 100px;
+}
+
+.withdraw-list-table td span {
+  display: flex;
+  text-align: left; /* Align the text to the left within the block */
+  align-items: center;
+  width: 100%;
+  word-break: break-word; /* Ensure long words break to the next line */
+}
+
+/* Style for the total amount row */
 .total-label {
   text-align: left;
   padding-left: 10px;
@@ -408,14 +456,13 @@ table {
   border-right: 1px solid #ccc;
   padding: 8px;
   text-align: center;
-  font-size: 14;
+  font-size: 14px;
   font-weight: bold;
 }
 
 .td-grid {
   height: 40px;
   text-align: center;
-  white-space: nowrap;
 }
 
 .td-grid.narrow-column {
@@ -445,14 +492,8 @@ table {
 .withdraw-list-table {
   width: 100%;
   border-collapse: collapse;
-
   font-size: 12.5px;
-}
-
-.withdraw-list-table td {
-  border: 1px solid #ccc;
-  padding: 0px 10px 0px 10px;
-  text-align: center;
+  table-layout: fixed;
 }
 
 .withdraw-list-table tr:hover {
@@ -509,7 +550,7 @@ span {
   background-color: #fff;
   min-width: 100px;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-  z-index: 1;
+  z-index: 1000;
   right: 0;
   top: 100%;
   border-radius: 4px;

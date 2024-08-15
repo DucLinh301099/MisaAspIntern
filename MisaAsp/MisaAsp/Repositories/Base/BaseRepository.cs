@@ -3,6 +3,9 @@ using System.Data;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
+using static Dapper.SqlMapper;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace MisaAsp.Repositories.Base
 {
@@ -14,6 +17,7 @@ namespace MisaAsp.Repositories.Base
         Task<T> ExecuteProcScalarAsync<T>(string procedureName, object parameters);
         Task<T> QuerySingleOrDefaultAsync<T>(string sql, object parameters = null);
         Task<T> QueryFirstOrDefaultAsync<T>(string sql, object parameters = null);
+        Task<List<object>> ExecuteProcReturnMultiAsync(string procedureName, Dictionary<string, object> parameters);
     }
 
     public class BaseRepository : IBaseRepository
@@ -76,9 +80,6 @@ namespace MisaAsp.Repositories.Base
                     _connection.Close();
             }
         }
-
-
-
 
         public async Task<T> ExecuteScalarAsync<T>(string sql, object parameters = null)
         {
@@ -215,11 +216,9 @@ namespace MisaAsp.Repositories.Base
                     _connection.Close();
             }
         }
-        public async Task<T> ExecuteProcQueryWithMappingAsync<T, U>(
-    string procedureName,
-    object parameters,
-    Func<T, U, T> map,
-    string splitOn = "Id")
+
+        // TODO: nghiên cứu lại nếu 2,3,4,5 model muốn return thì làm vậy sao được
+        public async Task<T> ExecuteProcQueryWithMappingAsync<T, U>(string procedureName, object parameters, Func<T, U, T> map, string splitOn = "Id")
         {
             var listParam = new List<string>();
             var sql = string.Empty;
@@ -249,6 +248,56 @@ namespace MisaAsp.Repositories.Base
                     splitOn: splitOn
                 );
                 return result.FirstOrDefault();
+            }
+            finally
+            {
+                if (_connection.State == ConnectionState.Open)
+                    _connection.Close();
+            }
+        }
+
+        //TODO: sau này xử lý sang dạng generic T
+        public async Task<List<object>> ExecuteProcReturnMultiAsync(string procedureName, Dictionary<string, object> parameters)
+        {
+            var listParam = new List<string>();
+            var sql = new StringBuilder();
+
+            foreach (var item in parameters)
+            {
+                listParam.Add(item.Key);
+            }
+
+            if (listParam.Count > 0)
+            {
+                sql.Append($"SELECT * FROM {procedureName}({string.Join(',', listParam)})");
+            }
+            else
+            {
+                sql.Append($"SELECT * FROM {procedureName}()");
+            }
+
+            try
+            {
+                _connection.Open();
+                var resultList = new List<object>();
+                var result = await _connection.QueryMultipleAsync(sql.ToString(), parameters);
+                
+                while (!result.IsConsumed)
+                {
+                    // Now fetch all data from the cursor
+                    var fetchSql = $"FETCH ALL IN \"{cursorName}\";";
+                    var result = await _connection.QueryMultipleAsync(fetchSql);
+                    var resultList = new List<object>();
+                    while (!result.IsConsumed)
+                    {
+                        var currentResult = await result.ReadAsync<object>();
+                        resultList.Add(currentResult);
+                    }
+                    var currentResult = await result.ReadAsync<object>();
+                    resultList.Add(currentResult);
+                }
+
+                return resultList;
             }
             finally
             {

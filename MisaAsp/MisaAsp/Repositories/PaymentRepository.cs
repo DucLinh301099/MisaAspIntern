@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Microsoft.EntityFrameworkCore;
 using MisaAsp.Models.ViewModel;
 using MisaAsp.Repositories.Base;
 using Newtonsoft.Json;
@@ -137,12 +138,5 @@ namespace MisaAsp.Repositories
 
             return paymentDictionary.Values.FirstOrDefault();
         }
-
-
-
-
-
-        
-
     }
 }

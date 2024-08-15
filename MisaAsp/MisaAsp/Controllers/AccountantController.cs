@@ -2,6 +2,7 @@
 using MisaAsp.Controllers.Base;
 using MisaAsp.Models.Ulti;
 using MisaAsp.Services;
+using MisaAsp.Services.Base;
 
 namespace MisaAsp.Controllers
 {
@@ -11,7 +12,7 @@ namespace MisaAsp.Controllers
     {
         private readonly IAccountantService _accountantService;
 
-        public AccountantController(IAccountantService accountantService, ResOutput response): base(response)
+        public AccountantController(IAccountantService accountantService, ResOutput response, IBaseService baseService) : base(response, baseService)
         {
             _accountantService = accountantService;
         }

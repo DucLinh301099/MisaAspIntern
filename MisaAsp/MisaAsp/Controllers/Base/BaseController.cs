@@ -1,19 +1,27 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MisaAsp.Attribute;
 using MisaAsp.Models.Ulti;
+using MisaAsp.Services.Base;
 
 namespace MisaAsp.Controllers.Base
 {
-    [Route("api/[controller]")]
-    [ApiController]
     [ModelState]
     public class BaseController : ControllerBase
     {
         protected readonly ResOutput _response;
+        private IBaseService _baseService;
 
-        public BaseController(ResOutput response)
+        public BaseController(ResOutput response, IBaseService baseService)
         {
             _response = response;
+            _baseService = baseService;
+        }
+
+        [HttpPost("get-paging")]
+        public IActionResult GetPaging(PagingFilterVM pagingFilter)
+        {
+            var result = _baseService.GetPaging(pagingFilter);
+            return Ok(result);
         }
     }
 }

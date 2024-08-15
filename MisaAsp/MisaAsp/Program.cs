@@ -9,6 +9,7 @@ using MisaAsp.Models.Ulti;
 using MisaAsp.Repositories;
 using MisaAsp.Repositories.Base;
 using MisaAsp.Services;
+using MisaAsp.Services.Base;
 using Npgsql;
 using System.Data;
 using System.Text;
@@ -46,6 +47,7 @@ builder.Services.AddScoped<IAccountantService, AccountantService>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IBankAccountService, BankAccountService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddScoped<IBaseService, BaseService>();
 #endregion
 
 #region Đăng kí Repo
