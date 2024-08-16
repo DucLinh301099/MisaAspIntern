@@ -39,12 +39,19 @@ namespace MisaAsp.Middleware
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
-            var res = new ResOutput();
-            res.HandleError("Đã xảy ra lỗi trong quá trình xử lý yêu cầu", exception.Message);
+            var errorResponse = new
+            {
+                Message = "Đã xảy ra lỗi trong quá trình xử lý yêu cầu.",
+                ExceptionMessage = exception.Message,
+                // Không serialize các đối tượng phức tạp như StackTrace hoặc các đối tượng bất đồng bộ
+                // Bạn có thể thêm StackTrace nếu cần thiết nhưng cần chú ý rằng nó có thể chứa các thông tin không thể serialize
+            };
 
-            var result = JsonConvert.SerializeObject(res);
+            var result = JsonConvert.SerializeObject(errorResponse); // Sử dụng Newtonsoft.Json cho phép serialize tốt hơn
             return context.Response.WriteAsync(result);
         }
+
+
 
         private static Task HandleInvalidExceptionAsync(HttpContext context, InvalidValueException exception)
         {

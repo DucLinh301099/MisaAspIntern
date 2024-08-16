@@ -17,11 +17,13 @@ namespace MisaAsp.Controllers.Base
             _baseService = baseService;
         }
 
-        [HttpPost("get-paging")]
-        public IActionResult GetPaging(PagingFilterVM pagingFilter)
+        [HttpPost("get-paging-filter")]
+        public async Task<IActionResult> GetPagingAsync(PagingFilter pagingFilter)
         {
-            var result = _baseService.GetPaging(pagingFilter);
-            return Ok(result);
+            
+                var result = await _baseService.GetPaging(pagingFilter);
+                return Ok(result);
+            
         }
     }
 }

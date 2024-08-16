@@ -97,8 +97,8 @@ export default {
       isSelectDropdownVisible: false,
       selectedTime: "Đầu năm đến hiện tại",
       timeOptions: Object.keys(withdrawListConfig.timeOptionsConfig), // Lấy danh sách tùy chọn từ config
-      startDate: "", // Ngày bắt đầu
-      endDate: "", // Ngày kết thúc
+      startDate: "", // Ngày bắt đầu mặc định
+      endDate: "",
       filters: [], // Mảng filter
     };
   },
@@ -133,34 +133,39 @@ export default {
     },
     applyFilter() {
       if (this.dateField && this.dateField.length) {
-        this.filters = [];
-        let filterDate = []; // Khởi tạo biến cục bộ filterDate
+        this.filters = []; // Đặt lại mảng filters
+
         for (let index = 0; index < this.dateField.length; index++) {
           const item = this.dateField[index];
-          if (item) {
-            filterDate.push([item, ">=", this.startDate]);
-            filterDate.push("and");
-            filterDate.push([item, "<=", this.endDate]);
-          }
-          if (index < this.dateField.length - 1) {
-            filterDate.push("or");
+          if (item && this.startDate && this.endDate) {
+            let filterDate = [
+              {
+                posted_date: "accountingdate",
+                condition: ">=",
+                value: this.startDate,
+              },
+              "and",
+              {
+                posted_date: "documentdate",
+                condition: "<=",
+                value: this.endDate,
+              },
+            ];
+
+            // Gán giá trị vào mảng filters
+            this.addFilter(filterDate);
           }
         }
-
-        // Gán giá trị vào mảng filters
-        this.addFilter(filterDate); // Truyền biến cục bộ filterDate vào hàm addFilter
 
         this.$emit("filters-updated", this.filters); // Phát ra sự kiện filters-updated với giá trị this.filters
       }
       this.isDropdownVisible = false;
     },
-    addFilter(data, command = "and") {
+    addFilter(data) {
       if (this.filters.length) {
-        this.filters.push(command);
-        this.filters.push(data);
-      } else {
-        this.filters = [data];
+        this.filters.push("and");
       }
+      this.filters.push(data);
     },
     clickOutside(event) {
       if (

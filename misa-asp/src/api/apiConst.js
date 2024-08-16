@@ -76,6 +76,9 @@ const Api = {
     updatePayment: {
       url: 'Payment/update-payment',
     },
+    getPagingFilter: {
+        url: 'Payment/get-paging-filter',
+    },
 
 }
 export default Api;

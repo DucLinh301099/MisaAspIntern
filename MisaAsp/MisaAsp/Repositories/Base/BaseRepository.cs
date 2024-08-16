@@ -6,6 +6,7 @@ using System.Linq;
 using static Dapper.SqlMapper;
 using System.Security.Cryptography;
 using System.Text;
+using Npgsql;
 
 namespace MisaAsp.Repositories.Base
 {
@@ -17,7 +18,7 @@ namespace MisaAsp.Repositories.Base
         Task<T> ExecuteProcScalarAsync<T>(string procedureName, object parameters);
         Task<T> QuerySingleOrDefaultAsync<T>(string sql, object parameters = null);
         Task<T> QueryFirstOrDefaultAsync<T>(string sql, object parameters = null);
-        Task<List<object>> ExecuteProcReturnMultiAsync(string procedureName, Dictionary<string, object> parameters);
+        Task<List<List<object>>> ExecuteProcReturnMultiAsync(string procedureName, Dictionary<string, object> parameters);
     }
 
     public class BaseRepository : IBaseRepository
@@ -257,47 +258,48 @@ namespace MisaAsp.Repositories.Base
         }
 
         //TODO: sau này xử lý sang dạng generic T
-        public async Task<List<object>> ExecuteProcReturnMultiAsync(string procedureName, Dictionary<string, object> parameters)
+        public async Task<List<List<object>>> ExecuteProcReturnMultiAsync(string procedureName, Dictionary<string, object> parameters)
         {
             var listParam = new List<string>();
             var sql = new StringBuilder();
 
+            // Thêm các tham số vào danh sách
             foreach (var item in parameters)
             {
-                listParam.Add(item.Key);
+                listParam.Add($"@{item.Key}"); // Sử dụng @ để đánh dấu tham số
             }
 
-            if (listParam.Count > 0)
-            {
-                sql.Append($"SELECT * FROM {procedureName}({string.Join(',', listParam)})");
-            }
-            else
-            {
-                sql.Append($"SELECT * FROM {procedureName}()");
-            }
+            // Xây dựng câu truy vấn
+            sql.Append($"SELECT * FROM {procedureName}({string.Join(',', listParam)})");
+            var resultList = new List<List<object>>();
+            if (_connection.State != ConnectionState.Open)
+                _connection.Open();
 
+            var transaction = _connection.BeginTransaction();
             try
             {
-                _connection.Open();
-                var resultList = new List<object>();
-                var result = await _connection.QueryMultipleAsync(sql.ToString(), parameters);
                 
-                //while (!result.IsConsumed)
-                //{
-                //    // Now fetch all data from the cursor
-                //    var fetchSql = $"FETCH ALL IN \"{cursorName}\";";
-                //    var result = await _connection.QueryMultipleAsync(fetchSql);
-                //    var resultList = new List<object>();
-                //    while (!result.IsConsumed)
-                //    {
-                //        var currentResult = await result.ReadAsync<object>();
-                //        resultList.Add(currentResult);
-                //    }
-                //    var currentResult = await result.ReadAsync<object>();
-                //    resultList.Add(currentResult);
-                //}
+                var result = await _connection.QueryAsync<string>(sql.ToString(), parameters, transaction);
+                if (result != null && result.Count() > 0)
+                {
+                    var lstResult = result.ToList();
+                    for (int i = 0; i < result.Count(); i++)
+                    {
+                        var cursorName = result.ToList()[i];
+                        var fetchSql = $"FETCH ALL IN \"{cursorName}\";";
+                        var cursorResult = await _connection.QueryAsync<object>(fetchSql, transaction: transaction);
+                        resultList.Add(cursorResult.ToList());
+                    }
+                }
 
+                transaction.Commit();
                 return resultList;
+            }
+            catch (Exception ex)
+            {
+                if (_connection.State == ConnectionState.Open)
+                    transaction.Rollback();
+                throw new InvalidOperationException("An error occurred while executing the stored procedure.", ex);
             }
             finally
             {
@@ -305,5 +307,7 @@ namespace MisaAsp.Repositories.Base
                     _connection.Close();
             }
         }
+
+
     }
 }

@@ -25,6 +25,8 @@ builder.Services.Configure<ApiBehaviorOptions>(options => {
      options.SuppressModelStateInvalidFilter = true;
  });
 
+
+
 // Cấu hình Domain tới FE
 var corsOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>();
 builder.Services.AddCors(options =>

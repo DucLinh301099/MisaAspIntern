@@ -13,7 +13,7 @@ namespace MisaAsp.Services.Base
 {
     public interface IBaseService
     {
-        Task<PagingResult> GetPaging(PagingFilterVM pagingFilter);
+        Task<PagingResult> GetPaging(PagingFilter pagingFilter);
     }
     public class BaseService: IBaseService
     {
@@ -22,43 +22,55 @@ namespace MisaAsp.Services.Base
         {
             _baseRepository = baseRepository;
         }
-        public async Task<PagingResult> GetPaging(PagingFilterVM pagingFilter)
+        public async Task<PagingResult> GetPaging(PagingFilter pagingFilter)
         {
             var result = new PagingResult();
             if (pagingFilter != null)
             {
-                var parameter = new List<string>();
-                
-                // bước 1: build query cần where
-                var whereQuery = GetWhereQuery(pagingFilter.Filters, parameter);
-
-                // bước 2: build sort
+                // Bước 1: Xây dựng các phần của truy vấn
+                var whereQuery = GetWhereQuery(pagingFilter.Filters);
                 var sortQuery = GetSortQuery(pagingFilter.Sort);
+                var pagingQuery = GetPagingQuery(pagingFilter.CurrentPage, pagingFilter.ItemsPerPage);
 
-                // bước 3: build page
-                var pagingQuery = GetPagingQuery(pagingFilter.CurrentPage, pagingFilter.ItemsPerPage, parameter);
-
-                // bước 4: build query
+                // Bước 2: Tạo các tham số cho stored procedure
                 var paramGet = new Dictionary<string, object>
                 {
-                    { "@p_view", pagingFilter.View },
-                    { "@p_where", whereQuery },
-                    { "@p_sort", sortQuery },
-                    { "@p_paging", pagingQuery },
-                    //{ "@p_params", parameter },
+                    { "p_view", pagingFilter.View },
+                    { "p_where", whereQuery },
+                    { "p_sort", sortQuery },
+                    { "p_paging", pagingQuery }
                 };
                 
-                var resultData = await _baseRepository.ExecuteProcReturnMultiAsync("getpaging", paramGet);
-                if (resultData != null)
+                // Gọi phương thức thực thi stored procedure
+                var resultData = await _baseRepository.ExecuteProcReturnMultiAsync("get_paging_filter", paramGet);
+
+                // Xử lý dữ liệu trả về
+                if (resultData != null && resultData.Count > 1)
                 {
-                    //var data = resultData.Read<object>().ToList();
-                    //var total = resultData.Read<int>().ToList().First();
-                    //result.PageData = data;
-                    //result.Total = total;
+                    // Xử lý dữ liệu trang
+                    if (resultData[0] != null && resultData[0].Count > 0)
+                    {
+                        result.PageData = resultData[0];
+                    }
+
+                    // Xử lý dữ liệu tổng số
+                    if (resultData[1] != null && resultData[1].Count > 0)
+                    {
+                        var countItem = resultData[1].FirstOrDefault() as IDictionary<string, object>;
+                        if (countItem != null && countItem.TryGetValue("count", out var countValue))
+                        {
+                            if (int.TryParse(countValue.ToString(), out int count))
+                            {
+                                result.Total = count;
+                            }
+                        }
+                    }
                 }
             }
             return result;
         }
+
+
 
         #region Where
         /// <summary>
@@ -67,7 +79,7 @@ namespace MisaAsp.Services.Base
         /// <param name="filters"></param>
         /// <param name="whereQuery"></param>
         /// <returns></returns>
-        public string BuildWhereQuery(Filter filterObject, List<string> parameter, StringBuilder whereQuery = null)
+        public string BuildWhereQuery(Filter filterObject, StringBuilder whereQuery = null)
         {
             if(whereQuery == null)
             {
@@ -91,7 +103,7 @@ namespace MisaAsp.Services.Base
                                     arrayAsList.Add(element);
                                 }
 
-                                BuildWhereQuery(new Filter(arrayAsList, filterObject.ParamIndex), parameter, whereQuery);
+                                BuildWhereQuery(new Filter(arrayAsList, filterObject.ParamIndex), whereQuery);
 
                                 break;
                             case JsonValueKind.Object:
@@ -122,10 +134,17 @@ namespace MisaAsp.Services.Base
             return whereQuery.ToString();
         }
 
-        public string GetWhereQuery(List<object> filters, List<string> parameter)
+        public string GetWhereQuery(List<object> filters)
         {
-            var queryWhere = BuildWhereQuery(new Filter(filters), parameter);
-            return @$"where {queryWhere}";
+            if (filters == null || filters.Count == 0)
+            {
+                return "";
+            }
+            else
+            {
+                var queryWhere = BuildWhereQuery(new Filter(filters));
+                return @$"where {queryWhere}";
+            }
         }
         #endregion
 
@@ -155,19 +174,25 @@ namespace MisaAsp.Services.Base
 
         public string GetSortQuery(List<SortVM> sort)
         {
-            var queryWhere = BuildSortQuery(sort);
-            return @$"order by {queryWhere}";
+            if (sort == null || sort.Count == 0)
+            {
+                return "";
+            }
+            else
+            {
+                var queryWhere = BuildSortQuery(sort);
+                return @$"order by {queryWhere}";
+            }
+            
         }
 
         #endregion
 
         #region Paging
 
-        public string GetPagingQuery(int currentPage, int itemsPerPage, List<string> parameter)
+        public string GetPagingQuery(int currentPage, int itemsPerPage)
         {
             var recordStart = (currentPage - 1) * itemsPerPage + 1;
-            parameter.Add(recordStart.ToString());
-            parameter.Add(itemsPerPage.ToString());
             var recordStartValid = ValidateSqlInput(recordStart.ToString());
             var itemsPerPageValid = ValidateSqlInput(itemsPerPage.ToString());
             //parameter.Add(valueValid);

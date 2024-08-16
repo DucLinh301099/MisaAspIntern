@@ -111,6 +111,7 @@ import BaseSubmit from "../Base/BaseSubmit.vue";
 import { withdrawList } from "../../api/withdrawlist";
 import withdrawListConfig from "../../config/WithdrawListConfig";
 import { baseApi } from "../../api/baseApi";
+import Api from "../../api/apiConst";
 
 export default {
   name: "MSWithdrawList",
@@ -122,6 +123,10 @@ export default {
     searchQuery: {
       type: String,
       default: "",
+    },
+    pageData: {
+      type: Object,
+      required: true,
     },
   },
   data() {
@@ -142,17 +147,14 @@ export default {
     filteredOptionsData() {
       let sortedData = [...this.optionsData];
 
-      // sortedData.sort((a, b) => {
-      //   const dateA = new Date(a.createdAt);
-      //   const dateB = new Date(b.createdAt);
-      //   return dateB - dateA;
-      // });
-
+      // Nếu không có truy vấn tìm kiếm, trả về dữ liệu gốc
       if (!this.searchQuery) {
         return sortedData;
       }
 
       const query = this.searchQuery.toLowerCase();
+
+      // Lọc dữ liệu dựa trên truy vấn tìm kiếm
       return sortedData.filter((item) => {
         return Object.values(item).some((val) =>
           String(val).toLowerCase().includes(query)
@@ -162,26 +164,21 @@ export default {
     totalPages() {
       return Math.ceil(this.filteredOptionsData.length / this.itemsPerPage);
     },
+
     totalRecords() {
       return this.filteredOptionsData.length;
     },
-    paginatedData() {
-      const start = (this.currentPage - 1) * this.itemsPerPage;
-      const end = start + this.itemsPerPage;
-      return this.filteredOptionsData.slice(start, end);
-    },
-    totalAmount() {
-      return this.filteredOptionsData.reduce((sum, item) => {
-        const amount = parseInt(item.totalAmount.replace(/[^\d]/g, ""), 10);
-        return sum + (amount || 0);
-      }, 0);
-    },
-    formattedTotalAmount() {
-      return this.totalAmount.toLocaleString("vi-VN");
-    },
+    // totalAmount() {
+    //   return this.filteredOptionsData.reduce((sum, item) => {
+    //     const amount = parseInt(item.totalAmount.replace(/[^\d]/g, ""), 10);
+    //     return sum + (amount || 0);
+    //   }, 0);
+    // },
+    // formattedTotalAmount() {
+    //   return this.totalAmount.toLocaleString("vi-VN");
+    // },
   },
   mounted() {
-    this.getWithdrawList();
     this.$emit("updatePageData", {
       currentPage: this.currentPage,
       itemsPerPage: this.itemsPerPage,
@@ -189,17 +186,11 @@ export default {
     });
   },
   watch: {
-    filteredOptionsData: {
-      handler(newData) {
-        this.$emit("updateTotalRecords", newData.length);
-        this.$emit("updatePageData", {
-          currentPage: this.currentPage,
-          itemsPerPage: this.itemsPerPage,
-          totalPages: this.totalPages,
-        });
+    pageData: {
+      handler() {
+        this.getWithdrawList(); // Gọi lại API mỗi khi pageData thay đổi
       },
       deep: true,
-      immediate: true,
     },
   },
   methods: {
@@ -310,24 +301,19 @@ export default {
       });
     },
     /**
-     * api hiển thị tất cả các withdraw payment 
+     * api hiển thị tất cả các withdraw payment
      */
     async getWithdrawList() {
       if (!withdrawListConfig.endpoint) {
         return;
       }
       try {
-        const response = await baseApi.getAuthenApi(
-          withdrawListConfig.endpoint
+        const response = await baseApi.postApi(
+          Api.getPagingFilter.url,
+          this.pageData
         );
-        if (response.data && Array.isArray(response.data)) {
-          this.optionsData = response.data;
-        } else if (
-          response.data &&
-          response.data.data &&
-          Array.isArray(response.data.data)
-        ) {
-          this.optionsData = response.data.data;
+        if (response.pageData && Array.isArray(response.pageData)) {
+          this.optionsData = response.pageData;
         } else {
           this.optionsData = [];
         }
@@ -436,7 +422,6 @@ table {
   height: auto;
   width: 100px;
 }
-
 
 .withdraw-list-table td span {
   display: flex;

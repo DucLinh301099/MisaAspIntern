@@ -19,6 +19,7 @@
           />
           <MSWithdrawList
             :searchQuery="searchQuery"
+            :pageData="pageData"
             :totalRecords="pageData.totalRecords"
             @updatePageData="updatePageData"
             @updateTotalRecords="updateTotalRecords"
@@ -29,7 +30,6 @@
     </div>
   </div>
 </template>
-
 <script>
 import Header from "../components/WithdrawList/Header.vue";
 import SideBar from "../components/WithdrawList/SideBar.vue";
@@ -56,6 +56,7 @@ export default {
         sort: null,
         currentPage: null,
         itemsPerPage: null,
+        view: "paymentmaster_view",
       },
     };
   },
@@ -68,6 +69,7 @@ export default {
         ...this.pageData,
         ...pageData,
       };
+      // this.$refs.withdrawList.getWithdrawList();
     },
     updateTotalRecords(totalRecords) {
       this.pageData.totalRecords = totalRecords;

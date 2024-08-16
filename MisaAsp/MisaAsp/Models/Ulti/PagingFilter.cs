@@ -8,7 +8,7 @@ using MisaAsp.Models.ViewModel;
 
 namespace MisaAsp.Models.Ulti
 {
-    public class PagingFilterVM
+    public class PagingFilter
     {
         public List<object> Filters { get; set; }
 
@@ -18,7 +18,7 @@ namespace MisaAsp.Models.Ulti
         [Required]
         public int ItemsPerPage { get; set; }
         public string View { get; set; }
-        public Dictionary<string, object> Parameter { get; set; }
+        //public Dictionary<string, object> Parameter { get; set; }
     }
 
     public class Filter
