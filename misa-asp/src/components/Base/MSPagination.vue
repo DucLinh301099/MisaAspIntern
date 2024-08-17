@@ -77,6 +77,7 @@ export default {
     return {
       currentPageInput: this.currentPage,
       dropdownOpen: false,
+     
     };
   },
   watch: {
@@ -96,23 +97,26 @@ export default {
       this.dropdownOpen = false; // Ẩn dropdown sau khi chọn
     },
     goToPreviousPage() {
-      this.$emit("previous-page");
-      this.$emit("updatePageData", {
-        currentPage: this.currentPage - 1,
-      });
+      if (this.currentPage > 1) {
+        this.$emit("update:currentPage", this.currentPage - 1);
+        this.$emit("updatePageData", {
+          currentPage: this.currentPage - 1,
+        });
+      }
     },
     goToNextPage() {
-      this.$emit("next-page");
-      this.$emit("updatePageData", {
-        currentPage: this.currentPage + 1,
-      });
+      if (this.currentPage < this.totalPages) {
+        this.$emit("update:currentPage", this.currentPage + 1);
+        this.$emit("updatePageData", {
+          currentPage: this.currentPage + 1,
+        });
+      }
     },
     goToPage(page) {
       if (page >= 1 && page <= this.totalPages) {
         this.$emit("update:currentPage", page);
         this.$emit("updatePageData", {
           currentPage: page,
-          totalRecords: this.totalRecords,
         });
       }
     },

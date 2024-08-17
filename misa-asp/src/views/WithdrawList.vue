@@ -18,12 +18,15 @@
             :dateField="dateField"
           />
           <MSWithdrawList
+          
             :searchQuery="searchQuery"
             :pageData="pageData"
             :totalRecords="pageData.totalRecords"
             @updatePageData="updatePageData"
             @updateTotalRecords="updateTotalRecords"
             @sort-updated="updateSort"
+            @previous-page="goToPreviousPage"
+            @next-page="goToNextPage"
           />
         </div>
       </div>
@@ -54,8 +57,8 @@ export default {
       pageData: {
         filters: null,
         sort: null,
-        currentPage: null,
-        itemsPerPage: null,
+        currentPage: 1,
+        itemsPerPage: 10,
         view: "paymentmaster_view",
       },
     };
@@ -69,7 +72,7 @@ export default {
         ...this.pageData,
         ...pageData,
       };
-      // this.$refs.withdrawList.getWithdrawList();
+      
     },
     updateTotalRecords(totalRecords) {
       this.pageData.totalRecords = totalRecords;
@@ -80,6 +83,19 @@ export default {
     updateSort(sort) {
       this.pageData.sort = sort;
     },
+    goToPreviousPage() {
+      if (this.pageData.currentPage > 1) {
+        this.pageData.currentPage -= 1;
+        this.updatePageData({ currentPage: this.pageData.currentPage });
+      }
+    },
+    goToNextPage() {
+      if (this.pageData.currentPage < Math.ceil(this.pageData.totalRecords / this.pageData.itemsPerPage)) {
+        this.pageData.currentPage += 1;
+        this.updatePageData({ currentPage: this.pageData.currentPage });
+      }
+    },
+
   },
 };
 </script>

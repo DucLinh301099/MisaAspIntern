@@ -61,8 +61,14 @@ namespace MisaAsp.Services.Base
                         {
                             if (int.TryParse(countValue.ToString(), out int count))
                             {
-                                result.Total = count;
+                                // Nếu count > 1, trừ 1 để có số lượng bản ghi thực tế
+                                result.Total = count > 1 ? count - 1 : count;
                             }
+                            // Lấy giá trị totalAmount và giữ nguyên dưới dạng chuỗi
+                            //if (countItem.TryGetValue("totalamount", out var totalAmountValue))
+                            //{
+                            //    result.TotalAmount = totalAmountValue.ToString();
+                            //}
                         }
                     }
                 }

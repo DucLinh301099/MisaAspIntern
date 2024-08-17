@@ -146,7 +146,7 @@ export default {
               },
               "and",
               {
-                posted_date: "documentdate",
+                posted_date: "accountingdate",
                 condition: "<=",
                 value: this.endDate,
               },

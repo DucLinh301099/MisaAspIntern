@@ -6,7 +6,7 @@
           <thead class="thead">
             <tr>
               <th class="th-index">#</th>
-              <th
+              <th 
                 v-for="(column, index) in columnConfig"
                 :key="index"
                 @dblclick="sortRecords(column.fieldName)"
@@ -133,10 +133,12 @@ export default {
     return {
       columnConfig: withdrawListConfig.columnConfig,
       optionsData: [],
+      optionsGetData: [],
       sort: [],
       dropdownVisible: null,
       sortAscending: true,
       totalRecords: null,
+      dataLength:0,
       itemsPerPage: 10,
       currentPage: 1,
       currentPageInput: 1,
@@ -162,36 +164,42 @@ export default {
       });
     },
     totalPages() {
-      return Math.ceil(this.filteredOptionsData.length / this.itemsPerPage);
+      return Math.ceil(this.dataLength / this.itemsPerPage);
     },
 
     totalRecords() {
-      return this.filteredOptionsData.length;
+    return this.dataLength;
+  },
+
+
+  totalAmount() {
+  return this.optionsGetData.reduce((sum, item) => {
+    // Kiểm tra và chuyển đổi totalAmount từ chuỗi sang số nguyên
+    const amount = parseInt((item.totalAmount || '0').replace(/[^\d]/g, ""), 10);
+    return sum + (amount || 0);
+  }, 0);
+},
+
+    formattedTotalAmount() {
+      return this.totalAmount.toLocaleString("vi-VN");
     },
-    // totalAmount() {
-    //   return this.filteredOptionsData.reduce((sum, item) => {
-    //     const amount = parseInt(item.totalAmount.replace(/[^\d]/g, ""), 10);
-    //     return sum + (amount || 0);
-    //   }, 0);
-    // },
-    // formattedTotalAmount() {
-    //   return this.totalAmount.toLocaleString("vi-VN");
-    // },
   },
   mounted() {
+    this.getWithdrawList();
     this.$emit("updatePageData", {
       currentPage: this.currentPage,
       itemsPerPage: this.itemsPerPage,
-      totalPages: this.totalPages,
+      
     });
   },
   watch: {
     pageData: {
       handler() {
-        this.getWithdrawList(); // Gọi lại API mỗi khi pageData thay đổi
+        this.getPagingWithdrawList(); // Gọi lại API mỗi khi pageData thay đổi
       },
       deep: true,
     },
+    
   },
   methods: {
     addNewRecord(newRecord) {
@@ -232,17 +240,25 @@ export default {
       this.$emit("updatePageData", {
         currentPage: this.currentPage,
         itemsPerPage: this.itemsPerPage,
-        totalPages: this.totalPages,
+        
       });
     },
     goToPreviousPage() {
       if (this.currentPage > 1) {
         this.currentPage -= 1;
+        this.$emit("updatePageData", {
+          currentPage: this.currentPage,
+          itemsPerPage: this.itemsPerPage,
+        });
       }
     },
     goToNextPage() {
       if (this.currentPage < this.totalPages) {
         this.currentPage += 1;
+        this.$emit("updatePageData", {
+          currentPage: this.currentPage,
+          itemsPerPage: this.itemsPerPage,
+        });
       }
     },
     goToPage(page) {
@@ -251,7 +267,6 @@ export default {
         this.$emit("updatePageData", {
           currentPage: this.currentPage,
           itemsPerPage: this.itemsPerPage,
-          totalPages: this.totalPages,
         });
       }
     },
@@ -294,6 +309,8 @@ export default {
           this.optionsData = this.optionsData.filter(
             (item) => item.id !== row.id
           );
+          this.getWithdrawList();
+          this.getPagingWithdrawList();
           this.showAlert("Xóa thành công!");
         } catch (error) {
           this.showAlert("Xóa thất bại. Vui lòng thử lại.");
@@ -303,8 +320,8 @@ export default {
     /**
      * api hiển thị tất cả các withdraw payment
      */
-    async getWithdrawList() {
-      if (!withdrawListConfig.endpoint) {
+    async getPagingWithdrawList() {
+      if (!Api.getPagingFilter.url) {
         return;
       }
       try {
@@ -314,13 +331,39 @@ export default {
         );
         if (response.pageData && Array.isArray(response.pageData)) {
           this.optionsData = response.pageData;
+          this.dataLength = response.total;
         } else {
           this.optionsData = [];
+          this.dataLength = 0;
         }
       } catch (error) {
         this.optionsData = [];
+        this.dataLength = 0;
       }
     },
+    async getWithdrawList() {
+      if (!withdrawListConfig.endpoint) {
+        return;
+      }
+      try {
+        const response = await baseApi.getAuthenApi(
+          withdrawListConfig.endpoint
+          
+        );
+        if (response.data && Array.isArray(response.data)) {
+          this.optionsGetData = response.data;
+          
+        } else {
+          this.optionsGetData = [];
+          
+        }
+      } catch (error) {
+        this.optionsGetData = [];
+        
+      }
+    },
+    
+
   },
 };
 </script>
@@ -371,7 +414,7 @@ export default {
 }
 
 .table-container {
-  max-height: 470px; /* Chiều cao tối đa của container */
+  max-height: 525px; /* Chiều cao tối đa của container */
   overflow-y: auto; /* Tạo thanh cuộn dọc */
 }
 
