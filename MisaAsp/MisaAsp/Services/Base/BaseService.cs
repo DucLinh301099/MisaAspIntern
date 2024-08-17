@@ -24,36 +24,34 @@ namespace MisaAsp.Services.Base
         }
         public async Task<PagingResult> GetPaging(PagingFilter pagingFilter)
         {
-            var result = new PagingResult();
+            var result = new PagingResult
+            {
+                TotalAmount = "0" // Gán giá trị mặc định là "0"
+            };
+
             if (pagingFilter != null)
             {
-                // Bước 1: Xây dựng các phần của truy vấn
                 var whereQuery = GetWhereQuery(pagingFilter.Filters);
                 var sortQuery = GetSortQuery(pagingFilter.Sort);
                 var pagingQuery = GetPagingQuery(pagingFilter.CurrentPage, pagingFilter.ItemsPerPage);
 
-                // Bước 2: Tạo các tham số cho stored procedure
                 var paramGet = new Dictionary<string, object>
-                {
-                    { "p_view", pagingFilter.View },
-                    { "p_where", whereQuery },
-                    { "p_sort", sortQuery },
-                    { "p_paging", pagingQuery }
-                };
-                
-                // Gọi phương thức thực thi stored procedure
+        {
+            { "p_view", pagingFilter.View },
+            { "p_where", whereQuery },
+            { "p_sort", sortQuery },
+            { "p_paging", pagingQuery }
+        };
+
                 var resultData = await _baseRepository.ExecuteProcReturnMultiAsync("get_paging_filter", paramGet);
 
-                // Xử lý dữ liệu trả về
                 if (resultData != null && resultData.Count > 1)
                 {
-                    // Xử lý dữ liệu trang
                     if (resultData[0] != null && resultData[0].Count > 0)
                     {
                         result.PageData = resultData[0];
                     }
 
-                    // Xử lý dữ liệu tổng số
                     if (resultData[1] != null && resultData[1].Count > 0)
                     {
                         var countItem = resultData[1].FirstOrDefault() as IDictionary<string, object>;
@@ -61,20 +59,27 @@ namespace MisaAsp.Services.Base
                         {
                             if (int.TryParse(countValue.ToString(), out int count))
                             {
-                                // Nếu count > 1, trừ 1 để có số lượng bản ghi thực tế
-                                result.Total = count > 1 ? count - 1 : count;
+                                result.Total = count ;
                             }
-                            // Lấy giá trị totalAmount và giữ nguyên dưới dạng chuỗi
-                            //if (countItem.TryGetValue("totalamount", out var totalAmountValue))
-                            //{
-                            //    result.TotalAmount = totalAmountValue.ToString();
-                            //}
+                        }
+
+                        if (resultData.Count > 2 && resultData[2] != null && resultData[2].Count > 0)
+                        {
+                            var totalAmountItem = resultData[2].FirstOrDefault() as IDictionary<string, object>;
+                            if (totalAmountItem != null && totalAmountItem.TryGetValue("sum", out var totalAmountValue))
+                            {
+                                result.TotalAmount = totalAmountValue?.ToString() ?? "0";
+                            }
                         }
                     }
                 }
             }
+
             return result;
         }
+
+
+
 
 
 

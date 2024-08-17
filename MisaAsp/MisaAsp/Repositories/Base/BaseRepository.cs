@@ -263,9 +263,11 @@ namespace MisaAsp.Repositories.Base
             var listParam = new List<string>();
             var sql = new StringBuilder();
 
-            // Thêm các tham số vào danh sách
+            // Xử lý các tham số
             foreach (var item in parameters)
             {
+                
+
                 listParam.Add($"@{item.Key}"); // Sử dụng @ để đánh dấu tham số
             }
 
@@ -278,7 +280,6 @@ namespace MisaAsp.Repositories.Base
             var transaction = _connection.BeginTransaction();
             try
             {
-                
                 var result = await _connection.QueryAsync<string>(sql.ToString(), parameters, transaction);
                 if (result != null && result.Count() > 0)
                 {
@@ -307,6 +308,7 @@ namespace MisaAsp.Repositories.Base
                     _connection.Close();
             }
         }
+
 
 
     }

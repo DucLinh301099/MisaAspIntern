@@ -133,7 +133,8 @@ export default {
     return {
       columnConfig: withdrawListConfig.columnConfig,
       optionsData: [],
-      optionsGetData: [],
+      
+      totalAmount:0,
       sort: [],
       dropdownVisible: null,
       sortAscending: true,
@@ -172,20 +173,14 @@ export default {
   },
 
 
-  totalAmount() {
-  return this.optionsGetData.reduce((sum, item) => {
-    // Kiểm tra và chuyển đổi totalAmount từ chuỗi sang số nguyên
-    const amount = parseInt((item.totalAmount || '0').replace(/[^\d]/g, ""), 10);
-    return sum + (amount || 0);
-  }, 0);
-},
 
-    formattedTotalAmount() {
-      return this.totalAmount.toLocaleString("vi-VN");
-    },
+
+formattedTotalAmount() {
+  return this.totalAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+},
   },
   mounted() {
-    this.getWithdrawList();
+   
     this.$emit("updatePageData", {
       currentPage: this.currentPage,
       itemsPerPage: this.itemsPerPage,
@@ -224,7 +219,7 @@ export default {
         name: "payment",
         params: { id: row.id },
         query: { mode: "edit" },
-      });
+      }); 
     },
     viewRow(row) {
       this.$router.push({
@@ -332,36 +327,39 @@ export default {
         if (response.pageData && Array.isArray(response.pageData)) {
           this.optionsData = response.pageData;
           this.dataLength = response.total;
+          this.totalAmount = response.totalAmount;
         } else {
           this.optionsData = [];
           this.dataLength = 0;
+          this.totalAmount = 0;
         }
       } catch (error) {
         this.optionsData = [];
         this.dataLength = 0;
+        this.totalAmount = 0;
       }
     },
-    async getWithdrawList() {
-      if (!withdrawListConfig.endpoint) {
-        return;
-      }
-      try {
-        const response = await baseApi.getAuthenApi(
-          withdrawListConfig.endpoint
+    // async getWithdrawList() {
+    //   if (!withdrawListConfig.endpoint) {
+    //     return;
+    //   }
+    //   try {
+    //     const response = await baseApi.getAuthenApi(
+    //       withdrawListConfig.endpoint
           
-        );
-        if (response.data && Array.isArray(response.data)) {
-          this.optionsGetData = response.data;
+    //     );
+    //     if (response.data && Array.isArray(response.data)) {
+    //       this.optionsGetData = response.data;
           
-        } else {
-          this.optionsGetData = [];
+    //     } else {
+    //       this.optionsGetData = [];
           
-        }
-      } catch (error) {
-        this.optionsGetData = [];
+    //     }
+    //   } catch (error) {
+    //     this.optionsGetData = [];
         
-      }
-    },
+    //   }
+    // },
     
 
   },
