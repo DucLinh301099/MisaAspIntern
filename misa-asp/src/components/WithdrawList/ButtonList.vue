@@ -9,6 +9,7 @@
           <MSButtonFilter
             @filters-updated="updateFilters"
             :dateField="dateField"
+             @reset-page="resetPage"
           />
           <div class="filter-conditions">
             <div class="filter-item--default">Đầu năm tới hiện tại</div>
@@ -151,6 +152,9 @@ export default {
     updateFilters(filters) {
       // Phát ra sự kiện để truyền filters lên WithdrawList
       this.$emit("filters-updated", filters);
+    },
+    resetPage() {
+      this.$emit('reset-page'); // Emit the reset-page event to WithdrawList
     },
   },
 };

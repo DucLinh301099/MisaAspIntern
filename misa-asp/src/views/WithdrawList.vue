@@ -16,6 +16,7 @@
             @search="handleSearch"
             @filters-updated="updateFilters"
             :dateField="dateField"
+            @reset-page="resetPage"
           />
           <MSWithdrawList
           
@@ -73,6 +74,9 @@ export default {
         ...pageData,
       };
       
+    },
+    resetPage() {
+      this.updatePageData({ currentPage: 1 }); // Reset the current page to 1
     },
     updateTotalRecords(totalRecords) {
       this.pageData.totalRecords = totalRecords;

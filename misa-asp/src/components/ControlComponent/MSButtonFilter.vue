@@ -158,6 +158,8 @@ export default {
         }
 
         this.$emit("filters-updated", this.filters); // Phát ra sự kiện filters-updated với giá trị this.filters
+        this.$emit('reset-page');
+       
       }
       this.isDropdownVisible = false;
     },

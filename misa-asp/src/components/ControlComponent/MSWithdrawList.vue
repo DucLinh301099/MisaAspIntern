@@ -190,6 +190,7 @@ formattedTotalAmount() {
   watch: {
     pageData: {
       handler() {
+        this.currentPage = this.pageData.currentPage; 
         this.getPagingWithdrawList(); // Gọi lại API mỗi khi pageData thay đổi
       },
       deep: true,
@@ -339,27 +340,7 @@ formattedTotalAmount() {
         this.totalAmount = 0;
       }
     },
-    // async getWithdrawList() {
-    //   if (!withdrawListConfig.endpoint) {
-    //     return;
-    //   }
-    //   try {
-    //     const response = await baseApi.getAuthenApi(
-    //       withdrawListConfig.endpoint
-          
-    //     );
-    //     if (response.data && Array.isArray(response.data)) {
-    //       this.optionsGetData = response.data;
-          
-    //     } else {
-    //       this.optionsGetData = [];
-          
-    //     }
-    //   } catch (error) {
-    //     this.optionsGetData = [];
-        
-    //   }
-    // },
+   
     
 
   },
