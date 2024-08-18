@@ -103,6 +103,7 @@ export default {
     };
   },
   methods: {
+
     toggleDropdown(event) {
       event.stopPropagation(); // Ngăn sự kiện click lan truyền
       this.isDropdownVisible = !this.isDropdownVisible;
@@ -111,6 +112,11 @@ export default {
       event.stopPropagation(); // Ngăn sự kiện click lan truyền
       this.isSelectDropdownVisible = !this.isSelectDropdownVisible;
     },
+    /**
+     * hàm chọn các option để đặt điều kiện
+     * lọc từ ngày bắt đầu đến ngày kêt thúc
+     * @param option 
+     */
     onSelectOption(option) {
       if (event) {
         event.stopPropagation(); // Ngăn sự kiện click lan truyền khi chọn option
@@ -127,10 +133,20 @@ export default {
         this.endDate = "";
       }
     },
+
+    /**
+     * hàm đặt lại điều kiện lọc
+     */
     resetFilter() {
       this.selectedTime = "Đầu năm đến hiện tại";
       this.onSelectOption(this.selectedTime);
     },
+
+    /**
+     * hàm lọc các bản ghi theo ngày hạch toán
+     * filterDate sẽ được gán theo format để truyền
+     * data gọi api
+     */
     applyFilter() {
       if (this.dateField && this.dateField.length) {
         this.filters = []; // Đặt lại mảng filters
@@ -163,12 +179,17 @@ export default {
       }
       this.isDropdownVisible = false;
     },
+
     addFilter(data) {
       if (this.filters.length) {
         this.filters.push("and");
       }
       this.filters.push(data);
     },
+    /**
+     * hàm ẩn các dropdown khi click ra ngoài
+     * @param event 
+     */
     clickOutside(event) {
       if (
         this.$refs.dropdownContent &&

@@ -86,16 +86,10 @@ export default {
     },
   },
   methods: {
-    onItemsPerPageChange(option) {
-      this.$emit("update:itemsPerPage", option);
-      this.$emit("updatePageData", {
-        itemsPerPage: option,
-        totalPages: Math.ceil(this.totalRecords / option),
-        currentPage: 1, // Reset về trang đầu khi thay đổi số bản ghi trên mỗi trang
-        totalRecords: this.totalRecords,
-      });
-      this.dropdownOpen = false; // Ẩn dropdown sau khi chọn
-    },
+    /**
+     * hàm trở về trang trước
+     * gọi các event emit đến MSWithdrawList
+     */
     goToPreviousPage() {
       if (this.currentPage > 1) {
         this.$emit("update:currentPage", this.currentPage - 1);
@@ -104,6 +98,10 @@ export default {
         });
       }
     },
+     /**
+     * hàm trở về trang sau
+     * gọi các event emit đến MSWithdrawList
+     */
     goToNextPage() {
       if (this.currentPage < this.totalPages) {
         this.$emit("update:currentPage", this.currentPage + 1);
@@ -112,6 +110,10 @@ export default {
         });
       }
     },
+     /**
+     * hàm chuyển trang theo số trang mong muốn khi nhập vào ô input
+     * gọi các event emit đến MSWithdrawList
+     */
     goToPage(page) {
       if (page >= 1 && page <= this.totalPages) {
         this.$emit("update:currentPage", page);
@@ -120,6 +122,7 @@ export default {
         });
       }
     },
+
     onPageInputChange(event) {
       this.currentPageInput = Number(event.target.value);
     },
@@ -127,6 +130,13 @@ export default {
       event.stopPropagation(); // Ngăn sự kiện click lan truyền
       this.dropdownOpen = !this.dropdownOpen;
     },
+    /**
+     * hàm chọn các option số bản ghi tối đa trên 1 trang
+     * tính số trang hiện có
+     * đặt currentPage = 1 - tức là sẽ chuyển về trang đầu
+     * mỗi khi chọn xong
+     * @param option 
+     */
     onSelectOption(option) {
       this.$emit("update:itemsPerPage", option);
       this.$emit("updatePageData", {

@@ -63,6 +63,11 @@ export default {
 
     /**
      * 2 function thực hiện đóng mở alert
+     * showConfirm có 2 button xác nhận và hủy
+     * showAlert chỉ có 1 button hủy
+     * dùng để cho các request khác nhau
+     * thông báo thành công hoặc lỗi thì chỉ dùng showAlert
+     * còn cần xác nhận hành động thì dùng showConfirm
      * @param message
      * @param action
      */

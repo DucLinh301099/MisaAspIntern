@@ -216,6 +216,10 @@ export default {
       await this.fetchData();
       this.showTable = true;
     },
+    /**
+     * hàm chọn 1 optiion trong select
+     * @param item 
+     */
     selectRow(item) {
       let displayFirstValue = this.config.columnConfig?.find(
         (col) => col.isDisplay
@@ -234,12 +238,23 @@ export default {
       this.errors = null;
       this.$refs.inputComponent.setError(null);
     },
+
+    /**
+     * các hàm cập nhật giá trị 
+     * @param 
+     */
     handleOnInput(event) {
       this.inputValue = event.target.value;
     },
     handleInputChange(value) {
       this.internalSelectedOption = value;
     },
+
+    ///////
+    /**
+     * các hàm xử lý đóng mở modal
+     
+     */
     openCreateModal() {
       this.isCreateModalVisible = true;
     },
@@ -253,6 +268,7 @@ export default {
         this.showAlert(responseData.message, () => {});
       }
     },
+    ///
     handleFocus() {
       this.isInputFocused = true;
     },

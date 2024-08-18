@@ -97,7 +97,7 @@
       :total-pages="totalPages"
       :items-per-page-options="itemsPerPageOptions"
       @update:itemsPerPage="updatePage"
-      @update:currentPage="goToPage"
+      @update:currentPage="goToPage"g
       @updatePageData="updatePageData"
       @previous-page="goToPreviousPage"
       @next-page="goToNextPage"
@@ -230,6 +230,11 @@ formattedTotalAmount() {
       });
     },
 
+ 
+    /**
+     * hàm update số trang bản ghi trong 1 trang
+     * @param itemsPerPage 
+     */
     updatePage(itemsPerPage) {
       this.itemsPerPage = itemsPerPage;
       this.currentPage = 1;
@@ -239,6 +244,10 @@ formattedTotalAmount() {
         
       });
     },
+
+    /**
+     * hàm chuyển về trang trước
+     */
     goToPreviousPage() {
       if (this.currentPage > 1) {
         this.currentPage -= 1;
@@ -248,6 +257,9 @@ formattedTotalAmount() {
         });
       }
     },
+    /**
+     * hàm chuyển đến trang sau
+     */
     goToNextPage() {
       if (this.currentPage < this.totalPages) {
         this.currentPage += 1;
@@ -257,6 +269,11 @@ formattedTotalAmount() {
         });
       }
     },
+    /**
+     * hàm nhập số trang vào input 
+     * để di chuyển đến trang đó
+     * @param page 
+     */
     goToPage(page) {
       if (page >= 1 && page <= this.totalPages) {
         this.currentPage = page;
@@ -266,6 +283,7 @@ formattedTotalAmount() {
         });
       }
     },
+    
     updatePageData(pageData) {
       this.$emit("updatePageData", pageData);
     },

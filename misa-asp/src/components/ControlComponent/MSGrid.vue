@@ -213,6 +213,7 @@ export default {
       }
       this.updateCurrentTotal();
     },
+    
     updateCurrentTotal() {
       this.currentTotal = this.modelValue.reduce(
         (sum, row) =>
@@ -221,9 +222,12 @@ export default {
       );
       this.$emit("updateTotalAmount", this.currentTotal);
     },
+   
     setError(item) {
       this.errors.push(item);
     },
+
+
     getColumnClass(columnName) {
       if (
         columnName === "TK Nợ" ||
