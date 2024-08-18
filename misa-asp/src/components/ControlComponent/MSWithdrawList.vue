@@ -304,7 +304,7 @@ formattedTotalAmount() {
           this.optionsData = this.optionsData.filter(
             (item) => item.id !== row.id
           );
-          this.getWithdrawList();
+          
           this.getPagingWithdrawList();
           this.showAlert("Xóa thành công!");
         } catch (error) {

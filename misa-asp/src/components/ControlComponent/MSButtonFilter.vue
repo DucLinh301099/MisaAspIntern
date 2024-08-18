@@ -97,7 +97,7 @@ export default {
       isSelectDropdownVisible: false,
       selectedTime: "Đầu năm đến hiện tại",
       timeOptions: Object.keys(withdrawListConfig.timeOptionsConfig), // Lấy danh sách tùy chọn từ config
-      startDate: "", // Ngày bắt đầu mặc định
+      startDate: "", 
       endDate: "",
       filters: [], // Mảng filter
     };

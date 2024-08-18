@@ -36,12 +36,12 @@ namespace MisaAsp.Services.Base
                 var pagingQuery = GetPagingQuery(pagingFilter.CurrentPage, pagingFilter.ItemsPerPage);
 
                 var paramGet = new Dictionary<string, object>
-        {
-            { "p_view", pagingFilter.View },
-            { "p_where", whereQuery },
-            { "p_sort", sortQuery },
-            { "p_paging", pagingQuery }
-        };
+                {
+                  { "p_view", pagingFilter.View },
+                  { "p_where", whereQuery },
+                  { "p_sort", sortQuery },
+                  { "p_paging", pagingQuery }
+                };
 
                 var resultData = await _baseRepository.ExecuteProcReturnMultiAsync("get_paging_filter", paramGet);
 
@@ -203,7 +203,7 @@ namespace MisaAsp.Services.Base
 
         public string GetPagingQuery(int currentPage, int itemsPerPage)
         {
-            var recordStart = (currentPage - 1) * itemsPerPage + 1;
+            var recordStart = (currentPage - 1) * itemsPerPage;
             var recordStartValid = ValidateSqlInput(recordStart.ToString());
             var itemsPerPageValid = ValidateSqlInput(itemsPerPage.ToString());
             //parameter.Add(valueValid);
