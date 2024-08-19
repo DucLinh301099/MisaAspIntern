@@ -17,9 +17,9 @@
             @filters-updated="updateFilters"
             :dateField="dateField"
             @reset-page="resetPage"
+            :filters="pageData.filters"
           />
           <MSWithdrawList
-          
             :searchQuery="searchQuery"
             :pageData="pageData"
             :totalRecords="pageData.totalRecords"
@@ -73,7 +73,6 @@ export default {
         ...this.pageData,
         ...pageData,
       };
-      
     },
     resetPage() {
       this.updatePageData({ currentPage: 1 }); // Reset the current page to 1
@@ -94,12 +93,14 @@ export default {
       }
     },
     goToNextPage() {
-      if (this.pageData.currentPage < Math.ceil(this.pageData.totalRecords / this.pageData.itemsPerPage)) {
+      if (
+        this.pageData.currentPage <
+        Math.ceil(this.pageData.totalRecords / this.pageData.itemsPerPage)
+      ) {
         this.pageData.currentPage += 1;
         this.updatePageData({ currentPage: this.pageData.currentPage });
       }
     },
-
   },
 };
 </script>

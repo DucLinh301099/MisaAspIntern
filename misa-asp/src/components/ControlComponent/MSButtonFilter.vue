@@ -97,13 +97,12 @@ export default {
       isSelectDropdownVisible: false,
       selectedTime: "Đầu năm đến hiện tại",
       timeOptions: Object.keys(withdrawListConfig.timeOptionsConfig), // Lấy danh sách tùy chọn từ config
-      startDate: "", 
+      startDate: "",
       endDate: "",
       filters: [], // Mảng filter
     };
   },
   methods: {
-
     toggleDropdown(event) {
       event.stopPropagation(); // Ngăn sự kiện click lan truyền
       this.isDropdownVisible = !this.isDropdownVisible;
@@ -115,7 +114,7 @@ export default {
     /**
      * hàm chọn các option để đặt điều kiện
      * lọc từ ngày bắt đầu đến ngày kêt thúc
-     * @param option 
+     * @param option
      */
     onSelectOption(option) {
       if (event) {
@@ -166,6 +165,18 @@ export default {
                 condition: "<=",
                 value: this.endDate,
               },
+              "and",
+              {
+                posted_date: "documentdate",
+                condition: ">=",
+                value: this.startDate,
+              },
+              "and",
+              {
+                posted_date: "documentdate",
+                condition: "<=",
+                value: this.endDate,
+              },
             ];
 
             // Gán giá trị vào mảng filters
@@ -174,8 +185,7 @@ export default {
         }
 
         this.$emit("filters-updated", this.filters); // Phát ra sự kiện filters-updated với giá trị this.filters
-        this.$emit('reset-page');
-       
+        this.$emit("reset-page");
       }
       this.isDropdownVisible = false;
     },
@@ -188,7 +198,7 @@ export default {
     },
     /**
      * hàm ẩn các dropdown khi click ra ngoài
-     * @param event 
+     * @param event
      */
     clickOutside(event) {
       if (

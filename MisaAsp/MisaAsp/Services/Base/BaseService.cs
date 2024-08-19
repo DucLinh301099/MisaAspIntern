@@ -8,6 +8,7 @@ using System.Reflection.Metadata;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 
 namespace MisaAsp.Services.Base
 {
@@ -102,19 +103,18 @@ namespace MisaAsp.Services.Base
         /// <returns></returns>
         public string BuildWhereQuery(Filter filterObject, StringBuilder whereQuery = null)
         {
-            if(whereQuery == null)
+            if (whereQuery == null)
             {
                 whereQuery = new StringBuilder();
             }
-            var filters = filterObject.Filters;// Lấy danh sách các bộ lọc từ đối tượng filterObject.
+            var filters = filterObject.Filters; // Lấy danh sách các bộ lọc từ đối tượng filterObject.
             if (filters != null && filters.Any())
-
             {
                 // Duyệt qua từng bộ lọc trong danh sách.
                 for (int i = 0; i < filters.Count; i++)
                 {
                     var item = filters[i];
-                    if(item is JsonElement jsonElement)
+                    if (item is JsonElement jsonElement)
                     {
                         switch (jsonElement.ValueKind)
                         {
@@ -127,8 +127,8 @@ namespace MisaAsp.Services.Base
                                 }
                                 // Đệ quy để xử lý mảng này.
                                 BuildWhereQuery(new Filter(arrayAsList, filterObject.ParamIndex), whereQuery);
-
                                 break;
+
                             case JsonValueKind.Object:
                                 // Nếu là đối tượng, thêm ngoặc đơn vào câu lệnh where và xử lý từng thuộc tính.
                                 whereQuery.Append(" (");
@@ -137,20 +137,26 @@ namespace MisaAsp.Services.Base
                                     if (objectFilter.Name == "value")
                                     {
                                         var valueValid = ValidateSqlInput(objectFilter.Value.ToString());
-                                        //parameter.Add(valueValid);
                                         whereQuery.Append($"'{valueValid}'");
                                         filterObject.ParamIndex++;
                                     }
                                     else
                                     {
-                                        whereQuery.Append(objectFilter.Value);
+                                        var value = objectFilter.Value.ToString();
+                                        // Tìm và thay thế từ khóa LIKE đúng cách
+                                        value = value.Replace("ILIKE", " ILIKE ");
+                                        whereQuery.Append(value);
                                     }
                                 }
                                 whereQuery.Append(") ");
                                 break;
+
                             case JsonValueKind.String:
                                 // Nếu là chuỗi, thêm chuỗi vào câu lệnh where.
-                                whereQuery.Append(item.ToString() + " ");
+                                var stringValue = item.ToString();
+                                // Tìm và thay thế từ khóa LIKE đúng cách
+                                stringValue = stringValue.Replace("ILIKE", " ILIKE ");
+                                whereQuery.Append(stringValue + " ");
                                 break;
                         }
                     }
@@ -158,6 +164,8 @@ namespace MisaAsp.Services.Base
             }
             return whereQuery.ToString();
         }
+
+
 
         // Hàm GetWhereQuery: Tạo câu lệnh where từ danh sách bộ lọc.
         public string GetWhereQuery(List<object> filters)

@@ -32,8 +32,6 @@ async deletePaymentById(id) {
    }
   }, 
 
-  async getPagingFilter() {
-    
-  }
+ 
 
 };

@@ -9,7 +9,7 @@
           <MSButtonFilter
             @filters-updated="updateFilters"
             :dateField="dateField"
-             @reset-page="resetPage"
+            @reset-page="resetPage"
           />
           <div class="filter-conditions">
             <div class="filter-item--default">Đầu năm tới hiện tại</div>
@@ -122,6 +122,7 @@
 </template>
 <script>
 import MSButtonFilter from "../ControlComponent/MSButtonFilter.vue";
+import debounce from "lodash/debounce";
 export default {
   name: "ButtonList",
   components: {
@@ -132,17 +133,166 @@ export default {
       type: Array,
       default: () => [],
     },
+    filters: {
+      type: Array,
+      default: () => [],
+    },
   },
   data() {
     return {
       searchQuery: "",
+      combinedFilters: null,
+      searchFilters: null,
     };
   },
   methods: {
-    onInput(event) {
-      this.searchQuery = event.target.value;
-      this.$emit("search", this.searchQuery);
+    onInput: debounce(function (event) {
+      this.searchQuery = event.target.value.trim();
+
+      // Nếu input trống, xóa điều kiện tìm kiếm và cập nhật combinedFilters
+      if (this.searchQuery === "") {
+        this.searchFilters = null; // Đặt lại searchFilters thành null
+        this.updateCombinedFilters(); // Cập nhật lại combinedFilters
+        return;
+      }
+
+      // Xây dựng điều kiện tìm kiếm nếu input không trống
+      this.searchFilters = []; // Khởi tạo lại searchFilters
+      const searchableFields = [
+        "documentnumber",
+        "billcontent",
+        "totalamount",
+        "accountnumber",
+        "vouchertype",
+        "paymentmethod",
+      ];
+
+      searchableFields.forEach((field, index) => {
+        const filterCondition = {
+          fieldName: field,
+          condition: "ILIKE",
+          value: `%${this.searchQuery}%`,
+        };
+
+        this.searchFilters.push(filterCondition);
+
+        if (index < searchableFields.length - 1) {
+          this.searchFilters.push("or");
+        }
+      });
+
+      // Loại bỏ các "or" dư thừa nếu không có điều kiện hợp lệ đi kèm
+      this.searchFilters = this.cleanUpFilters(this.searchFilters);
+
+      // Cập nhật lại combinedFilters
+      this.updateCombinedFilters();
+    }, 600), // Độ trễ debounce 600ms
+
+    updateCombinedFilters() {
+      // Khởi tạo mảng combinedFilters mới từ các filters hiện có, lọc bỏ các điều kiện tìm kiếm cũ
+      let combinedFilters = this.$props.filters
+        ? this.$props.filters.filter((filter) => !this.isSearchFilter(filter))
+        : [];
+
+      // Kiểm tra và thêm các bộ lọc từ searchFilters (nếu có)
+      if (this.searchFilters && this.searchFilters.length > 0) {
+        if (combinedFilters.length > 0) {
+          combinedFilters.push("and"); // Thêm "and" nếu có bộ lọc từ MSButtonFilter
+        }
+        // Gộp các điều kiện trong searchFilters vào dấu ngoặc đơn
+        combinedFilters.push("(", ...this.searchFilters, ")");
+      }
+
+      // Loại bỏ các "or", "and", và dấu ngoặc đơn dư thừa nếu không có điều kiện hợp lệ đi kèm trong combinedFilters
+      combinedFilters = this.cleanUpFilters(combinedFilters);
+
+      // Nếu không có bộ lọc nào, gán combinedFilters là null
+      this.combinedFilters =
+        combinedFilters.length > 0 ? combinedFilters : null;
+
+      // Gửi combinedFilters qua sự kiện
+      this.$emit("filters-updated", this.combinedFilters);
     },
+
+    //TODO: Sẽ nguyên cứu lại, như này quá dài dòng, sẽ nghiên cứu đưa logic
+    // này vào BE xử lý
+    // Hàm để kiểm tra và loại bỏ các "or", "and", và dấu ngoặc đơn dư thừa
+    cleanUpFilters(filtersArray) {
+      let result = filtersArray.filter((item, index) => {
+        if (item === "or" || item === "and") {
+          // Loại bỏ "or" hoặc "and" nếu nó nằm ở đầu, cuối,
+          // hoặc đứng trước/sau một "or" hoặc "and" khác, hoặc đứng sau một "(" hoặc trước một ")"
+          return (
+            index > 0 &&
+            index < filtersArray.length - 1 &&
+            filtersArray[index - 1] !== "or" &&
+            filtersArray[index - 1] !== "and" &&
+            filtersArray[index - 1] !== "(" &&
+            filtersArray[index + 1] !== "or" &&
+            filtersArray[index + 1] !== "and" &&
+            filtersArray[index + 1] !== ")"
+          );
+        }
+        return true; // Giữ lại các điều kiện khác
+      });
+
+      // Bước 2: Loại bỏ cặp dấu ngoặc đơn nếu không có điều kiện hợp lệ giữa chúng
+      let openBracketIndex = result.indexOf("(");
+      let closeBracketIndex = result.lastIndexOf(")");
+
+      // Nếu tìm thấy cặp dấu ngoặc đơn
+      if (
+        openBracketIndex !== -1 &&
+        closeBracketIndex !== -1 &&
+        closeBracketIndex > openBracketIndex
+      ) {
+        let innerContent = result.slice(
+          openBracketIndex + 1,
+          closeBracketIndex
+        );
+
+        // Nếu tất cả nội dung giữa ngoặc đơn chỉ là "or" hoặc "and", hoặc trống, ta sẽ xóa dấu ngoặc đơn và nội dung bên trong
+        if (
+          innerContent.every(
+            (item) => item === "or" || item === "and" || item === ""
+          )
+        ) {
+          result.splice(
+            openBracketIndex,
+            closeBracketIndex - openBracketIndex + 1
+          ); // Xóa dấu ngoặc đơn và nội dung bên trong
+        }
+      }
+
+      // Kiểm tra và loại bỏ "and" ở đầu hoặc cuối nếu không có điều kiện hợp lệ trước/sau nó
+      if (result[0] === "and") {
+        result.shift(); // Xóa phần tử đầu tiên
+      }
+      if (result[result.length - 1] === "and") {
+        result.pop(); // Xóa phần tử cuối cùng
+      }
+
+      return result;
+    },
+
+    // Hàm kiểm tra nếu filter là điều kiện tìm kiếm từ input
+    isSearchFilter(filter) {
+      const searchableFields = [
+        "documentnumber",
+        "billcontent",
+        "totalamount",
+        "accountnumber",
+        "vouchertype",
+        "paymentmethod",
+      ];
+      // Kiểm tra nếu filter là object và thuộc một trong các searchableFields
+      return (
+        filter &&
+        filter.fieldName &&
+        searchableFields.includes(filter.fieldName)
+      );
+    },
+
     goToPaymentPage() {
       this.$router.push({
         name: "payment",
@@ -154,7 +304,7 @@ export default {
       this.$emit("filters-updated", filters);
     },
     resetPage() {
-      this.$emit('reset-page'); // Emit the reset-page event to WithdrawList
+      this.$emit("reset-page");
     },
   },
 };

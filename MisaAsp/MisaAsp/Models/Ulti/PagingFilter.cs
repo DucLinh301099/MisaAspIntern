@@ -18,7 +18,7 @@ namespace MisaAsp.Models.Ulti
         [Required]
         public int ItemsPerPage { get; set; }
         public string View { get; set; }
-        //public Dictionary<string, object> Parameter { get; set; }
+    
     }
 
     public class Filter

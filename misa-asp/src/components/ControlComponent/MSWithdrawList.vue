@@ -5,8 +5,8 @@
         <table class="withdraw-list-table">
           <thead class="thead">
             <tr>
-              <th class="th-index">#</th>
-              <th 
+              <th class="th-index"></th>
+              <th
                 v-for="(column, index) in columnConfig"
                 :key="index"
                 @dblclick="sortRecords(column.fieldName)"
@@ -32,13 +32,14 @@
                 v-for="(column, colIndex) in columnConfig"
                 :key="colIndex"
               >
+                <div></div>
                 <span
                   v-if="
                     column.columnName !== 'Số chứng từ' &&
                     column.columnName !== 'Chức năng'
                   "
-                  >{{ row[column.fieldName] }}</span
-                >
+                  >{{ row[column.fieldName] }}
+                </span>
                 <a
                   v-else-if="column.columnName === 'Số chứng từ'"
                   @click="viewRow(row)"
@@ -97,7 +98,8 @@
       :total-pages="totalPages"
       :items-per-page-options="itemsPerPageOptions"
       @update:itemsPerPage="updatePage"
-      @update:currentPage="goToPage"g
+      @update:currentPage="goToPage"
+      g
       @updatePageData="updatePageData"
       @previous-page="goToPreviousPage"
       @next-page="goToNextPage"
@@ -133,13 +135,13 @@ export default {
     return {
       columnConfig: withdrawListConfig.columnConfig,
       optionsData: [],
-      
-      totalAmount:0,
+
+      totalAmount: 0,
       sort: [],
       dropdownVisible: null,
       sortAscending: true,
       totalRecords: null,
-      dataLength:0,
+      dataLength: 0,
       itemsPerPage: 10,
       currentPage: 1,
       currentPageInput: 1,
@@ -169,33 +171,27 @@ export default {
     },
 
     totalRecords() {
-    return this.dataLength;
-  },
+      return this.dataLength;
+    },
 
-
-
-
-formattedTotalAmount() {
-  return this.totalAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-},
+    formattedTotalAmount() {
+      return this.totalAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    },
   },
   mounted() {
-   
     this.$emit("updatePageData", {
       currentPage: this.currentPage,
       itemsPerPage: this.itemsPerPage,
-      
     });
   },
   watch: {
     pageData: {
       handler() {
-        this.currentPage = this.pageData.currentPage; 
+        this.currentPage = this.pageData.currentPage;
         this.getPagingWithdrawList(); // Gọi lại API mỗi khi pageData thay đổi
       },
       deep: true,
     },
-    
   },
   methods: {
     addNewRecord(newRecord) {
@@ -205,12 +201,15 @@ formattedTotalAmount() {
 
     getColumnClass(columnName) {
       if (columnName === "Số tiền") {
-        return "narrow-column";
+        return "amount-column";
       }
-      if (columnName === "Số tài khoản NH") {
-        return "account-number-column"; // Add a specific class for this column
+      if (columnName === "Ngày hạch toán" || columnName === "Ngày chứng từ") {
+        return "date-column";
       }
-      return "";
+      if (columnName === "Diễn giải") {
+        return "description-column";
+      }
+      return "left-align-column";
     },
     toggleDropdown(index) {
       this.dropdownVisible = this.dropdownVisible === index ? null : index;
@@ -220,7 +219,7 @@ formattedTotalAmount() {
         name: "payment",
         params: { id: row.id },
         query: { mode: "edit" },
-      }); 
+      });
     },
     viewRow(row) {
       this.$router.push({
@@ -230,10 +229,9 @@ formattedTotalAmount() {
       });
     },
 
- 
     /**
      * hàm update số trang bản ghi trong 1 trang
-     * @param itemsPerPage 
+     * @param itemsPerPage
      */
     updatePage(itemsPerPage) {
       this.itemsPerPage = itemsPerPage;
@@ -241,7 +239,6 @@ formattedTotalAmount() {
       this.$emit("updatePageData", {
         currentPage: this.currentPage,
         itemsPerPage: this.itemsPerPage,
-        
       });
     },
 
@@ -270,9 +267,9 @@ formattedTotalAmount() {
       }
     },
     /**
-     * hàm nhập số trang vào input 
+     * hàm nhập số trang vào input
      * để di chuyển đến trang đó
-     * @param page 
+     * @param page
      */
     goToPage(page) {
       if (page >= 1 && page <= this.totalPages) {
@@ -283,7 +280,7 @@ formattedTotalAmount() {
         });
       }
     },
-    
+
     updatePageData(pageData) {
       this.$emit("updatePageData", pageData);
     },
@@ -323,7 +320,7 @@ formattedTotalAmount() {
           this.optionsData = this.optionsData.filter(
             (item) => item.id !== row.id
           );
-          
+
           this.getPagingWithdrawList();
           this.showAlert("Xóa thành công!");
         } catch (error) {
@@ -358,9 +355,6 @@ formattedTotalAmount() {
         this.totalAmount = 0;
       }
     },
-   
-    
-
   },
 };
 </script>
@@ -452,24 +446,51 @@ table {
 /* CSS cho các ô td */
 .withdraw-list-table td {
   border: 1px solid #ccc;
-  padding: 10px;
-  text-align: center;
+  padding: 5px;
   vertical-align: middle;
   overflow: visible;
   text-overflow: ellipsis;
   word-break: break-word;
-
   height: auto;
-  width: 100px;
 }
 
 .withdraw-list-table td span {
-  display: flex;
-  text-align: left; /* Align the text to the left within the block */
-  align-items: center;
+  display: block;
   width: 100%;
-  word-break: break-word; /* Ensure long words break to the next line */
-  justify-content: center;
+  word-break: break-word;
+  margin: 0 auto;
+}
+
+/* Căn giữa text trong cột "Ngày hạch toán" và "Ngày chứng từ" */
+.withdraw-list-table td.date-column {
+  text-align: center;
+}
+
+/* Căn phải text trong cột "Số tiền" */
+.withdraw-list-table td.amount-column {
+  text-align: right;
+}
+
+/* Căn trái text trong các cột còn lại */
+.withdraw-list-table td.left-align-column {
+  text-align: left;
+}
+
+/* Thêm vào các lớp cụ thể trong hàm getColumnClass */
+.td-grid.date-column {
+  text-align: center;
+}
+
+.td-grid.amount-column {
+  text-align: right;
+}
+.td-grid.description-column {
+  width: 500px; /* Điều chỉnh chiều rộng theo nhu cầu của bạn */
+  text-align: left;
+}
+
+.td-grid.left-align-column {
+  text-align: left;
 }
 
 /* Style for the total amount row */
@@ -481,9 +502,9 @@ table {
 .withdraw-list-table th {
   border-left: 1px solid #ccc;
   border-right: 1px solid #ccc;
-  padding: 8px;
+  padding: 0px 8px 0px 8px;
   text-align: center;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: bold;
 }
 
@@ -492,8 +513,9 @@ table {
   text-align: center;
 }
 
-.td-grid.narrow-column {
+.withdraw-list-table td.td-grid.narrow-column {
   width: 170px;
+  text-align: right !important;
 }
 
 @media screen and (max-width: 320px) {
