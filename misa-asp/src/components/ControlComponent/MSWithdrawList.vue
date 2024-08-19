@@ -5,12 +5,20 @@
         <table class="withdraw-list-table">
           <thead class="thead">
             <tr>
-              <th class="th-index"></th>
+              <th class="th-index">
+                <input type="checkbox" @change="toggleSelectAll" />
+              </th>
               <th
                 v-for="(column, index) in columnConfig"
                 :key="index"
                 @dblclick="sortRecords(column.fieldName)"
+                :class="[
+                 getColumnClass(column.columnName),
+                  column.columnName === 'Diễn giải' ? 'description-column' : ''
+                  ]"
               >
+             
+    
                 {{ column.columnName }}
               </th>
             </tr>
@@ -22,7 +30,11 @@
               :key="rowIndex"
               @dblclick="viewRow(row)"
             >
-              <td>{{ rowIndex + 1 }}</td>
+              <td><input 
+                  type="checkbox" 
+                  v-model="selectedRows" 
+                  :value="row" 
+                /></td>
               <td
                 :class="[
                   'td-grid',
@@ -32,7 +44,9 @@
                 v-for="(column, colIndex) in columnConfig"
                 :key="colIndex"
               >
-                <div></div>
+                
+                  
+                
                 <span
                   v-if="
                     column.columnName !== 'Số chứng từ' &&
@@ -40,12 +54,14 @@
                   "
                   >{{ row[column.fieldName] }}
                 </span>
+                
                 <a
                   v-else-if="column.columnName === 'Số chứng từ'"
                   @click="viewRow(row)"
                   href="#"
                   >{{ row[column.fieldName] }}</a
                 >
+             
                 <div v-else class="actions-container">
                   <div class="flex justify-end">
                     <div class="ms-dropdown">
@@ -99,7 +115,6 @@
       :items-per-page-options="itemsPerPageOptions"
       @update:itemsPerPage="updatePage"
       @update:currentPage="goToPage"
-      g
       @updatePageData="updatePageData"
       @previous-page="goToPreviousPage"
       @next-page="goToNextPage"
@@ -135,6 +150,8 @@ export default {
     return {
       columnConfig: withdrawListConfig.columnConfig,
       optionsData: [],
+      selectedRows: [], // Lưu trữ các dòng được chọn
+      selectAll: false, // Trạng thái của checkbox chọn tất cả
 
       totalAmount: 0,
       sort: [],
@@ -194,23 +211,31 @@ export default {
     },
   },
   methods: {
+    toggleSelectAll() {
+      this.selectAll = !this.selectAll;
+      if (this.selectAll) {
+        this.selectedRows = [...this.optionsData]; // Chọn tất cả các dòng
+      } else {
+        this.selectedRows = []; // Bỏ chọn tất cả các dòng
+      }
+    },
     addNewRecord(newRecord) {
       this.optionsData.push(newRecord);
       this.$forceUpdate();
     },
 
     getColumnClass(columnName) {
-      if (columnName === "Số tiền") {
-        return "amount-column";
-      }
-      if (columnName === "Ngày hạch toán" || columnName === "Ngày chứng từ") {
-        return "date-column";
-      }
-      if (columnName === "Diễn giải") {
-        return "description-column";
-      }
-      return "left-align-column";
-    },
+  if (columnName === "Số tiền") {
+    return "amount-column";
+  }
+  if (columnName === "Ngày hạch toán" || columnName === "Ngày chứng từ") {
+    return "date-column";
+  }
+  if (columnName === "Diễn giải") {
+    return "description-column";
+  }
+  return "left-align-column";
+},
     toggleDropdown(index) {
       this.dropdownVisible = this.dropdownVisible === index ? null : index;
     },
@@ -369,6 +394,48 @@ export default {
 .bold-number {
   font-weight: 800;
 }
+.withdraw-list-table th, 
+.withdraw-list-table td {
+  padding: 8px;
+  vertical-align: middle;
+  text-align: center; /* Căn giữa các checkbox */
+}
+
+input[type="checkbox"] {
+  appearance: none; /* Loại bỏ kiểu dáng mặc định của checkbox */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 1px solid #afafaf; 
+  border-radius: 2px; 
+  outline: none;
+  cursor: pointer;
+  position: relative;
+  background-color: white;
+}
+
+
+input[type="checkbox"]:checked {
+  border-color: #28a745; 
+  background-color: white; 
+}
+
+
+input[type="checkbox"]:checked::after {
+  content: '\2714'; /* Ký hiệu dấu tick */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 14px;
+  color: #28a745; 
+}
+
+/* Thêm hiệu ứng hover */
+input[type="checkbox"]:hover {
+  border-color: #28a745; /* Viền xanh lá khi hover */
+}
 
 .amout {
   padding-left: 5px;
@@ -484,13 +551,38 @@ table {
 .td-grid.amount-column {
   text-align: right;
 }
-.td-grid.description-column {
-  width: 500px; /* Điều chỉnh chiều rộng theo nhu cầu của bạn */
+.withdraw-list-table td.description-column {
+  width: 200px; /* Cung cấp chiều rộng tối thiểu */
+  max-width: 300px; /* Giới hạn chiều rộng tối đa */
+  white-space: nowrap; /* Ngăn không cho văn bản xuống dòng */
+  overflow: hidden;
+  text-overflow: ellipsis; /* Thêm dấu ba chấm nếu nội dung quá dài */
   text-align: left;
 }
 
 .td-grid.left-align-column {
   text-align: left;
+}
+/* Căn giữa text trong thẻ th của cột "Ngày hạch toán" và "Ngày chứng từ" */
+.withdraw-list-table th.date-column {
+  text-align: center;
+}
+
+/* Căn phải text trong thẻ th của cột "Số tiền" */
+.withdraw-list-table th.amount-column {
+  text-align: right;
+}
+
+/* Căn trái text trong các thẻ th của các cột còn lại */
+.withdraw-list-table th.left-align-column {
+  text-align: left;
+}
+
+/* Căn lề cho thẻ th của cột "Diễn giải" và đảm bảo cột này rộng hơn */
+.withdraw-list-table th.description-column {
+  text-align: left;
+  max-width: 300px; /* Đảm bảo chiều rộng tối thiểu cho cột */
+  width:250px;
 }
 
 /* Style for the total amount row */
@@ -542,7 +634,7 @@ table {
   width: 100%;
   border-collapse: collapse;
   font-size: 12.5px;
-  table-layout: fixed;
+  table-layout: auto;
 }
 
 .withdraw-list-table tr:hover {
