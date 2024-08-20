@@ -11,7 +11,7 @@
               <th
                 v-for="(column, index) in columnConfig"
                 :key="index"
-                @dblclick="sortRecords(column.fieldName)"
+                @click="sortRecords(column.fieldName)"
                 :class="[
                   getColumnClass(column.columnName),
                   column.columnName === 'Diễn giải' ? 'description-column' : '',
@@ -229,6 +229,9 @@ export default {
       if (columnName === "Diễn giải") {
         return "description-column";
       }
+      if (columnName === "Chức năng") {
+        return "action-column";
+      }
       return "left-align-column";
     },
     toggleDropdown(index) {
@@ -389,7 +392,12 @@ export default {
 .bold-number {
   font-weight: 800;
 }
-.withdraw-list-table th,
+.withdraw-list-table th {
+  padding: 8px;
+  vertical-align: middle;
+  text-align: center; /* Căn giữa các checkbox */
+  cursor: pointer;
+}
 .withdraw-list-table td {
   padding: 8px;
   vertical-align: middle;
@@ -539,6 +547,10 @@ table {
   text-align: left;
 }
 
+.withdraw-list-table th.action-column {
+  text-align: center;
+}
+
 /* Thêm vào các lớp cụ thể trong hàm getColumnClass */
 .td-grid.date-column {
   text-align: center;
@@ -640,7 +652,9 @@ table {
 .withdraw-list-table .td-chung-tu {
   color: inherit;
 }
-
+.withdraw-list-table .sticky-column {
+  text-align: center;
+}
 .withdraw-list-table .td-chung-tu a {
   color: #0075c0;
   text-decoration: none;
@@ -683,6 +697,7 @@ span {
 }
 
 .sticky-column .dropdown-content {
+  text-align: center;
   display: none;
   position: fixed;
   background-color: #fff;
