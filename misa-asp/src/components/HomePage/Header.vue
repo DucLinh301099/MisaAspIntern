@@ -71,6 +71,10 @@ export default {
     };
   },
   methods: {
+    /**
+     * hàm đóng mở menu
+     * @param menu
+     */
     toggleDropdown(menu) {
       this.dropdownOpen = this.dropdownOpen === menu ? "" : menu;
     },
