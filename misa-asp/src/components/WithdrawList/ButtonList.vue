@@ -217,11 +217,16 @@ export default {
     //TODO: Sẽ nguyên cứu lại, như này quá dài dòng, sẽ nghiên cứu đưa logic
     // này vào BE xử lý
     // Hàm để kiểm tra và loại bỏ các "or", "and", và dấu ngoặc đơn dư thừa
+    /**
+     * hàm xóa bỏ các thành phần dư thừa trong truy vấn
+     * khi thay đổi điều kiện lọc.
+     * @param filtersArray
+     */
     cleanUpFilters(filtersArray) {
       let result = filtersArray.filter((item, index) => {
         if (item === "or" || item === "and") {
           // Loại bỏ "or" hoặc "and" nếu nó nằm ở đầu, cuối,
-          // hoặc đứng trước/sau một "or" hoặc "and" khác, hoặc đứng sau một "(" hoặc trước một ")"
+          // hoặc đứng trước/sau một "or", "and", hoặc ngoặc đơn
           return (
             index > 0 &&
             index < filtersArray.length - 1 &&
@@ -236,33 +241,44 @@ export default {
         return true; // Giữ lại các điều kiện khác
       });
 
-      // Bước 2: Loại bỏ cặp dấu ngoặc đơn nếu không có điều kiện hợp lệ giữa chúng
-      let openBracketIndex = result.indexOf("(");
-      let closeBracketIndex = result.lastIndexOf(")");
+      // Bước 2: Loại bỏ các cặp ngoặc đơn trống hoặc không hợp lệ
+      let stack = [];
+      let removeIndexes = new Set();
 
-      // Nếu tìm thấy cặp dấu ngoặc đơn
-      if (
-        openBracketIndex !== -1 &&
-        closeBracketIndex !== -1 &&
-        closeBracketIndex > openBracketIndex
-      ) {
-        let innerContent = result.slice(
-          openBracketIndex + 1,
-          closeBracketIndex
-        );
-
-        // Nếu tất cả nội dung giữa ngoặc đơn chỉ là "or" hoặc "and", hoặc trống, ta sẽ xóa dấu ngoặc đơn và nội dung bên trong
-        if (
-          innerContent.every(
-            (item) => item === "or" || item === "and" || item === ""
-          )
-        ) {
-          result.splice(
-            openBracketIndex,
-            closeBracketIndex - openBracketIndex + 1
-          ); // Xóa dấu ngoặc đơn và nội dung bên trong
+      result.forEach((item, index) => {
+        if (item === "(") {
+          stack.push(index);
+        } else if (item === ")") {
+          let openIndex = stack.pop();
+          if (openIndex !== undefined) {
+            let innerContent = result.slice(openIndex + 1, index);
+            if (
+              innerContent.length === 0 || // Trống
+              innerContent.every(
+                (innerItem) => innerItem === "or" || innerItem === "and"
+              )
+            ) {
+              removeIndexes.add(openIndex);
+              removeIndexes.add(index);
+              innerContent.forEach((_, innerIndex) =>
+                removeIndexes.add(openIndex + 1 + innerIndex)
+              );
+            }
+          }
         }
-      }
+      });
+
+      result = result.filter((_, index) => !removeIndexes.has(index));
+
+      // Bước 3: Kiểm tra và loại bỏ "and" dư thừa
+      let previousItem = null;
+      result = result.filter((item) => {
+        if (item === "and" && previousItem === "and") {
+          return false; // Loại bỏ nếu có hai "and" gần nhau, chỉ giữ lại một
+        }
+        previousItem = item;
+        return true;
+      });
 
       // Kiểm tra và loại bỏ "and" ở đầu hoặc cuối nếu không có điều kiện hợp lệ trước/sau nó
       if (result[0] === "and") {

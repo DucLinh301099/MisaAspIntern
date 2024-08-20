@@ -13,12 +13,11 @@
                 :key="index"
                 @dblclick="sortRecords(column.fieldName)"
                 :class="[
-                 getColumnClass(column.columnName),
-                  column.columnName === 'Diễn giải' ? 'description-column' : ''
-                  ]"
+                  getColumnClass(column.columnName),
+                  column.columnName === 'Diễn giải' ? 'description-column' : '',
+                  column.columnName === 'Chức năng' ? 'sticky-column' : '',
+                ]"
               >
-             
-    
                 {{ column.columnName }}
               </th>
             </tr>
@@ -30,23 +29,19 @@
               :key="rowIndex"
               @dblclick="viewRow(row)"
             >
-              <td><input 
-                  type="checkbox" 
-                  v-model="selectedRows" 
-                  :value="row" 
-                /></td>
+              <td>
+                <input type="checkbox" v-model="selectedRows" :value="row" />
+              </td>
               <td
                 :class="[
                   'td-grid',
                   getColumnClass(column.columnName),
                   column.columnName === 'Số chứng từ' ? 'td-chung-tu' : '',
+                  column.columnName === 'Chức năng' ? 'sticky-column' : '',
                 ]"
                 v-for="(column, colIndex) in columnConfig"
                 :key="colIndex"
               >
-                
-                  
-                
                 <span
                   v-if="
                     column.columnName !== 'Số chứng từ' &&
@@ -54,14 +49,14 @@
                   "
                   >{{ row[column.fieldName] }}
                 </span>
-                
+
                 <a
                   v-else-if="column.columnName === 'Số chứng từ'"
                   @click="viewRow(row)"
                   href="#"
                   >{{ row[column.fieldName] }}</a
                 >
-             
+
                 <div v-else class="actions-container">
                   <div class="flex justify-end">
                     <div class="ms-dropdown">
@@ -103,7 +98,7 @@
     </div>
     <div class="total-amount">
       <span class="span-amount"
-        >Tổng tiền:<strong>{{ formattedTotalAmount }}</strong></span
+        >Tổng:<strong>{{ formattedTotalAmount }}</strong></span
       >
     </div>
 
@@ -225,17 +220,17 @@ export default {
     },
 
     getColumnClass(columnName) {
-  if (columnName === "Số tiền") {
-    return "amount-column";
-  }
-  if (columnName === "Ngày hạch toán" || columnName === "Ngày chứng từ") {
-    return "date-column";
-  }
-  if (columnName === "Diễn giải") {
-    return "description-column";
-  }
-  return "left-align-column";
-},
+      if (columnName === "Số tiền") {
+        return "amount-column";
+      }
+      if (columnName === "Ngày hạch toán" || columnName === "Ngày chứng từ") {
+        return "date-column";
+      }
+      if (columnName === "Diễn giải") {
+        return "description-column";
+      }
+      return "left-align-column";
+    },
     toggleDropdown(index) {
       this.dropdownVisible = this.dropdownVisible === index ? null : index;
     },
@@ -394,7 +389,7 @@ export default {
 .bold-number {
   font-weight: 800;
 }
-.withdraw-list-table th, 
+.withdraw-list-table th,
 .withdraw-list-table td {
   padding: 8px;
   vertical-align: middle;
@@ -407,29 +402,27 @@ input[type="checkbox"] {
   -moz-appearance: none;
   width: 18px;
   height: 18px;
-  border: 1px solid #afafaf; 
-  border-radius: 2px; 
+  border: 1px solid #afafaf;
+  border-radius: 2px;
   outline: none;
   cursor: pointer;
   position: relative;
   background-color: white;
 }
 
-
 input[type="checkbox"]:checked {
-  border-color: #28a745; 
-  background-color: white; 
+  border-color: #28a745;
+  background-color: white;
 }
 
-
 input[type="checkbox"]:checked::after {
-  content: '\2714'; /* Ký hiệu dấu tick */
+  content: "\2714"; /* Ký hiệu dấu tick */
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 14px;
-  color: #28a745; 
+  font-size: 12px;
+  color: #28a745;
 }
 
 /* Thêm hiệu ứng hover */
@@ -442,9 +435,8 @@ input[type="checkbox"]:hover {
 }
 
 .span-amount {
-  font-size: 14px;
+  font-size: 12px;
   text-align: center;
-  padding-right: 150px;
 }
 
 .total-amount {
@@ -489,7 +481,7 @@ table {
 .thead {
   background-color: #f4f5f8;
   text-align: left;
-  height: 40px;
+  height: 35px;
   top: 0;
   z-index: 1;
   position: sticky;
@@ -522,20 +514,24 @@ table {
 }
 
 .withdraw-list-table td span {
-  display: block;
+  display: flex;
   width: 100%;
   word-break: break-word;
   margin: 0 auto;
+  align-items: center;
 }
 
 /* Căn giữa text trong cột "Ngày hạch toán" và "Ngày chứng từ" */
-.withdraw-list-table td.date-column {
-  text-align: center;
+.withdraw-list-table td.date-column span {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 /* Căn phải text trong cột "Số tiền" */
-.withdraw-list-table td.amount-column {
-  text-align: right;
+.withdraw-list-table td.amount-column span {
+  display: flex;
+  justify-content: flex-end;
 }
 
 /* Căn trái text trong các cột còn lại */
@@ -582,7 +578,7 @@ table {
 .withdraw-list-table th.description-column {
   text-align: left;
   max-width: 300px; /* Đảm bảo chiều rộng tối thiểu cho cột */
-  width:250px;
+  width: 250px;
 }
 
 /* Style for the total amount row */
@@ -633,7 +629,7 @@ table {
 .withdraw-list-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 12.5px;
+  font-size: 12px;
   table-layout: auto;
 }
 
@@ -648,6 +644,7 @@ table {
 .withdraw-list-table .td-chung-tu a {
   color: #0075c0;
   text-decoration: none;
+  padding-left: 5px;
 }
 
 .withdraw-list-table .td-chung-tu a:hover {
@@ -685,18 +682,28 @@ span {
   padding: 5px 10px;
 }
 
-.dropdown-content {
+.sticky-column .dropdown-content {
   display: none;
-  position: absolute;
+  position: fixed;
   background-color: #fff;
   min-width: 100px;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-  z-index: 1000;
+  z-index: 9999; /* Đặt giá trị z-index cao hơn */
   right: 0;
-  top: 100%;
+  top: auto; /* Đảm bảo không bị đè lên */
+  top: 100%; /* Hiển thị phía trên nút */
+  margin-bottom: 5px; /* Khoảng cách giữa dropdown và nút */
   border-radius: 2.5px;
 }
+.sticky-column .dropdown:hover .dropdown-content,
+.sticky-column .dropbtn:focus + .dropdown-content {
+  display: block;
+}
 
+.sticky-column .dropdown-content {
+  position: absolute;
+  right: 0;
+}
 .dropdown-content a {
   color: black;
   padding: 12px 16px;

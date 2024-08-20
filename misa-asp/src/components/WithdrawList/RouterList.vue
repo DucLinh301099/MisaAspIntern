@@ -22,9 +22,9 @@
             </div>
           </li>
           <li class="ms-tabs-li">
-            <div class="line-top"></div>
+            <div class="line-top-1"></div>
             <div type="button" class="ms-tabs-btn">
-              <div class="ms-label tab-label">
+              <div class="ms-label-1 tab-label">
                 Chi tiền
                 <!---->
               </div>
@@ -190,9 +190,11 @@ export default {
 .con-ms-tabs .con-ms-ul-tabs .ms-tabs-ul {
   margin: 0;
   padding: 0;
-  height: 25px;
+  height: 28px;
 }
-
+.ms-label-1:hover {
+  color: green;
+}
 .ms-tabs-position-bottom .con-ms-ul-tabs .ms-tabs-ul .ms-tabs-li {
   border-left: none;
 
@@ -202,20 +204,32 @@ export default {
   align-items: center;
   justify-content: center;
   margin: 0 5px; /* Adjust space between tabs */
+  flex-direction: column;
 }
 
 .con-ms-tabs .con-ms-ul-tabs .ms-tabs-ul .ms-tabs-li {
   border-left: 6px solid transparent;
   position: relative;
 }
-
+.line-top {
+  width: 100%;
+  height: 4px;
+  background-color: #2ca01c;
+  border-radius: 5px 5px 0 0;
+}
 .ms-tabs-position-bottom .con-ms-ul-tabs .ms-tabs-ul .ms-tabs-li .line-top {
   width: 100%;
   height: 4px;
   background-color: unset;
   border-radius: 5px 5px 0 0;
 }
-
+.ms-tabs-position-bottom .con-ms-ul-tabs .ms-tabs-ul .ms-tabs-li .line-top-1 {
+  width: 100%;
+  height: 4px;
+  background-color: unset;
+  border-radius: 5px 5px 0 0;
+  background-color: #2ca01c;
+}
 .ms-tabs-position-bottom .con-ms-ul-tabs .ms-tabs-ul .ms-tabs-li .ms-tabs-btn {
   margin: 0;
   padding: 0 12px;
@@ -246,7 +260,12 @@ export default {
   white-space: nowrap;
   font-size: 13px;
 }
-
+.ms-label-1 {
+  text-align: center;
+  white-space: nowrap;
+  font-size: 13px;
+  font-weight: 600;
+}
 .other-li .ms-tabs-btn {
   padding: unset !important;
   position: absolute !important;
